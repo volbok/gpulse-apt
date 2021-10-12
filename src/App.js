@@ -47,7 +47,7 @@ function IddleTimeOut() {
         timer = 0
         setTimeout(() => {
           toast(1, '#ec7063', 'USUÁRIO DESLOGADO POR INATIVIDADE.', 3000)
-          history.push('/gpulse')
+          history.push('/gpulse-web')
         }, 3000)
       }
     }, 1000)
@@ -85,7 +85,7 @@ function IddleTimeOut() {
       <DatePicker></DatePicker>
       <Switch>
         <div id="páginas">
-          <Route exact path="/gpulse">
+          <Route exact path="/gpulse-web">
             <Login></Login>
           </Route>
           <Route path="/atendimentos">

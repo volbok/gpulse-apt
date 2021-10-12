@@ -330,7 +330,7 @@ function Hospitais() {
         maxHeight: window.innerHeight,
       }}
     >
-      <Header link={'/gpulse'} titulo={'HOSPITAIS'}></Header>
+      <Header link={'/gpulse-web'} titulo={'HOSPITAIS'}></Header>
       <ShowHospitais></ShowHospitais>
     </div>
   )
