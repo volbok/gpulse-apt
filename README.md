@@ -1,3 +1,2 @@
-#gpulse-web
-Front End
+GPULSE-WEB
 Rodrigo iniciando trabalhos...
