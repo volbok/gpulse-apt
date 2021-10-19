@@ -803,7 +803,8 @@ function Laboratorio({ viewlaboratorio }) {
     return (
       <div id="OUTRUN" style={{
         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-        height: '50vh', padding: 0, paddingLeft: 10, paddingRight: 10,
+        width: '100%',
+        height: '50vh', padding: 0, paddingTop: 5, paddingLeft: window.innerWidth > 400 ? 10 : 0, 
       }}>
         <input
           className="input"
@@ -826,8 +827,7 @@ function Laboratorio({ viewlaboratorio }) {
           style={{
             display: arrayfilterlab.length > 0 ? 'flex' : 'none',
             height: '100%',
-            width: '40vw',
-            margin: 0, padding: 0,
+            width: window.innerWidth > 400 ? '40vw' : '100%',
           }}
         >
           {arrayfilterlab.map((item) => (
@@ -835,11 +835,10 @@ function Laboratorio({ viewlaboratorio }) {
               key={item.id}
               id="item da lista"
               className="row"
-              style={{ boxShadow: 'none', marginBottom: 0, padding: 2.5, paddingRight: 7.5 }}
             >
               <button
                 onClick={() => addLab(item)}
-                className="blue-button"
+                className="hover-button"
                 style={{ width: '100%' }}
               >
                 {item.exame}
@@ -853,7 +852,7 @@ function Laboratorio({ viewlaboratorio }) {
           style={{
             display: arrayfilterlab.length > 0 ? 'none' : 'flex',
             height: '100%',
-            width: '40vw',
+            width: window.innerWidth > 400 ? '40vw' : '100%',
             margin: 0,
           }}
         >
@@ -956,7 +955,7 @@ function Laboratorio({ viewlaboratorio }) {
             className="corpo"
           >
             <div className="title2" style={{ fontSize: 14 }}>DATA E HORA DA COLETA:</div>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10 }}>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10, width: window.innerWidth > 400 ? '40vw' : '90vw' }}>
               <button
                 className="blue-button"
                 onClick={() => clickAgorabtn()}
@@ -1015,7 +1014,11 @@ function Laboratorio({ viewlaboratorio }) {
               />
             </div>
             <div style={{
-              display: 'flex', flexDirection: 'row', justifyContent: 'center',
+              display: 'flex',
+              flexDirection: window.innerWidth > 400 ? 'row' : 'column',
+              justifyContent: window.innerWidth > 400 ? 'center' : 'flex-start',
+              alignItems: 'center',
+              width: '100%',
               padding: 10,
             }}>
               <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '50vh' }}>
@@ -1027,7 +1030,7 @@ function Laboratorio({ viewlaboratorio }) {
                     flexWrap: 'wrap',
                     justifyContent: 'space-evenly',
                     alignItems: 'flex-start',
-                    width: '42vw',
+                    width: window.innerWidth > 400 ? '42vw' : '100%',
                     height: '100%',
                   }}
                 >
@@ -1035,8 +1038,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickHemograma()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#AF7AC5',
                       flexDirection: 'column',
@@ -1050,8 +1053,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickPcr()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#AF7AC5',
                       flexDirection: 'column',
@@ -1065,8 +1068,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickGasoart()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#F4D03F',
@@ -1080,8 +1083,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickGasoven()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#F4D03F',
                       flexDirection: 'column',
@@ -1095,8 +1098,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickLactato()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#F4D03F',
                       flexDirection: 'column',
@@ -1110,8 +1113,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickCloreto()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#F4D03F',
                       flexDirection: 'column',
@@ -1125,8 +1128,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickUreia()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       opacity: ureiabtn === 1 ? 1 : 0.6,
@@ -1139,8 +1142,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickCreatinina()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       opacity: creatininabtn === 1 ? 1 : 0.6,
@@ -1153,8 +1156,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickSodio()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       opacity: sodiobtn === 1 ? 1 : 0.6,
@@ -1167,8 +1170,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickPotassio()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       opacity: potassiobtn === 1 ? 1 : 0.6,
@@ -1181,8 +1184,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickFosforo()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       opacity: fosforobtn === 1 ? 1 : 0.6,
@@ -1195,8 +1198,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickMagnesio()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       opacity: magnesiobtn === 1 ? 1 : 0.6,
@@ -1209,8 +1212,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickTgo()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
@@ -1224,8 +1227,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickFal()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
@@ -1239,8 +1242,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickGgt()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
@@ -1254,8 +1257,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickBtf()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
@@ -1269,8 +1272,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickAmilase()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
@@ -1284,8 +1287,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickTap()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#CD6155',
                       flexDirection: 'column',
@@ -1299,8 +1302,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickPtt()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       backgroundColor: '#CD6155',
                       flexDirection: 'column',
@@ -1314,8 +1317,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickHemoc1()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
@@ -1329,8 +1332,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickHemoc2()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
@@ -1344,8 +1347,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickHemoc3()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
@@ -1359,8 +1362,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickUroc()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
@@ -1374,8 +1377,8 @@ function Laboratorio({ viewlaboratorio }) {
                     className="blue-button"
                     onClick={() => clickMinibal()}
                     style={{
-                      width: '32%',
-                      height: 75,
+                      width: window.innerWidth > 400 ? '32%' : '45%',
+                      height: window.innerWidth > 400 ? '40%' : '35%',
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',

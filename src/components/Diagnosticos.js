@@ -262,12 +262,12 @@ function Diagnostico(
           </div>
           <div className="corpo">
             <div id="FILTROS DE DIAGNÓSTICOS" style={{ display: 'flex', flexDirection: window.innerWidth > 400 ? 'row' : 'column', justifyContent: 'center', width: '100%' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '20vw' }}>
                 <label className="title2">
                   DATA DO DIAGNÓSTICO:
                 </label>
                 <label
-                  style={{ width: 200 }}
+                  style={{ width: '90%' }}
                   autoComplete="off"
                   className="input"
                   placeholder="INÍCIO"
@@ -283,7 +283,7 @@ function Diagnostico(
                   {pickdate1}
                 </label>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '20vw' }}>
                 <label className="title2">
                   CID:
                 </label>
@@ -297,14 +297,14 @@ function Diagnostico(
                   onChange={() => filterCid()}
                   title="CID."
                   style={{
-                    width: 100
+                    width: '90%'
                   }}
                   type="text"
                   maxLength={5}
                   id="inputCid"
                 ></input>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '30vw' }}>
                 <label className="title2">
                   DIAGNÓSTICO:
                 </label>
@@ -334,7 +334,6 @@ function Diagnostico(
                   id="item da lista"
                   className="row"
                   onClick={() => selectDiagnostico(item)}
-                  style={{ margin: 5, marginTop: 2.5, marginBottom: 2.5 }}
                 >
                   <button
                     className={item.codigo == selectcid ? "red-button" : "blue-button"}

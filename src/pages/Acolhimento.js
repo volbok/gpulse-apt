@@ -74,7 +74,7 @@ function Acolhimento() {
           className="scroll"
           id="LISTA DE PACIENTES"
           style={{
-            height: '82vh',
+            height: '100%',
           }}
         >
           {atendimentos.sort((a, b) => a.admissao > b.admissao ? 1 : -1).map((item) => (
@@ -84,23 +84,23 @@ function Acolhimento() {
               className="row"
             >
               <div
-                className="title2"
+                className="title2center"
                 title="HORA DE ENTRADA."
-                style={{ minWidth: 100, width: 100, margin: 2.5, alignSelf: 'center' }}
+                style={{ width: '30%', margin: 2.5 }}
               >
                 {item.admissao}
               </div>
               <div
-                className="title2"
+                className="title2center"
                 title="TEMPO DE ESPERA."
-                style={{ minWidth: 250, width: 250, margin: 2.5, alignSelf: 'center' }}
+                style={{ width: '30%', margin: 2.5 }}
               >
                 {espera(item.admissao)}
               </div>
               <div
-                className="title2"
+                className="title2center"
                 title="SETOR/UNIDADE DE INTERNAÇÃO."
-                style={{ minWidth: 120, width: 120, margin: 2.5, alignSelf: 'center' }}
+                style={{ width: '30%', margin: 2.5 }}
               >
                 {item.unidade}
               </div>
@@ -114,14 +114,15 @@ function Acolhimento() {
                 {item.nome}
               </button>
               <div
-                className="title2"
-                style={{ minWidth: 100, width: 100, margin: 2.5, alignSelf: 'center' }}
+                className="title2center"
+                style={{ width: '30%', margin: 2.5}}
               >
                 {moment().diff(moment(item.dn, 'DD/MM/YYYY'), 'years') > 1 ? moment().diff(moment(item.dn, 'DD/MM/YYYY'), 'years') + ' ANOS' : moment().diff(moment(item.dn, 'DD/MM/YYYY'), 'years') + ' ANO'}
               </div>
             </div>
-          ))}
-        </div>
+          ))
+          }
+        </div >
       );
     } else {
       return (
@@ -129,13 +130,7 @@ function Acolhimento() {
           className="scroll"
           id="LISTA DE PACIENTES"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            borderRadius: 5,
-            margin: 5,
-            minHeight: window.innerHeight - 180,
-            height: window.innerHeight - 180,
+            height: '82vh',
           }}
         >
           <div className="title2"
@@ -152,50 +147,45 @@ function Acolhimento() {
     }
   }
 
-  function ShowPacientesHeader() {
+  function CabecalhoPacientes() {
     return (
-      <div
-        className="row"
-        style={{ width: '100%', paddingLeft: 10, paddingRight: 35 }}
-      >
-        <button
-          className="header"
-          style={{ minWidth: 100, width: 100, margin: 2.5 }}
-          disabled="true"
+      <div className="scrollheader">
+        <div
+          className="rowheader"
         >
-          ENTRADA
-        </button>
-        <button
-          className="header"
-          style={{ minWidth: 250, width: 250, margin: 2.5, padding: 10 }}
-        >
-          TEMPO DE ESPERA
-        </button>
-        <button
-          className="header"
-          style={{ minWidth: 120, width: 120, margin: 2.5, padding: 5 }}
-        >
-          UNIDADE
-        </button>
-        <button
-          className="header"
-          style={{ minWidth: 50, width: 50, margin: 2.5 }}
-        >
-          BOX
-        </button>
-        <button
-          className="header"
-          style={{ width: '100%', margin: 2.5 }}
-        >
-          NOME
-        </button>
-        <button
-          className="header"
-          style={{ minWidth: 100, width: 100, margin: 2.5 }}
-        >
-          IDADE
-        </button>
-      </div >
+          <button
+            className="rowitemheader"
+            style={{ width: '30%', margin: 2.5}}
+            disabled="true"
+          >
+            ENTRADA
+          </button>
+          <button
+            className="rowitemheader"
+            style={{ width: '30%', margin: 2.5}}
+          >
+            TEMPO DE ESPERA
+          </button>
+          <button
+            className="rowitemheader"
+            style={{ width: '30%', margin: 2.5}}
+          >
+            UNIDADE
+          </button>
+          <button
+            className="rowitemheader"
+            style={{ width: '100%', margin: 2.5 }}
+          >
+            NOME
+          </button>
+          <button
+            className="rowitemheader"
+            style={{ width: '30%', margin: 2.5}}
+          >
+            IDADE
+          </button>
+        </div>
+      </div>
     );
   }
 
@@ -487,7 +477,7 @@ function Acolhimento() {
                 id="inputFluxo"
                 defaultValue={descritor}
               ></input>
-              <div className="scroll"
+              <div className="scrolldrop"
                 id="LISTA DE DESCRITORES"
                 style={{
                   display: viewfluxo === 1 ? 'flex' : 'none',
@@ -698,12 +688,14 @@ function Acolhimento() {
       <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo}></Toast>
       <ShowClassificador></ShowClassificador>
       <div
+        className="scrollgroup"
         style={{
           display: 'flex',
-          flex: 10,
           flexDirection: 'column',
           width: window.innerWidth,
+          height: '82vh',
         }}>
+        <CabecalhoPacientes></CabecalhoPacientes>
         <ShowPacientes></ShowPacientes>
       </div>
     </div>

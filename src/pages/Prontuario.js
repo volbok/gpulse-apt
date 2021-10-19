@@ -15,7 +15,7 @@ import 'moment/locale/pt-br';
 import Context from '../Context';
 import { useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 // importando css.
 import '../design.css';
 // importando imagens.
@@ -1910,8 +1910,8 @@ function Prontuario() {
                           title="IMPRIMIR EVOLUÇÃO."
                           style={{
                             display: item.status == 1 && item.idusuario == idusuario ? 'flex' : 'none', marginTop: 0,
-                            marginRight: window.innerWidth > 800 && item.idusuario == idusuario ? 2.5 : 0,
-                            marginLeft: window.innerWidth > 800 && item.idusuario == idusuario ? 2.5 : 0,
+                            marginRight: 2.5,
+                            marginLeft: 2.5,
                             marginBottom: window.innerWidth > 800 && item.idusuario == idusuario ? 0 : 5,
                           }}
                         >
@@ -1951,9 +1951,9 @@ function Prontuario() {
                           style={{
                             display: item.status == 0 && item.idusuario == idusuario ? 'flex' : 'none',
                             marginRight: 0,
-                            marginLeft: window.innerWidth > 800 ? 2.5 : 0,
+                            marginLeft: 2.5,
                             marginBottom: 0,
-                            marginTop: window.innerWidth < 800 ? 2.5 : 0
+                            marginTop: 0
                           }}
                         >
                           <img
@@ -2769,7 +2769,6 @@ function Prontuario() {
                 id="item da lista"
                 className="row"
               >
-
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
@@ -2830,6 +2829,22 @@ function Prontuario() {
                 </div>
               </div>
             ))}
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <button className="blue-button"
+                onClick={() => viewLaboratorio(1)}
+                style={{ display: window.innerWidth > 800 ? 'none' : 'flex', marginRight: 7.5, marginTop: 2.5 }}
+              >
+                <img
+                  alt=""
+                  src={novo}
+                  style={{
+                    margin: 10,
+                    height: 30,
+                    width: 30,
+                  }}
+                ></img>
+              </button>
+            </div>
           </div>
         </div >
       );
@@ -2958,11 +2973,7 @@ function Prontuario() {
           <Identificacao></Identificacao>
           <div
             className="scroll"
-            id="LISTA DE EXAMES DE IMAGEM"
-          //onMouseUp={() => scrollPosition("LISTA DE EXAMES DE IMAGEM")}
-          //onMouseOver={() => keepScroll("LISTA DE EXAMES DE IMAGEM")}
-          //onLoad={() => keepScroll("LISTA DE EXAMES DE IMAGEM")}
-          >
+            id="LISTA DE EXAMES DE IMAGEM"          >
             {arrayimagem.map((item) => (
               <div
                 key={item.id}
@@ -2996,7 +3007,6 @@ function Prontuario() {
                         {item.exame}
                       </div>
                     </div>
-
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                       <button id="viewimage" className="animated-blue-button" style={{ display: item.status < 3 ? 'none' : 'flex' }}>
                         <img
@@ -3038,6 +3048,22 @@ function Prontuario() {
                 </div>
               </div>
             ))}
+            <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <button className="blue-button"
+                onClick={() => viewImagem(1)}
+                style={{ display: window.innerWidth > 800 ? 'none' : 'flex', marginRight: 7.5, marginTop: 2.5 }}
+              >
+                <img
+                  alt=""
+                  src={novo}
+                  style={{
+                    margin: 10,
+                    height: 30,
+                    width: 30,
+                  }}
+                ></img>
+              </button>
+            </div>
           </div>
         </div>
       );

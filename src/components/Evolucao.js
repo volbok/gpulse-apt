@@ -892,7 +892,7 @@ function Evolucao(
               className="widget"
               style={{
                 display: window.innerWidth > 400 ? 'flex' : 'none',
-                flexDirection: 'column', width: '20vw', backgroundColor: 'grey', margin: 10
+                flexDirection: 'column', width: '20vw', backgroundColor: 'grey', margin: 10, marginRight: 30
               }}
             >
               <button className={page == 1 ? "red-button" : "blue-button"} style={{ width: '100%', margin: 10 }} onClick={() => setpage(1)}>

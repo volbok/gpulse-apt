@@ -2262,7 +2262,7 @@ input::-webkit-inner-spin-button {
 /* ANIMAÇÕES */
 .fade-in {
   animation-name: fadein;
-  animation-duration: 1000ms;
+  animation-duration: 500ms;
 }
 
 @keyframes fadein {

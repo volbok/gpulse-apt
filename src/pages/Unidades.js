@@ -70,6 +70,7 @@ function Unidades() {
         style={{
           display: 'flex',
           width: '100%',
+          height: '100%',
           margin: 0,
           marginTop: 5,
           padding: 5,
@@ -1015,7 +1016,7 @@ function Unidades() {
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <button
                   className="blue-button"
-                  onClick={() => clickAcolhimento(item)}
+                  onClick={(e) => {clickAcolhimento(item); e.stopPropagation()}}
                   style={{
                     display: lto.filter(valor => valor.unidade == item.unidade).map(valor => valor.tipo) == 1 && tipousuario == 5 ? 'flex' : 'none',
                     width: 50,
@@ -1438,7 +1439,7 @@ function Unidades() {
   // renderização do componente.
   return (
     <div
-      className="main fade-in scroll"
+      className="main fade-in"
       style={{
         display: renderchart== 1 ? 'flex' : 'none',
         flexDirection: 'column',
@@ -1459,6 +1460,7 @@ function Unidades() {
         style={{
           display: window.innerWidth > 400 ? 'flex' : 'none',
           width: '100vw', padding: 5,
+          height: '100vh',
           backgroundColor: 'transparent',
           borderColor: 'transparent',
           overflowY: 'scroll',

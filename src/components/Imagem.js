@@ -140,7 +140,10 @@ function Imagem(
 
   function ShowSearchImagem() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{
+        display: 'flex', flexDirection: 'column',
+        justifyContent: 'center', alignItems: 'center',
+      }}>
         <input
           className="input"
           autoComplete="off"
@@ -149,8 +152,8 @@ function Imagem(
           onBlur={(e) => (e.target.placeholder = 'BUSCAR EXAME...')}
           onChange={() => filterImagem()}
           style={{
-            width: 0.3 * window.innerWidth,
-            margin: 20
+            width: window.innerWidth > 400 ? '60vw' : '75vw',
+            margin: 20,
           }}
           type="text"
           id="inputFilterImagem"
@@ -162,8 +165,9 @@ function Imagem(
           id="LISTA DE EXAMES DE IMAGEM DISPONÍVEIS"
           style={{
             display: arrayfilterimagem.length > 0 ? 'flex' : 'none',
-            height: 200,
-            width: 0.5 * window.innerWidth,
+            height: '30vh',
+            width: window.innerWidth > 400 ? '60vw' : '75vw',
+            margin: 20,
           }}
         >
           {arrayfilterimagem.map((item) => (
@@ -189,8 +193,9 @@ function Imagem(
           id="LISTA DE EXAMES DE IMAGEM SELECIONADOS"
           style={{
             display: arrayfilterimagem.length > 0 ? 'none' : 'flex',
-            height: 200,
-            width: 0.5 * window.innerWidth
+            height: '30vh',
+            width: window.innerWidth > 400 ? '60vw' : '75vw',
+            margin: 20,
           }}
         >
           {selectedlistimagem.map((item) => (
@@ -207,9 +212,9 @@ function Imagem(
               >
                 {item.exame}
               </button>
-              <button className="red-button"
+              <button className="animated-red-button"
                 onClick={() => deleteImagem(item)}
-                style={{ marginRight: 0 }}
+                style={{ marginRight: 0, height: 'calc(100% - 5px)' }}
               >
                 <img
                   alt=""
@@ -232,9 +237,10 @@ function Imagem(
           onBlur={(e) => (e.target.placeholder = 'JUSTIFICATIVA')}
           onChange={() => setJustificativa()}
           style={{
-            width: 0.5 * window.innerWidth,
-            height: 150,
+            height: '20vh',
+            width: window.innerWidth > 400 ? '60vw' : '75vw',
             margin: 20,
+            marginTop: 0
           }}
           type="text"
           id="inputJustificativa"
