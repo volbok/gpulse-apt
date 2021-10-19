@@ -1016,7 +1016,7 @@ function Unidades() {
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                 <button
                   className="blue-button"
-                  onClick={(e) => {clickAcolhimento(item); e.stopPropagation()}}
+                  onClick={(e) => { clickAcolhimento(item); e.stopPropagation() }}
                   style={{
                     display: lto.filter(valor => valor.unidade == item.unidade).map(valor => valor.tipo) == 1 && tipousuario == 5 ? 'flex' : 'none',
                     width: 50,
@@ -1436,12 +1436,31 @@ function Unidades() {
     history.push('/acolhimento')
   }
 
+  // botão para acesso ao painel do gestor.
+  const [painelgestor, setpainelgestor] = useState(0);
+  function PainelDoGestorBtn() {
+    return (
+      <button
+        className={painelgestor == 1 ? "red-button" : "green-button"}
+        style={{
+          width: '8vw', minHeight: '8vw',
+          alignSelf: 'flex-start',
+          position: 'absolute',
+          bottom: 10, left: 10, zIndex: 5,
+        }}
+        onClick={painelgestor == 1 ? () => setpainelgestor(0) : () => setpainelgestor(1)}
+      >
+        PAINEL DO GESTOR
+      </button>
+    )
+  }
+
   // renderização do componente.
   return (
     <div
       className="main fade-in"
       style={{
-        display: renderchart== 1 ? 'flex' : 'none',
+        display: renderchart == 1 ? 'flex' : 'none',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         verticalAlign: 'center',
@@ -1465,9 +1484,11 @@ function Unidades() {
           borderColor: 'transparent',
           overflowY: 'scroll',
         }}>
+        <PainelDoGestorBtn></PainelDoGestorBtn>
         <div
+          className="fade-in"
           style={{
-            display: 'flex', flexDirection: 'row', justifyContent: 'center',
+            display: painelgestor == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center',
             width: '100%'
           }}>
           <Stuff></Stuff>

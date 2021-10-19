@@ -22,6 +22,7 @@ import '../design.css';
 import body from '../images/body.png';
 import dorso from '../images/dorso.svg';
 import newlogo from '../images/newlogo.svg';
+import logoinverted from '../images/newlogoinverted.svg'
 import deletar from '../images/deletar.svg';
 import suspender from '../images/suspender.svg';
 import editar from '../images/editar.svg';
@@ -403,6 +404,7 @@ function Prontuario() {
   }
   // atualizando as invasões.
   const updateInvasoes = () => {
+    setloadprincipal(1);
     console.log('ATUALIZANDO INVASÕES.');
     var obj = {
       idatendimento: idatendimento,
@@ -443,6 +445,7 @@ function Prontuario() {
     };
     axios.post(html + '/updateinvasoes/' + idinv, obj).then(() => {
       loadAlertas();
+      setloadprincipal(0);
     });
   };
   // criando o registro de invasões para o atendimento.
@@ -3513,6 +3516,10 @@ function Prontuario() {
   const [viewformulario, setviewformulario] = useState(0);
 
   useEffect(() => {
+    setloadprincipal(1);
+    setTimeout(() => {
+      setloadprincipal(0);
+    }, 3000);
     // abrindo o prontuário sempre na tela principal.
     setstateprontuario(1);
     // carregando dados do paciente e do atendimento.
@@ -3547,6 +3554,31 @@ function Prontuario() {
     }
     // eslint-disable-next-line
   }, [idatendimento])
+
+  // animação para carregamento da tela principal.
+  const [loadprincipal, setloadprincipal] = useState(0);
+  const LoadPrincipal = useCallback(() => {
+    return (
+      <div
+        className="scroll"
+        style={{
+          display: loadprincipal == 1 ? 'flex' : 'none',
+          borderRadius: 0, overflowY: 'scroll', paddingRight: 10, backgroundColor: '#ffffff', opacity: 0.5,
+          justifyContent: 'center', flexDirection: 'column',
+        }}>
+        <img
+          className="pulsarlogo"
+          alt=""
+          src={logoinverted}
+          style={{
+            padding: 0,
+            margin: 0,
+            borderRadius: 0,
+          }}
+        ></img>
+      </div>
+    )
+  }, [loadprincipal]);
 
   // funções deflagradas para alimentação da tela principal.
   const updatePrincipal = (idpaciente) => {
@@ -4007,7 +4039,7 @@ function Prontuario() {
 
   // PAINEL PRINCIPAL.
   function Principal() {
-    if (stateprontuario === 1) {
+    if (stateprontuario === 1 && loadprincipal == 0) {
       return (
         <div id="painel principal"
           className="scroll"
@@ -4709,6 +4741,10 @@ function Prontuario() {
   // MENU LATERAL.
   // selecionando o menu principal.
   const clickPrincipal = () => {
+    setloadprincipal(1);
+    setTimeout(() => {
+      setloadprincipal(0);
+    }, 3000);
     cleanFilters();
     setstateprontuario(1);
     // reposicionando a scroll da tela principal para o topo.
@@ -9874,6 +9910,7 @@ function Prontuario() {
           }}>
           <Paciente></Paciente>
           <Principal></Principal>
+          <LoadPrincipal></LoadPrincipal>
           <ShowEvolucoes></ShowEvolucoes>
           <ShowDiagnosticos></ShowDiagnosticos>
           <ShowProblemas></ShowProblemas>

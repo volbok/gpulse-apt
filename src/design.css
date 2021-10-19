@@ -251,6 +251,55 @@ body {
   border-radius: 5px;
 }
 
+.scrollmenuinverted {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background-color: #8f9bbc;
+  border-color: #8f9bbc;
+  border-style: solid;
+  border-width: 5px;
+  border-radius: 5px;
+  box-shadow: transparent;
+  cursor: default;
+  font-size: 13;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 5px;
+  padding-right: 10px;
+}
+
+.scrollmenuinverted::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollmenuinverted::-webkit-scrollbar-track {
+  background-color: #8f9bbc;
+  border-radius: 5px;
+}
+
+.scrollmenuinverted::-webkit-scrollbar-button {
+  display: none;
+}
+
+.scrollmenuinverted::-webkit-scrollbar-corner {
+  display: none;
+}
+
+.scrollmenuinverted::-webkit-scrollbar-thumb {
+  background-color: gray;
+  border-radius: 5px;
+}
+
+.scrollmenuinverted::-webkit-scrollbar-thumb:hover {
+  background-color: darkgray;
+  border-radius: 5px;
+}
+
 /* TÍTULOS */
 .logintitle {
   display: none;
@@ -2283,37 +2332,28 @@ input::-webkit-inner-spin-button {
   }
 }
 
-.fade-in-slow {
-  animation-name: fadeinslow;
-  animation-duration: 3s;
+.pulsarlogo {
+  animation-name: pulsarlogo;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
 }
 
-@keyframes fadeinslow {
-  from {
-    opacity: 0;
+@keyframes pulsarlogo {
+  0% {
+    opacity: 0.3;
+    height: 8vw;
   }
-  to {
+  50% {
     opacity: 1;
+    height: 16vw;
+  }
+  100% {
+    opacity: 0.3;
+    height: 8vw;
   }
 }
 
 /* animações para a tela de login */
-.pulsar-in {
-  animation-name: pulsarin;
-  animation-duration: 5s;
-}
-
-@keyframes pulsarin {
-  0% {
-    opacity: 0;
-  }
-  70% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 100;
-  }
-}
 
 .manequim-in {
   display: flex;

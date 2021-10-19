@@ -64,18 +64,8 @@ function Farmacia() {
     if (listatendimentos.length > 0) {
       return (
         <div
-          className="scroll"
+          className="scroll" style={{ height: '40vh' }}
           id="LISTA DE PACIENTES"
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            borderRadius: 5,
-            margin: 0,
-            paddding: 0,
-            borderRadius: 0,
-            height: '50vh',
-            width: '65vw',
-          }}
         >
           {listatendimentos.map((item) => (
             <div
@@ -87,8 +77,8 @@ function Farmacia() {
               }}
             >
               <button
-                className="widget"
-                style={{ minWidth: 50, margin: 2.5, color: '#ffffff', backgroundColor: 'grey' }}
+                className="grey-button"
+                style={{ width: 50, margin: 2.5, color: '#ffffff', backgroundColor: 'grey' }}
                 title="BOX"
                 disabled="true"
               >
@@ -110,7 +100,7 @@ function Farmacia() {
                 style={{
                   alignSelf: 'center',
                   margin: 2.5,
-                  width: 150,
+                  width: '30%',
                 }}
               >
                 {item.dn}
@@ -151,41 +141,39 @@ function Farmacia() {
   // cabeçalho da lista de pacientes.
   function CabecalhoPacientes() {
     return (
-      <div className="rowheader"
-        style={{
-          marginBottom: -20, paddingBottom: -20, paddingLeft: 25, paddingRight: 30,
-          opacity: 0.3, fontSize: 12, width: '65vw'
-        }}>
-        <button
-          className="rowitem"
-          style={{
-            width: 50,
-            margin: 2.5,
-          }}
-          title="BOX"
-          disabled="true"
-        >
-          BOX
-        </button>
-        <button
-          className="rowitem"
-          style={{
-            margin: 2.5,
-            width: '100%',
-          }}
-        >
-          NOME
-        </button>
-        <button
-          className="rowitem"
-          style={{
-            margin: 2.5,
-            width: 150,
-          }}
-        >
-          DATA DE NASCIMENTO
-        </button>
-      </div >
+      <div className="scrollheader">
+        <div className="rowheader">
+          <button
+            className="header-button"
+            style={{
+              width: 50,
+              margin: 2.5,
+            }}
+            title="BOX"
+            disabled="true"
+          >
+            BOX
+          </button>
+          <button
+            className="rowitemheader"
+            style={{
+              margin: 2.5,
+              width: '100%',
+            }}
+          >
+            NOME
+          </button>
+          <button
+            className="rowitemheader"
+            style={{
+              margin: 2.5,
+              width: '30%',
+            }}
+          >
+            DATA DE NASCIMENTO
+          </button>
+        </div>
+      </div>
     );
   }
 
@@ -211,19 +199,22 @@ function Farmacia() {
   const ShowPrescricoes = useCallback(() => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div className="title2" style={{ opacity: 0.3, display: prescricoes.length > 0 ? 'flex' : 'none' }}>PRESCRIÇÕES</div>
+        <div className="title2" style={{ opacity: 0.3, display: 'flex' }}>PRESCRIÇÕES</div>
         <div
-          className="scroll"
+          className="scrolldrop"
           id="LISTA DE PRESCRIÇÕES"
           style={{
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-start',
             borderRadius: 5,
-            padding: 0,
+            padding: 5,
+            paddingRight: 10,
             margin: 0,
             height: '45vh',
-            width: '12vw'
+            width: '12vw',
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
           }}
         >
           {prescricoes.map((item) => (
@@ -237,7 +228,7 @@ function Farmacia() {
                 }
                 selectPrescricao(item); document.getElementById("prescricao" + item.id).className = 'red-button'
               }}
-              style={{ margin: 5, padding: 10 }}
+              style={{ margin: 5, marginTop: 0, margiBottom: 10, padding: 10, width: '100%' }}
               title="PRESCRIÇÃO"
             >
               {item.data}
@@ -278,9 +269,9 @@ function Farmacia() {
   function ShowSaquinhos() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div className="title2" style={{ opacity: 0.3, display: itensprescricao.length > 0 ? 'flex' : 'none' }}>ITENS PARA DISPENSAÇÃO</div>
+        <div className="title2" style={{ opacity: 0.3, display: 'flex' }}>ITENS PARA DISPENSAÇÃO</div>
         <div
-          className="scroll"
+          className="scrolldrop"
           id="LISTA DE SAQUINHOS"
           style={{
             display: 'flex',
@@ -292,7 +283,9 @@ function Farmacia() {
             padding: 0,
             margin: 0,
             width: '56vw',
-            height: '45vh'
+            height: '45vh',
+            borderTopLeftRadius: 0,
+            borderBottomLeftRadius: 0,
           }}
         >
           {itensprescricao.map((item) => (
@@ -491,9 +484,10 @@ function Farmacia() {
         onChange={() => filterEstoque()}
         style={{
           width: '26vw',
-          margin: 5, padding: 5,
+          margin: 5, padding: 5, marginBottom: 20,
           backgroundColor: 'rgba(255, 255, 255, 0.4)',
           color: '#ffffff',
+          boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)'
         }}
         type="text"
         id="inputFilterEstoque"
@@ -508,7 +502,7 @@ function Farmacia() {
   const Estoque = useCallback(() => {
     return (
       <div
-        className="scrolldrop"
+        className="scrollmenuinverted"
         id="LISTA DE ESTOQUE"
         style={{
           position: 'relative',
@@ -518,8 +512,6 @@ function Farmacia() {
           borderRadius: 5,
           height: '100%',
           width: '100%',
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
           boxShadow: 'none',
         }}
       >
@@ -1128,7 +1120,7 @@ function Farmacia() {
           style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}
         >
           <div className="menucontainer" style={{ padding: 10 }}>
-            <text className="title2" style={{ width: '15vw', textAlign: 'center'}}>{'HORÁRIOS DE ADMINISTRAÇÃO'}</text>
+            <text className="title2" style={{ width: '15vw', textAlign: 'center' }}>{'HORÁRIOS DE ADMINISTRAÇÃO'}</text>
             <div
               className="scroll"
               id="LISTA DE HORÁRIOS PARA ADMINISTRAÇÃO DO ITEM DA PRESCRIÇÃO"
@@ -1456,18 +1448,21 @@ function Farmacia() {
             backgroundColor: '#8f9bbc',
             borderRadius: 0, margin: 0, padding: 5,
             display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+            backgroundColor: '#8f9bbc',
             boxShadow: '0px 1px 5px 1px rgba(0, 0, 0, 0.3)',
           }}>
           <FilterEstoque></FilterEstoque>
           <Estoque></Estoque>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '70vw' }}>
+        <div
+          className="scrollgroup"
+          style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '70vw' }}>
           <CabecalhoPacientes></CabecalhoPacientes>
           <ShowPacientes></ShowPacientes>
           <div style={{
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'flex-start',
+            justifyContent: 'center',
             padding: 5,
             height: '50vh',
             width: '70vw',
