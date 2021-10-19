@@ -801,7 +801,10 @@ function Laboratorio({ viewlaboratorio }) {
   const [viewSearchLab, setViewSearchLab] = useState(0);
   function ShowSearchLab() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div id="OUTRUN" style={{
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+        height: '50vh', padding: 0, paddingLeft: 10, paddingRight: 10,
+      }}>
         <input
           className="input"
           autoComplete="off"
@@ -810,8 +813,7 @@ function Laboratorio({ viewlaboratorio }) {
           onBlur={(e) => (e.target.placeholder = 'BUSCAR EXAME...')}
           onChange={() => filterLab()}
           style={{
-            width: 0.3 * window.innerWidth,
-            margin: 20,
+            width: '100%', marginBottom: 10,
           }}
           type="text"
           id="inputFilterLab"
@@ -823,25 +825,26 @@ function Laboratorio({ viewlaboratorio }) {
           id="LISTA DE EXAMES LABORATORIAIS PARA SELEÇÃO"
           style={{
             display: arrayfilterlab.length > 0 ? 'flex' : 'none',
-            height: 200,
-            width: 0.4 * window.innerWidth,
-            margin: 20,
+            height: '100%',
+            width: '40vw',
+            margin: 0, padding: 0,
           }}
         >
           {arrayfilterlab.map((item) => (
-            <p
+            <div
               key={item.id}
               id="item da lista"
               className="row"
+              style={{ boxShadow: 'none', marginBottom: 0, padding: 2.5, paddingRight: 7.5 }}
             >
               <button
                 onClick={() => addLab(item)}
-                className="hover-button"
+                className="blue-button"
                 style={{ width: '100%' }}
               >
                 {item.exame}
               </button>
-            </p>
+            </div>
           ))}
         </div>
         <div
@@ -849,15 +852,15 @@ function Laboratorio({ viewlaboratorio }) {
           id="LISTA DE EXAMES LABORATORIAIS PARA SELEÇÃO"
           style={{
             display: arrayfilterlab.length > 0 ? 'none' : 'flex',
-            height: 200,
-            width: 0.4 * window.innerWidth,
-            margin: 20,
+            height: '100%',
+            width: '40vw',
+            margin: 0,
           }}
         >
           {selectedlistlab.map((item) => (
-            <p
-              key={item.id}
+            <div
               id="item da lista"
+              key={item.id}
               className="row"
             >
               <button
@@ -866,7 +869,7 @@ function Laboratorio({ viewlaboratorio }) {
               >
                 {item.exame}
               </button>
-              <button className="red-button"
+              <button className="animated-red-button"
                 onClick={() => deleteLab(item)}
                 style={{ marginRight: 0 }}
               >
@@ -880,7 +883,7 @@ function Laboratorio({ viewlaboratorio }) {
                   }}
                 ></img>
               </button>
-            </p>
+            </div>
           ))}
         </div>
       </div>
@@ -1011,19 +1014,21 @@ function Laboratorio({ viewlaboratorio }) {
                 mask="11:11"
               />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div className="title2" style={{ fontSize: 14, marginBottom: 0, marginTop: 15 }}>SELEÇÃO RÁPIDA DE EXAMES:</div>
+            <div style={{
+              display: 'flex', flexDirection: 'row', justifyContent: 'center',
+              padding: 10,
+            }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '50vh' }}>
+                <div className="title2center" style={{ marginTop: 15, marginBottom: 20 }}>SELEÇÃO RÁPIDA DE EXAMES:</div>
                 <div
-                  className="scroll"
+                  className="scrolldrop"
                   style={{
                     flexDirection: 'row',
                     flexWrap: 'wrap',
-                    justifyContent: 'flex-start',
+                    justifyContent: 'space-evenly',
                     alignItems: 'flex-start',
-                    height: 260,
-                    width: 0.4 * window.innerWidth,
-                    paddingRight: 5,
+                    width: '42vw',
+                    height: '100%',
                   }}
                 >
                   <button
@@ -1035,7 +1040,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#AF7AC5',
                       flexDirection: 'column',
-                      opacity: hemogramabtn === 1 ? 1 : 0.5,
+                      opacity: hemogramabtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     HEMOGRAMA
@@ -1049,7 +1055,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#AF7AC5',
                       flexDirection: 'column',
-                      opacity: pcrbtn === 1 ? 1 : 0.5,
+                      opacity: pcrbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     PCR
@@ -1063,7 +1070,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#F4D03F',
-                      opacity: gasoartbtn === 1 ? 1 : 0.5,
+                      opacity: gasoartbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     GASOMETRIA ARTERIAL
@@ -1077,7 +1085,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#F4D03F',
                       flexDirection: 'column',
-                      opacity: gasovenbtn === 1 ? 1 : 0.5,
+                      opacity: gasovenbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     GASOMETRIA VENOSA
@@ -1091,7 +1100,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#F4D03F',
                       flexDirection: 'column',
-                      opacity: lactatobtn === 1 ? 1 : 0.5,
+                      opacity: lactatobtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     LACTATO
@@ -1105,7 +1115,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#F4D03F',
                       flexDirection: 'column',
-                      opacity: cloretobtn === 1 ? 1 : 0.5,
+                      opacity: cloretobtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     CLORETO
@@ -1118,7 +1129,8 @@ function Laboratorio({ viewlaboratorio }) {
                       height: 75,
                       margin: 2.5,
                       flexDirection: 'column',
-                      opacity: ureiabtn === 1 ? 1 : 0.5,
+                      opacity: ureiabtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     URÉIA
@@ -1131,7 +1143,8 @@ function Laboratorio({ viewlaboratorio }) {
                       height: 75,
                       margin: 2.5,
                       flexDirection: 'column',
-                      opacity: creatininabtn === 1 ? 1 : 0.5,
+                      opacity: creatininabtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     CREATININA
@@ -1144,7 +1157,8 @@ function Laboratorio({ viewlaboratorio }) {
                       height: 75,
                       margin: 2.5,
                       flexDirection: 'column',
-                      opacity: sodiobtn === 1 ? 1 : 0.5,
+                      opacity: sodiobtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     SÓDIO
@@ -1157,7 +1171,8 @@ function Laboratorio({ viewlaboratorio }) {
                       height: 75,
                       margin: 2.5,
                       flexDirection: 'column',
-                      opacity: potassiobtn === 1 ? 1 : 0.5,
+                      opacity: potassiobtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     POTÁSSIO
@@ -1170,7 +1185,8 @@ function Laboratorio({ viewlaboratorio }) {
                       height: 75,
                       margin: 2.5,
                       flexDirection: 'column',
-                      opacity: fosforobtn === 1 ? 1 : 0.5,
+                      opacity: fosforobtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     FÓSFORO
@@ -1183,7 +1199,8 @@ function Laboratorio({ viewlaboratorio }) {
                       height: 75,
                       margin: 2.5,
                       flexDirection: 'column',
-                      opacity: magnesiobtn === 1 ? 1 : 0.5,
+                      opacity: magnesiobtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     MAGNÉSIO
@@ -1197,7 +1214,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
-                      opacity: tgobtn === 1 ? 1 : 0.5,
+                      opacity: tgobtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     TGO + TGP
@@ -1211,7 +1229,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
-                      opacity: falbtn === 1 ? 1 : 0.5,
+                      opacity: falbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     FOSFATASE ALCALINA
@@ -1225,7 +1244,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
-                      opacity: ggtbtn === 1 ? 1 : 0.5,
+                      opacity: ggtbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     GAMA-GT
@@ -1239,7 +1259,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
-                      opacity: btfbtn === 1 ? 1 : 0.5,
+                      opacity: btfbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     BILIRRUBINA TOTAL E FRAÇÕES
@@ -1253,7 +1274,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#52BE80',
                       flexDirection: 'column',
-                      opacity: amilasebtn === 1 ? 1 : 0.5,
+                      opacity: amilasebtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     AMILASE
@@ -1267,7 +1289,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#CD6155',
                       flexDirection: 'column',
-                      opacity: tapbtn === 1 ? 1 : 0.5,
+                      opacity: tapbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     TAP + RNI
@@ -1281,7 +1304,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       backgroundColor: '#CD6155',
                       flexDirection: 'column',
-                      opacity: pttbtn === 1 ? 1 : 0.5,
+                      opacity: pttbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     PTT
@@ -1295,7 +1319,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
-                      opacity: hemoc1btn === 1 ? 1 : 0.5,
+                      opacity: hemoc1btn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     HEMOCULTURA (1a AMOSTRA)
@@ -1309,7 +1334,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
-                      opacity: hemoc2btn === 1 ? 1 : 0.5,
+                      opacity: hemoc2btn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     HEMOCULTURA (2a AMOSTRA)
@@ -1323,7 +1349,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
-                      opacity: hemoc3btn === 1 ? 1 : 0.5,
+                      opacity: hemoc3btn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     HEMOCULTURA (3a AMOSTRA)
@@ -1337,7 +1364,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
-                      opacity: urocbtn === 1 ? 1 : 0.5,
+                      opacity: urocbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     UROCULTURA
@@ -1351,7 +1379,8 @@ function Laboratorio({ viewlaboratorio }) {
                       margin: 2.5,
                       flexDirection: 'column',
                       backgroundColor: '#EB984E',
-                      opacity: minibalbtn === 1 ? 1 : 0.5,
+                      opacity: minibalbtn === 1 ? 1 : 0.6,
+                      padding: 10,
                     }}
                   >
                     ASPIRADO TRAQUEAL

@@ -199,349 +199,354 @@ function UpdateAtendimento({ viewupdateatendimento }) {
           className="menucover fade-in"
         >
           <div>
-            
-              <div className="menucontainer">
-                <div id="cabeçalho" className="cabecalho">
-                  <div className="title5">{'ATUALIZAR ATENDIMENTO'}</div>
-                  <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                    <button className="red-button" onClick={() => close()}>
-                      <img
-                        alt=""
-                        src={deletar}
-                        style={{
-                          margin: 10,
-                          height: 30,
-                          width: 30,
-                        }}
-                      ></img>
-                    </button>
-                    <button className="green-button"
-                      onClick={() => setFirstAssistente()}
-                    >
-                      <img
-                        alt=""
-                        src={salvar}
-                        style={{
-                          margin: 10,
-                          height: 30,
-                          width: 30,
-                        }}
-                      ></img>
-                    </button>
+            <div className="menucontainer">
+              <div id="cabeçalho" className="cabecalho">
+                <div className="title5">{'ATUALIZAR ATENDIMENTO'}</div>
+                <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                  <button className="red-button" onClick={() => close()}>
+                    <img
+                      alt=""
+                      src={deletar}
+                      style={{
+                        margin: 10,
+                        height: 30,
+                        width: 30,
+                      }}
+                    ></img>
+                  </button>
+                  <button className="green-button"
+                    onClick={() => setFirstAssistente()}
+                  >
+                    <img
+                      alt=""
+                      src={salvar}
+                      style={{
+                        margin: 10,
+                        height: 30,
+                        width: 30,
+                      }}
+                    ></img>
+                  </button>
+                </div>
+              </div>
+              <div
+                className="corpo"
+              >
+                <div
+                  id="IDENTIFICAÇÃO DO PACIENTE."
+                  title="APENAS A SECRETÁRIA PODE MUDAR ESTES DADOS."
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    margin: 2.5,
+                    width: '100%',
+                  }}
+                >
+                  <div className="grey-button"
+                    style={{
+                      display: box != '' ? 'flex' : 'none',
+                      margin: 2.5, padding: 5, fontSize: 14,
+                      width: window.innerWidth > 800 ? 120 : 50, height: 60,
+                      backgroundColor: 'grey'
+                    }}>
+                    {'BOX ' + box}
+                  </div>
+                  <div className="grey-button"
+                    style={{
+                      margin: 2.5, padding: 5, fontSize: 14,
+                      height: 60,
+                      width: '100%',
+                      backgroundColor: 'grey'
+                    }}>
+                    {nomepaciente}
+                  </div>
+                  <div className="grey-button"
+                    style={{
+                      margin: 2.5, padding: 5, fontSize: 14,
+                      width: window.innerWidth > 800 ? 120 : 50, height: 60,
+                      backgroundColor: 'grey'
+                    }}>
+                    {(moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANOS')}
                   </div>
                 </div>
                 <div
-                  className="corpo"
+                  className="scroll"
+                  style={{
+                    height: '60vh',
+                    alignItems: 'center',
+                  }}
                 >
+                  <label
+                    className="title2center"
+                    style={{
+                      display: box != '' ? 'flex' : 'none',
+                      marginTop: 15,
+                      fontSize: 14,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    STATUS:
+                  </label>
                   <div
-                    id="IDENTIFICAÇÃO DO PACIENTE."
-                    title="APENAS A SECRETÁRIA PODE MUDAR ESTES DADOS."
+                    id="STATUS DO PACIENTE."
+                    style={{
+                      display: box != '' ? 'flex' : 'none',
+                      flexDirection: window.innerWidth > 800 ? 'row' : 'column',
+                      justifyContent: 'center',
+                      margin: 5,
+                    }}
+                  >
+                    <div
+                      className={status == 3 ? "green-button" : "blue-button"}
+                      onClick={() => clickStatus3()}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        padding: 10,
+                        width: 110,
+                        margin: 2.5,
+                      }}
+                    >
+                      ESTÁVEL
+                    </div>
+                    <div
+                      className={status == 2 ? "yellow-button" : "blue-button"}
+                      onClick={() => clickStatus2()}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        padding: 10,
+                        width: 110,
+                        margin: 2.5,
+                      }}
+                    >
+                      ALERTA
+                    </div>
+                    <div
+                      className={status == 1 ? "red-button" : "blue-button"}
+                      onClick={() => clickStatus1()}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        padding: 10,
+                        width: 110,
+                        margin: 2.5,
+                      }}
+                    >
+                      INSTÁVEL
+                    </div>
+                    <div
+                      className={status == 0 ? "grey-button" : "blue-button"}
+                      onClick={() => clickStatus0()}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        padding: 10,
+                        width: 110,
+                        margin: 2.5,
+                      }}
+                    >
+                      CONFORTO
+                    </div>
+                  </div>
+                  <div
                     style={{
                       display: 'flex',
                       flexDirection: 'row',
                       justifyContent: 'center',
-                      alignItems: 'center',
-                      margin: 2.5,
-                      width: '100%',
+                      marginTop: 0,
                     }}
                   >
-                    <div className="grey-button"
-                      style={{
-                        display: box != '' ? 'flex' : 'none',
-                        margin: 2.5, padding: 5, fontSize: 14,
-                        width: window.innerWidth > 800 ? 120 : 50, height: 60,
-                        backgroundColor: 'grey'
-                      }}>
-                      {'BOX ' + box}
-                    </div>
-                    <div className="grey-button"
-                      style={{
-                        margin: 2.5, padding: 5, fontSize: 14,
-                        height: 60,
-                        width: '100%',
-                        backgroundColor: 'grey'
-                      }}>
-                      {nomepaciente}
-                    </div>
-                    <div className="grey-button"
-                      style={{
-                        margin: 2.5, padding: 5, fontSize: 14,
-                        width: window.innerWidth > 800 ? 120 : 50, height: 60,
-                        backgroundColor: 'grey'
-                      }}>
-                      {(moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANOS')}
-                    </div>
-                  </div>
-                  <div
-                    className="scroll"
-                    style={{
-                      marginTop: 10,
-                      height: 300,
-                      width: 0.6 * window.innerWidth,
-                    }}
-                  >
-                    <label
-                      className="title2"
-                      style={{
-                        display: box != '' ? 'flex' : 'none',
-                        marginTop: 15,
-                        fontSize: 14,
-                        justifyContent: 'center',
-                      }}
-                    >
-                      STATUS:
-                    </label>
-                    <div
-                      id="STATUS DO PACIENTE."
-                      style={{
-                        display: box != '' ? 'flex' : 'none',
-                        flexDirection: window.innerWidth > 800 ? 'row' : 'column',
-                        justifyContent: 'center',
-                        margin: 5,
-                      }}
-                    >
-                      <div
-                        className={status == 3 ? "green-button" : "blue-button"}
-                        onClick={() => clickStatus3()}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          padding: 10,
-                          width: 110,
-                          margin: 2.5,
-                        }}
-                      >
-                        ESTÁVEL
-                      </div>
-                      <div
-                        className={status == 2 ? "yellow-button" : "blue-button"}
-                        onClick={() => clickStatus2()}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          padding: 10,
-                          width: 110,
-                          margin: 2.5,
-                        }}
-                      >
-                        ALERTA
-                      </div>
-                      <div
-                        className={status == 1 ? "red-button" : "blue-button"}
-                        onClick={() => clickStatus1()}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          padding: 10,
-                          width: 110,
-                          margin: 2.5,
-                        }}
-                      >
-                        INSTÁVEL
-                      </div>
-                      <div
-                        className={status == 0 ? "grey-button" : "blue-button"}
-                        onClick={() => clickStatus0()}
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          padding: 10,
-                          width: 110,
-                          margin: 2.5,
-                        }}
-                      >
-                        CONFORTO
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                        marginTop: 0,
-                      }}
-                    >
-                      <div>
-                        <label
-                          className="title2"
-                          style={{
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            marginTop: 15,
-                            fontSize: 14,
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {window.innerWidth > 800 ? 'ANTECEDENTES PESSOAIS:' : 'ANT. PESSOAIS:'}
-                        </label>
-                        <textarea
-                          className="textarea"
-                          title="ANTECEDENTES PESSOAIS."
-                          id="inputAntecedentes"
-                          type="text"
-                          defaultValue={antecedentes}
-                          maxLength="200"
-                          autoComplete="off"
-                          placeholder="ANTECEDENTES PESSOAIS"
-                          onFocus={(e) => (e.target.placeholder = '')}
-                          onBlur={(e) =>
-                            (e.target.placeholder = 'ANTECEDENTES PESSOAIS')
-                          }
-                          style={{
-                            resize: 'none',
-                            marginBottom: 0,
-                            marginRight: 0,
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            height: 90,
-                          }}
-                        ></textarea>
-                      </div>
-                      <div>
-                        <label
-                          className="title2"
-                          style={{
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            marginTop: 15,
-                            fontSize: 14,
-                            justifyContent: 'center',
-                          }}
-                        >
-                          ALERGIAS:
-                        </label>
-                        <textarea
-                          className="textarea"
-                          title="ALERGIAS."
-                          id="inputAle"
-                          type="text"
-                          defaultValue={alergias}
-                          maxLength="200"
-                          autoComplete="off"
-                          placeholder="ALERGIAS"
-                          onFocus={(e) => (e.target.placeholder = '')}
-                          onBlur={(e) =>
-                            (e.target.placeholder = 'ALERGIAS')
-                          }
-                          style={{
-                            resize: 'none',
-                            marginBottom: 0,
-                            marginRight: 0,
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            height: 90,
-                          }}
-                        ></textarea>
-                      </div>
-                    </div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <div>
-                        <label
-                          className="title2"
-                          style={{
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            marginTop: 15,
-                            fontSize: 14,
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {window.innerWidth > 800 ? 'MEDICAÇÕES PRÉVIAS:' : 'MEDIC. PRÉVIAS:'}
-                        </label>
-                        <textarea
-                          className="textarea"
-                          title="MEDICAÇÕES PRÉVIAS."
-                          id="inputMedicacoes"
-                          type="text"
-                          defaultValue={medicacoes}
-                          maxLength="200"
-                          autoComplete="off"
-                          placeholder="MEDICAÇÕES PRÉVIAS"
-                          onFocus={(e) => (e.target.placeholder = '')}
-                          onBlur={(e) =>
-                            (e.target.placeholder = 'MEDICAÇÕES PRÉVIAS')
-                          }
-                          style={{
-                            resize: 'none',
-                            marginBottom: 0,
-                            marginRight: 0,
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            height: 90,
-                          }}
-                        ></textarea>
-                      </div>
-                      <div>
-                        <label
-                          className="title2"
-                          style={{
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            marginTop: 15,
-                            fontSize: 14,
-                            justifyContent: 'center',
-                          }}
-                        >
-                          {window.innerWidth > 800 ? 'EXAMES PRÉVIOS:' : 'EX. PRÉVIOS:'}
-                        </label>
-                        <textarea
-                          className="textarea"
-                          title="EXAMES PRÉVIOS."
-                          id="inputExames"
-                          type="text"
-                          defaultValue={exames}
-                          maxLength="200"
-                          autoComplete="off"
-                          placeholder="EXAMES PRÉVIOS"
-                          onFocus={(e) => (e.target.placeholder = '')}
-                          onBlur={(e) => (e.target.placeholder = 'EXAMES PRÉVIOS')}
-                          style={{
-                            resize: 'none',
-                            marginBottom: 0,
-                            width: window.innerWidth > 800 ? 350 : 135,
-                            height: 90,
-                          }}
-                        ></textarea>
-                      </div>
-                    </div>
-                    <div>
+                    <div style={{ width: '100%', padding: 5 }}>
                       <label
-                        className="title2"
+                        className="title2center"
                         style={{
+                          width: '40vw',
                           marginTop: 15,
                           fontSize: 14,
                           justifyContent: 'center',
                         }}
                       >
-                        HISTÓRIA DA DOENÇA ATUAL:
+                        {window.innerWidth > 800 ? 'ANTECEDENTES PESSOAIS:' : 'ANTECEDENTES:'}
                       </label>
                       <textarea
                         className="textarea"
-                        title="HISTÓRIA DA DOENÇA ATUAL."
-                        id="inputHistoria"
+                        title="ANTECEDENTES PESSOAIS."
+                        id="inputAntecedentes"
                         type="text"
-                        defaultValue={historia}
-                        maxLength="500"
+                        defaultValue={antecedentes}
+                        maxLength="200"
                         autoComplete="off"
-                        placeholder="HISTÓRIA DA DOENÇA ATUAL"
+                        placeholder="ANTECEDENTES PESSOAIS"
                         onFocus={(e) => (e.target.placeholder = '')}
                         onBlur={(e) =>
-                          (e.target.placeholder = 'HISTÓRIA DA DOENÇA ATUAL')
+                          (e.target.placeholder = 'ANTECEDENTES PESSOAIS')
                         }
                         style={{
                           resize: 'none',
-                          marginBottom: 5,
-                          width: window.innerWidth > 800 ? 705 : 275,
+                          marginBottom: 0,
+                          marginRight: 0,
+                          width: '40vw',
+                          height: 90,
+                          alignSelf: 'center'
+                        }}
+                      ></textarea>
+                    </div>
+                    <div style={{ width: '100%', padding: 5 }}>
+                      <label
+                        className="title2center"
+                        style={{
+                          width: '40vw',
+                          marginTop: 15,
+                          fontSize: 14,
+                          justifyContent: 'center',
+                        }}
+                      >
+                        ALERGIAS:
+                      </label>
+                      <textarea
+                        className="textarea"
+                        title="ALERGIAS."
+                        id="inputAle"
+                        type="text"
+                        defaultValue={alergias}
+                        maxLength="200"
+                        autoComplete="off"
+                        placeholder="ALERGIAS"
+                        onFocus={(e) => (e.target.placeholder = '')}
+                        onBlur={(e) =>
+                          (e.target.placeholder = 'ALERGIAS')
+                        }
+                        style={{
+                          resize: 'none',
+                          marginBottom: 0,
+                          marginRight: 0,
+                          width: '40vw',
                           height: 90,
                         }}
                       ></textarea>
                     </div>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      marginTop: 0,
+                    }}
+                  >
+                    <div style={{ width: '100%', padding: 5 }}>
+                      <label
+                        className="title2center"
+                        style={{
+                          width: '40vw',
+                          marginTop: 15,
+                          fontSize: 14,
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {window.innerWidth > 800 ? 'MEDICAÇÕES PRÉVIAS:' : 'MEDICAÇÕES:'}
+                      </label>
+                      <textarea
+                        className="textarea"
+                        title="MEDICAÇÕES PRÉVIAS."
+                        id="inputMedicacoes"
+                        type="text"
+                        defaultValue={medicacoes}
+                        maxLength="200"
+                        autoComplete="off"
+                        placeholder="MEDICAÇÕES PRÉVIAS"
+                        onFocus={(e) => (e.target.placeholder = '')}
+                        onBlur={(e) =>
+                          (e.target.placeholder = 'MEDICAÇÕES PRÉVIAS')
+                        }
+                        style={{
+                          resize: 'none',
+                          marginBottom: 0,
+                          marginRight: 0,
+                          width: '40vw',
+                          height: 90,
+                        }}
+                      ></textarea>
+                    </div>
+                    <div style={{ width: '100%', padding: 5 }}>
+                      <label
+                        className="title2center"
+                        style={{
+                          width: '40vw',
+                          marginTop: 15,
+                          fontSize: 14,
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {window.innerWidth > 800 ? 'EXAMES PRÉVIOS:' : 'EXAMES:'}
+                      </label>
+                      <textarea
+                        className="textarea"
+                        title="EXAMES PRÉVIOS."
+                        id="inputExames"
+                        type="text"
+                        defaultValue={exames}
+                        maxLength="200"
+                        autoComplete="off"
+                        placeholder="EXAMES PRÉVIOS"
+                        onFocus={(e) => (e.target.placeholder = '')}
+                        onBlur={(e) => (e.target.placeholder = 'EXAMES PRÉVIOS')}
+                        style={{
+                          resize: 'none',
+                          marginBottom: 0,
+                          width: '40vw',
+                          height: 90,
+                        }}
+                      ></textarea>
+                    </div>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    marginTop: 0,
+                  }}>
+                    <label
+                      className="title2center"
+                      style={{
+                        marginTop: 15,
+                        fontSize: 14,
+                        justifyContent: 'center',
+                      }}
+                    >
+                      HISTÓRIA DA DOENÇA ATUAL:
+                    </label>
+                    <textarea
+                      className="textarea"
+                      title="HISTÓRIA DA DOENÇA ATUAL."
+                      id="inputHistoria"
+                      type="text"
+                      defaultValue={historia}
+                      maxLength="500"
+                      autoComplete="off"
+                      placeholder="HISTÓRIA DA DOENÇA ATUAL"
+                      onFocus={(e) => (e.target.placeholder = '')}
+                      onBlur={(e) =>
+                        (e.target.placeholder = 'HISTÓRIA DA DOENÇA ATUAL')
+                      }
+                      style={{
+                        resize: 'none',
+                        marginBottom: 5,
+                        width: 'calc(80vw + 20px)',
+                        height: 90,
+                      }}
+                    ></textarea>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      
+      </div>
     );
   } else {
     return null;

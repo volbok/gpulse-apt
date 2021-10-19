@@ -66,9 +66,10 @@ function Unidades() {
   function ShowUnidades() {
     return (
       <div
+        className="scrollgroup"
         style={{
           display: 'flex',
-          width: window.innerWidth,
+          width: '100%',
           margin: 0,
           marginTop: 5,
           padding: 5,
@@ -83,11 +84,10 @@ function Unidades() {
             justifyContent: 'flex-start',
             width: '100%',
             height: '82vh',
-            flexWrap: 'wrap',
+            flexWrap: window.innerWidth < 800 ? 'nowrap' : 'wrap',
             alignItems: 'center',
             borderRadius: 5,
             margin: 0,
-            paddingRight: 20,
           }}
         >
           {unidades.map((item) => GetData(item))}
@@ -836,6 +836,7 @@ function Unidades() {
       return (
         <div
           className="card"
+          onClick={() => selectUnidade(item)}
           style={{
             display: renderchart == 1 ? 'flex' : 'none',
             flexDirection: 'column',
@@ -843,7 +844,7 @@ function Unidades() {
             alignItems: 'center',
             borderRadius: 5,
             padding: 10,
-            width: window.innerWidth < 800 ? '95%' : '21.7vw',
+            width: window.innerWidth < 400 ? '95%' : '21vw',
             height: 400
           }}
         >
@@ -868,8 +869,8 @@ function Unidades() {
           >
             <Doughnut
               data={dataChart}
-              width={0.15 * window.innerWidth}
-              height={0.15 * window.innerWidth}
+              width={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
+              height={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
               plugins={ChartDataLabels}
               options={{
                 plugins: {
@@ -1029,10 +1030,11 @@ function Unidades() {
                 </button>
                 <button
                   className="blue-button"
-                  onClick={() => {
-                    settipounidade(lto.filter(value => value.unidade == item.unidade).map(item => item.tipo))
-                    setnomeunidade(lto.filter(value => value.unidade == item.unidade).map(item => item.unidade))
-                    history.push('/atendimentos')
+                  onClick={(e) => {
+                    settipounidade(lto.filter(value => value.unidade == item.unidade).map(item => item.tipo));
+                    setnomeunidade(lto.filter(value => value.unidade == item.unidade).map(item => item.unidade));
+                    history.push('/atendimentos');
+                    e.stopPropagation();
                   }}
                   style={{
                     display:
@@ -1058,6 +1060,7 @@ function Unidades() {
       return (
         <div
           className="card"
+          onClick={() => selectUnidade(item)}
           style={{
             display: renderchart == 1 ? 'flex' : 'none',
             flexDirection: 'column',
@@ -1065,7 +1068,7 @@ function Unidades() {
             alignItems: 'center',
             borderRadius: 5,
             padding: 10,
-            width: window.innerWidth < 800 ? '95%' : '21.7vw',
+            width: window.innerWidth < 800 ? '95%' : '21vw',
             height: 400
           }}
         >
@@ -1099,8 +1102,8 @@ function Unidades() {
           >
             <Doughnut
               data={dataChartBlocoCirurgico}
-              width={0.15 * window.innerWidth}
-              height={0.15 * window.innerWidth}
+              width={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
+              height={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
               plugins={ChartDataLabels}
               options={{
                 plugins: {
@@ -1267,7 +1270,7 @@ function Unidades() {
             alignItems: 'center',
             borderRadius: 5,
             padding: 10,
-            width: window.innerWidth < 800 ? '95%' : '21.7vw',
+            width: window.innerWidth < 800 ? '95%' : '21vw',
             height: 400
           }}
         >
@@ -1324,8 +1327,8 @@ function Unidades() {
               backgroundColor="red"
               data={dataChartConsultas}
               padding={10}
-              width={0.15 * window.innerWidth}
-              height={0.15 * window.innerWidth}
+              width={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
+              height={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
               plugins={ChartDataLabels}
               options={{
                 scales: {
@@ -1435,28 +1438,51 @@ function Unidades() {
   // renderização do componente.
   return (
     <div
-      className="main fade-in"
+      className="main fade-in scroll"
       style={{
-        display: 'flex',
+        display: renderchart== 1 ? 'flex' : 'none',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         verticalAlign: 'center',
         overflowX: 'hidden',
-        overflowY: 'scroll',
+        overflowY: 'hidden',
         margin: 0,
         padding: 0,
         height: window.innerHeight,
         maxHeight: window.innerHeight,
       }}
     >
-      <Header link={'/hospitais'} titulo={'UNIDADES DE ATENDIMENTO: ' + nomehospital}></Header>
+      <Header link={'/hospitais'} titulo={nomehospital}></Header>
       <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo} />
-      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-        <Stuff></Stuff>
-        <MoreStuff></MoreStuff>
+      <div
+        className="scroll"
+        style={{
+          display: window.innerWidth > 400 ? 'flex' : 'none',
+          width: '100vw', padding: 5,
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          overflowY: 'scroll',
+        }}>
+        <div
+          style={{
+            display: 'flex', flexDirection: 'row', justifyContent: 'center',
+            width: '100%'
+          }}>
+          <Stuff></Stuff>
+          <MoreStuff></MoreStuff>
+        </div>
+        <ShowUnidades></ShowUnidades>
+        <ViewInterconsultas></ViewInterconsultas>
       </div>
-      <ShowUnidades></ShowUnidades>
-      <ViewInterconsultas></ViewInterconsultas>
+      <div
+        style={{
+          display: window.innerWidth < 400 ? 'flex' : 'none',
+          flexDirection: 'row', justifyContent: 'center',
+          width: '100%'
+        }}>
+        <ShowUnidades></ShowUnidades>
+        <ViewInterconsultas></ViewInterconsultas>
+      </div>
     </div>
   )
 }

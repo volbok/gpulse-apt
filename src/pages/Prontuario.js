@@ -37,6 +37,7 @@ import microfone from '../images/microfone.svg';
 import logoff from '../images/power.svg';
 import back from '../images/back.svg';
 import foto from '../images/3x4.jpg';
+import clock from '../images/clock.svg';
 // importando componentes de sobreposição.
 import UpdateAtendimento from '../components/UpdateAtendimento';
 import Evolucao from '../components/Evolucao';
@@ -402,8 +403,6 @@ function Prontuario() {
   }
   // atualizando as invasões.
   const updateInvasoes = () => {
-    // setscrollmenu(0);
-    // setscrolllist(0);
     console.log('ATUALIZANDO INVASÕES.');
     var obj = {
       idatendimento: idatendimento,
@@ -443,15 +442,7 @@ function Prontuario() {
       dataabd: dataabd,
     };
     axios.post(html + '/updateinvasoes/' + idinv, obj).then(() => {
-      loadInvasoes();
-      alertSepse();
-      alertDadosVitais();
-      alertCulturas();
-      alertDispositivos();
-      alertEvacuacoes();
-      setTimeout(() => {
-        setalertas(arrayalertas);
-      }, 1000);
+      loadAlertas();
     });
   };
   // criando o registro de invasões para o atendimento.
@@ -574,11 +565,11 @@ function Prontuario() {
           </div>
           <div className="title2">{'MODO: ' + modo}</div>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <div className={parseInt(pressao) > 14 ? 'title3' : 'title2'} >
+            <div className={parseInt(pressao) > 14 ? 'title3' : 'title2'} style={{ alignSelf: 'center' }}>
               {modo === 'PCV' || 'PSV' ? 'PI: ' + pressao + ' cmH2O' : 'VCV: ' + pressao + 'ml'}
             </div>
-            <div className={parseInt(peep) > 10 ? 'title3' : 'title2'} >{'PEEP: ' + peep + ' cmH2O'}</div>
-            <div className={parseInt(fi) > 60 ? 'title3' : 'title2'} >{'FI: ' + fi + '%'}</div>
+            <div className={parseInt(peep) > 10 ? 'title3' : 'title2'} style={{ alignSelf: 'center' }}>{'PEEP: ' + peep + ' cmH2O'}</div>
+            <div className={parseInt(fi) > 60 ? 'title3' : 'title2'} style={{ alignSelf: 'center' }}>{'FI: ' + fi + '%'}</div>
           </div>
         </div>
         <div className="card"
@@ -589,7 +580,7 @@ function Prontuario() {
             width: '100%', margin: 0, padding: 0,
             height: window.innerWidth > 800 ? 145 : 110,
           }}>
-          <div className="title2">
+          <div className="title2center">
             {'PACIENTE FORA DA VM.'}</div>
         </div >
         <div className="card"
@@ -893,79 +884,8 @@ function Prontuario() {
       });
     }
     // carregando os alertas (primeiro carregamento).
-    setalertas([]);
-    arrayalertas = [];
-    setTimeout(() => {
-      if (tax > 37.8 || tax < 35) {
-        escoresepse = escoresepse + 1;
-      }
-      if (fc > 90) {
-        escoresepse = escoresepse + 1;
-      }
-      if (fr > 20) {
-        escoresepse = escoresepse + 1;
-      }
-      if (glasgow < 15) {
-        escoresepse = escoresepse + 2;
-      }
-      if (sao2 < 90) {
-        escoresepse = escoresepse + 2;
-      }
-      if (diu < 1000) {
-        escoresepse = escoresepse + 2;
-      }
-      if (pam < 70) {
-        escoresepse = escoresepse + 2;
-      }
-      if (escoresepse > 1) {
-        arrayalertas.push('CRITÉRIOS DE SEPSE!');
-      }
-      if (pam < 60) {
-        arrayalertas.push('HIPOTENSÃO');
-      }
-      if (pam > 120) {
-        arrayalertas.push('HIPERTENSÃO');
-      }
-      if (fc < 60) {
-        arrayalertas.push('BRADICARDIA');
-      }
-      if (fc > 120) {
-        arrayalertas.push('TAQUICARDIA');
-      }
-      if (fr < 15) {
-        arrayalertas.push('BRADIPNÉIA');
-      }
-      if (fr > 22) {
-        arrayalertas.push('TAQUIPNÉIA');
-      }
-      if (sao2 < 93) {
-        arrayalertas.push('SAO2 BAIXA');
-      }
-      if (diurese12h < 1000) {
-        arrayalertas.push('OLIGÚRIA');
-      }
-      if (diurese12h > 3000) {
-        arrayalertas.push('POLIÚRIA');
-      }
-      if (ganhos12h - perdas12h < -2000) {
-        arrayalertas.push('BALANÇO HÍDRICO MUITO NEGATIVO');
-      }
-      if (ganhos12h - perdas12h > 2000) {
-        arrayalertas.push('BALANÇO HÍDRICO MUITO POSITIVO');
-      }
-      if (ganhosacumulados - perdasacumuladas < -3000) {
-        arrayalertas.push('BALANÇO HÍDRICO ACUMULADO MUITO NEGATIVO');
-      }
-      if (ganhosacumulados - perdasacumuladas > 3000) {
-        arrayalertas.push('BALANÇO HÍDRICO ACUMULADO MUITO POSITIVO');
-      }
-      alertCulturas();
-      alertDispositivos();
-      alertEvacuacoes();
-      setTimeout(() => {
-        setalertas(arrayalertas);
-      }, 1000);
-    }, 2000);
+
+
   }
   // carregando os últimos registros de evolução + exame clínico que apresentam valores válidos de BRADEN E MORSE.
   const [lastbraden, setlastbraden] = useState(0);
@@ -1219,19 +1139,16 @@ function Prontuario() {
   // exibição da lista de diagnósticos (tela principal).
   function CardDiagnosticos() {
     return (
-      <div className="cardscroll"
-        title="DIAGNOSTICOS."
-        style={{
-          width: '100%', margin: 5, padding: 5,
-          height: window.innerWidth > 800 ? 145 : 100,
-        }}>
-        <div className="title4">{'DIAGNÓSTICOS:'}</div>
-        <div style={{ display: listdiagnosticos.length > 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+      <div className="pulsewidgetscroll" title="DIAGNOSTICOS.">
+        <div className="title4 pulsewidgettitle">{'DIAGNÓSTICOS'}</div>
+        <div
+          className="pulsewidgetcontent"
+          style={{ display: listdiagnosticos.length > 0 ? 'flex' : 'none' }}>
           {listdiagnosticos.map((item) => (
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
               <div
                 key={item.id}
-                className={item.termino !== '' ? "title2" : "title3"}
+                className={item.termino !== '' ? "title2center" : "title3"}
                 style={{
                   margin: 0,
                   marginTop: 2.5,
@@ -1247,8 +1164,16 @@ function Prontuario() {
             </div>
           ))}
         </div>
-        <div style={{ display: listdiagnosticos.length < 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
-          <text className="title2">SEM DIAGNÓSTICOS REGISTRADOS</text>
+        <div
+          style={{
+            display: listdiagnosticos.length < 1 ? 'flex' : 'none',
+            color: '#8f9bbc',
+            fontWeight: 'bold',
+            fontSize: 16,
+          }}
+          className="pulsewidgetcontent"
+        >
+          {'SEM DIAGNÓSTICOS REGISTRADOS'}
         </div>
       </div>
     );
@@ -1257,34 +1182,20 @@ function Prontuario() {
   // exibição da lista de internações (tela principal).
   function CardInternacoes() {
     return (
-      <div className="cardscroll"
-        title="INTERNAÇÕES."
-        style={{
-          width: '100%', margin: 5, padding: 5,
-          height: window.innerWidth > 800 ? 145 : 100,
-        }}>
-        <div className="title4">{'HISTÓRICO DE INTERNAÇÕES:'}</div>
-        <div style={{ display: listatendimentos.length > 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+      <div className="pulsewidgetscroll"
+        title="INTERNAÇÕES">
+        <div className="title4 pulsewidgettitle">{'HISTÓRICO DE INTERNAÇÕES'}</div>
+        <div className="pulsewidgetcontent" style={{ display: listatendimentos.length > 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'flex-start' }}>
           {listatendimentos.filter(value => value.idpaciente == idpaciente).map((item) => (
-            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-              <div
-                key={item.id}
-                style={{
-                  margin: 0,
-                  marginTop: 2.5,
-                  marginBottom: 5,
-                  marginRight: 5,
-                  opacity: 1.0,
-                  width: '100%',
-                  padding: 5,
-                }}
-              >
-                {JSON.stringify(item.admissao).substring(1, 11) + ' - ' + item.hospital + ' / ' + item.unidade}
-              </div>
+            <div
+              key={item.id}
+              className="title2center"
+            >
+              {JSON.stringify(item.admissao).substring(1, 11) + ' - ' + item.hospital + ' / ' + item.unidade}
             </div>
           ))}
         </div>
-        <div style={{ display: listatendimentos.length < 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+        <div className="pulsewidgetcontent" style={{ display: listatendimentos.length < 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
           <text style={{ color: '#ffffff' }}>SEM ATENDIMENTOS REGISTRADOS</text>
         </div>
       </div>
@@ -1440,51 +1351,38 @@ function Prontuario() {
   // PAINEL DE ALERTAS.
   function CardAlertas() {
     return (
-      <div style={{ width: '100%', margin: 5, padding: 0 }}>
-        <div
-          className={alertas.length < 1 ? "alertnone" : "alert"}
-          id="ALERTAS"
-          title="ALERTAS"
-          style={{
-            display: listevolucoes.length > 0 ? 'flex' : 'none',
-            width: '100%',
-            height: 165,
-            margin: 0,
-          }}
-        >
-          <div className="title4" style={{ color: '#E74C3C', display: alertas.length < 1 ? 'none' : 'flex' }}>
-            {'ALERTAS:'}
-          </div>
-          {alertas.length < 1 ? 'SEM ALERTAS NO MOMENTO' :
-            alertas.map((item) => (
-              <div
-                className="title2"
-                style={{
-                  margin: 0,
-                  marginTop: 2.5,
-                  marginBottom: 5,
-                  marginRight: 5,
-                  opacity: 1.0,
-                  padding: 5,
-                  color: '#ffffff'
-                }}
-              >
-                {item}
-              </div>
-            ))}
+      <div className="pulsewidgetscroll"
+        style={{
+          backgroundColor: alertas.length > 1 ? '#ec7063' : '#52be80',
+          borderColor: alertas.length > 1 ? '#ec7063' : '#52be80',
+        }}
+      >
+        <div className="title5 pulsewidgettitle" style={{ color: '#ffffff' }}>
+          {'ALERTAS: ' + alertas.length}
         </div>
         <div
-          className="alert"
+          className="pulsewidgetcontent"
           id="ALERTAS"
           title="ALERTAS"
           style={{
-            display: listevolucoes.length < 1 ? 'flex' : 'none',
-            width: '100%',
-            height: 165,
-            margin: 0,
+            display: alertas.length > 0 ? 'flex' : 'none', justifyContent: 'flex-start',
           }}
         >
-          {'IMPOSSÍVEL GERAR ALERTAS'}
+          {alertas.map((item) => (
+            <div
+              className="title2center"
+              style={{
+                margin: 0,
+                marginTop: 2.5,
+                marginBottom: 5,
+                marginRight: 5,
+                opacity: 1.0,
+                color: '#ffffff'
+              }}
+            >
+              {item}
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -2162,8 +2060,8 @@ function Prontuario() {
                           className="textarea"
                           title="APARELHO CARDIOVASCULAR."
                           style={{
-                            minWidth: 200,
-                            width: '100%',
+                            minWidth: '45%',
+                            width: '45%',
                             height: 80,
                             margin: 0,
                             marginRight: 10,
@@ -2177,8 +2075,8 @@ function Prontuario() {
                           className="textarea"
                           title="APARELHO RESPIRATÓRIO."
                           style={{
-                            minWidth: 200,
-                            width: '100%',
+                            minWidth: '45%',
+                            width: '45%',
                             height: 80,
                             margin: 0,
                           }}
@@ -2193,8 +2091,8 @@ function Prontuario() {
                           className="textarea"
                           title="ABDOME."
                           style={{
-                            minWidth: 200,
-                            width: '100%',
+                            minWidth: '45%',
+                            width: '45%',
                             height: 80,
                             margin: 0,
                             marginRight: 10,
@@ -2208,8 +2106,8 @@ function Prontuario() {
                           className="textarea"
                           title="OUTROS ACHADOS CLÍNICOS IMPORTANTES."
                           style={{
-                            minWidth: 200,
-                            width: '100%',
+                            minWidth: '45%',
+                            width: '45%',
                             height: 80,
                             margin: 0,
                           }}
@@ -2404,112 +2302,10 @@ function Prontuario() {
                 </div>
               </p>
             ))}
-          </div>
-          <div
-            className="scroll"
-            id="LISTA DE PROPOSTAS MOBILE"
-            style={{
-              display: window.innerWidth < 800 ? 'flex' : 'none',
-              justifyContent: 'flex-start',
-              margin: 5,
-              padding: 0,
-              paddingRight: 5,
-              height: '100%',
-              minWidth: window.innerWidth > 800 ? 0.60 * (window.innerWidth) : '',
-              width: 0.95 * window.innerWidth,
-            }}
-          >
-            {listpropostas.map((item) => (
-              <div
-                key={item.id}
-                id="item da lista"
-                className="row"
-                style={{ margin: 5, marginTop: 2.5, marginBottom: 2.5, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-                  <button
-                    className="blue-button"
-                    style={{
-                      width: '50%',
-                      margin: 2.5,
-                      marginLeft: 5,
-                      marginRight: 0,
-                      flexDirection: 'column',
-                      backgroundColor: '#1f7a8c',
-                    }}
-                  >
-                    <div>{'DEFINIÇÃO: ' + item.inicio}</div>
-                  </button>
-                  <button
-                    className={item.termino === '' ? "red-button" : "green-button"}
-                    onClick={() => checkProposta(item)}
-                    style={{
-                      width: '50%',
-                      margin: 2.5,
-                      marginLeft: 5,
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <div style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                    }}>
-                      <div className="title2" style={{ color: 'white', margin: 2.5 }}>
-                        {item.termino === '' ? '!' : 'REALIZAÇÃO: ' + item.termino}
-                      </div>
-                    </div>
-                  </button>
-                  <button className="yellow-button"
-                    onClick={() => selectProposta(item)}
-                  >
-                    <img
-                      alt=""
-                      src={editar}
-                      style={{
-                        margin: 10,
-                        height: 30,
-                        width: 30,
-                      }}
-                    ></img>
-                  </button>
-                  <button className="red-button"
-                    onClick={() => deleteProposta(item)}
-                    style={{ marginRight: 0 }}
-                  >
-                    <img
-                      alt=""
-                      src={deletar}
-                      style={{
-                        margin: 10,
-                        height: 30,
-                        width: 30,
-                      }}
-                    ></img>
-                  </button>
-                </div>
-                <div style={{ paddingLeft: 2.5, paddingRight: 2.5 }}>
-                  <button
-                    className="blue-button"
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'flex-start',
-                      textAlign: 'left',
-                      width: '100%',
-                      margin: 2.5,
-                      padding: 10,
-                      backgroundColor: '#1f7a8c',
-                    }}
-                  >
-                    {item.proposta}
-                  </button>
-                </div>
-              </div>
-            ))}
             <div style={{ width: '100%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
               <button className="blue-button"
                 onClick={() => viewProposta(1)}
-                style={{ display: window.innerWidth > 800 ? 'none' : 'flex', marginRight: 5, marginTop: 5 }}
+                style={{ display: window.innerWidth > 800 ? 'none' : 'flex', marginRight: 7.5, marginTop: 2.5 }}
               >
                 <img
                   alt=""
@@ -2973,24 +2769,37 @@ function Prontuario() {
                 id="item da lista"
                 className="row"
               >
-                <button
-                  className="blue-button"
-                  style={{
-                    width: window.innerWidth > 800 ? 150 : 75,
-                    margin: 2.5,
-                    padding: 10,
-                    flexDirection: 'column',
-                    backgroundColor: item.status == 1 ? '#ec7063' : item.status == 2 ? '#f39c12' : '#52be80',
-                  }}
-                >
-                  <div>{item.status == 1 ? 'AGUARDANDO COLETA' : item.status == 2 ? 'PROCESSANDO' : 'LIBERADO'}</div>
-                </button>
+
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
-                      <div className="title2" style={{ justifyContent: 'flex-start', marginBottom: 0, fontSize: 16 }}>
-                        {item.resultado != '' ? item.exame + ': ' + item.resultado : item.exame}
+
+                      <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                        <button
+                          className="blue-button"
+                          style={{
+                            width: 50,
+                            height: 50,
+                            margin: 2.5,
+                            padding: 10,
+                            flexDirection: 'column',
+                            backgroundColor: item.status == 1 ? '#ec7063' : item.status == 2 ? '#f39c12' : '#52be80',
+                          }}
+                        >
+                          <div>{item.status == 1 ? '!' : item.status == 2 ? <img alt=""
+                            src={clock}
+                            style={{
+                              margin: 10,
+                              height: 20,
+                              width: 20,
+                            }} ></img> : '✔'}</div>
+                        </button>
+
+                        <div className="title2" style={{ justifyContent: 'flex-start', marginBottom: 0 }}>
+                          {item.resultado != '' ? item.exame + ': ' + item.resultado : item.exame}
+                        </div>
                       </div>
+
                       <div className="title2" style={{ alignSelf: 'flex-start', marginTop: 0, marginBottom: 0, opacity: 0.5 }}>
                         {'REFERÊNCIA: ' + item.referencia}
                       </div>
@@ -3011,10 +2820,10 @@ function Prontuario() {
                     </button>
                   </div>
                   <div className="title2" style={{ flexDirection: 'row', justifyContent: 'flex-start', marginTop: 0, paddingTop: 0, opacity: 0.5 }}>
-                    <div>
+                    <div style={{ display: window.innerWidth > 400 ? 'flex' : 'none' }}>
                       {'SOLICITAÇÃO: ' + item.datapedido}
                     </div>
-                    <div style={{ display: item.dataresultado == '' ? 'none' : 'flex', marginLeft: 10 }}>
+                    <div style={{ display: item.dataresultado == '' ? 'none' : 'flex', marginLeft: window.innerWidth > 400 ? 20 : 0 }}>
                       {'RESULTADO: ' + item.dataresultado}
                     </div>
                   </div>
@@ -3160,23 +2969,34 @@ function Prontuario() {
                 id="item da lista"
                 className="row"
               >
-                <button
-                  className="blue-button"
-                  style={{
-                    width: window.innerWidth > 800 ? 150 : 75,
-                    margin: 2.5,
-                    padding: 10,
-                    flexDirection: 'column',
-                    backgroundColor: item.status == 1 ? '#ec7063' : item.status == 2 ? '#f39c12' : '#52be80',
-                  }}
-                >
-                  <div>{item.status == 1 ? 'SOLICITADO' : item.status == 2 ? 'PROCESSANDO LAUDO' : 'LAUDO LIBERADO'}</div>
-                </button>
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
-                    <div className="title2" style={{ justifyContent: 'flex-start', marginBottom: 0, minHeight: 50 }}>
-                      {item.exame}
+
+                    <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+                      <button
+                        className="blue-button"
+                        style={{
+                          width: 50,
+                          height: 50,
+                          margin: 2.5,
+                          padding: 10,
+                          flexDirection: 'column',
+                          backgroundColor: item.status == 1 ? '#ec7063' : item.status == 2 ? '#f39c12' : '#52be80',
+                        }}
+                      >
+                        <div>{item.status == 1 ? '!' : item.status == 2 ? <img alt=""
+                          src={clock}
+                          style={{
+                            margin: 10,
+                            height: 20,
+                            width: 20,
+                          }} ></img> : '✔'}</div>
+                      </button>
+                      <div className="title2" style={{ justifyContent: 'flex-start', marginBottom: 0 }}>
+                        {item.exame}
+                      </div>
                     </div>
+
                     <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                       <button id="viewimage" className="animated-blue-button" style={{ display: item.status < 3 ? 'none' : 'flex' }}>
                         <img
@@ -3206,7 +3026,7 @@ function Prontuario() {
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
-                    <div className="title2" style={{ flexDirection: 'row', justifyContent: 'flex-start', marginTop: 0 }}>
+                    <div className="title2" style={{ flexDirection: 'row', justifyContent: 'flex-start', marginTop: 0, opacity: 0.5 }}>
                       <div>
                         {'SOLICITAÇÃO: ' + item.pedido}
                       </div>
@@ -3699,8 +3519,6 @@ function Prontuario() {
     document.getElementById("PRINCIPAL").onwheel = function (e) {
       e.preventDefault()
     }
-    // escondendo o manequim.
-    document.getElementById("MANEQUIM").className = "supercard manequim-out"
     // eslint-disable-next-line
   }, [idatendimento])
 
@@ -3752,19 +3570,8 @@ function Prontuario() {
     // carregando os últimos valores válidos para Braden e Morse.
     loadLastBraden();
     loadLastMorse();
-    // carregando os alertas.
-    setalertas([]);
-    arrayalertas = [];
-    setTimeout(() => {
-      alertSepse();
-      alertDadosVitais();
-      alertCulturas();
-      alertDispositivos();
-      alertEvacuacoes();
-      setTimeout(() => {
-        setalertas(arrayalertas);
-      }, 1000);
-    }, 1000);
+    // carregando alertas.
+    loadAlertas();
     if (stateprontuario === 9 && (tipousuario === 1 || tipousuario === 2)) {
       setshowlesoes(0);
       setshowinvasoes(0);
@@ -3773,6 +3580,21 @@ function Prontuario() {
       setshowinvasoes(0);
     } else {
     }
+  }
+
+  // carregando os alertas.
+  const loadAlertas = () => {
+    setalertas([]);
+    arrayalertas = [];
+    // carregando os alertas.
+    alertSepse();
+    alertDadosVitais();
+    alertCulturas();
+    alertDispositivos();
+    alertEvacuacoes();
+    setTimeout(() => {
+      setalertas(arrayalertas);
+    }, 1000);
   }
 
   /*
@@ -3793,7 +3615,7 @@ function Prontuario() {
         onClick={() => viewUpdateAtendimento()}
       >
         <div id="IDENTIFICAÇÃO" style={{
-          display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+          display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '100vw',
           verticalAlign: 'center', alignItems: 'center',
         }}>
           <img
@@ -3806,52 +3628,119 @@ function Prontuario() {
               borderRadius: 5,
             }}
           ></img>
-          <button
-            className="grey-button"
-            style={{
-              display: tipounidade != 4 ? 'flex' : 'none',
-              textTransform: 'uppercase',
-              width: 65, height: 65, marginRight: 10, marginLeft: 10,
-              backgroundColor: 'grey'
-            }}
-            id="inputBox"
-            title={"BOX"}
-          >
-            {box}
-          </button>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <button
-              className="rowitem"
-              style={{
-                marginLeft: tipounidade != 4 ? 0 : 5,
-                marginRight: 0,
-                marginBottom: 0,
-                paddingBottom: 0,
-                color: '#ffffff',
-                alignSelf: 'flex-start',
-              }}
-              id="inputNome"
-            >
-              {nomepaciente}
-            </button>
-            <button
-              className="rowitem"
-              style={{
-                color: '#ffffff',
-                alignSelf: 'flex-start',
-              }}
-            >
-              {moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') < 2 ? + moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANO' : moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANOS'}
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'left', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'left', width: '100%' }}>
+              <button
+                className="grey-button"
+                style={{
+                  display: tipounidade != 4 ? 'flex' : 'none',
+                  textTransform: 'uppercase',
+                  width: window.innerWidth > 400 ? 65 : 50,
+                  minWidth: window.innerWidth > 400 ? 65 : 50,
+                  height: window.innerWidth > 400 ? 65 : 50,
+                  minHeight: window.innerWidth > 400 ? 65 : 50,
+                  marginRight: 5, marginLeft: 10,
+                  backgroundColor: 'grey'
+                }}
+                id="inputBox"
+                title={"BOX"}
+              >
+                {box}
+              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'left', width: '100%' }}>
+                <button
+                  className="rowitem"
+                  style={{
+                    marginLeft: tipounidade != 4 ? 0 : 5,
+                    marginRight: 0,
+                    marginBottom: 0,
+                    paddingBottom: 0,
+                    color: '#ffffff',
+                    alignSelf: 'flex-start',
+                    fontSize: window.innerWidth > 400 ? 18 : 14,
+                  }}
+                  id="inputNome"
+                >
+                  {nomepaciente}
+                </button>
+                <button
+                  className="rowitem"
+                  style={{
+                    color: '#ffffff',
+                    alignSelf: 'flex-start',
+                  }}
+                >
+                  {moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') < 2 ? + moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANO' : moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANOS'}
+                </button>
+
+                <div
+                  style={{
+                    display: window.innerWidth > 400 ? 'none' : 'flex',
+                    bottom: 10, right: 10,
+                    flexDirection: 'row',
+                    alignSelf: 'flex-end', marginRight: 5,
+                  }}
+                >
+                  <Link
+                    to={tipounidade == 4 ? "/ambulatorio" : "/pacientes"}
+                    className="grey-button"
+                    title="VOLTAR."
+                    style={{
+                      minWidth: 40,
+                      minHeight: 40,
+                      width: 40,
+                      height: 40,
+                      margin: 2.5,
+                      padding: 5,
+                    }}
+                  >
+                    <img
+                      alt=""
+                      src={back}
+                      style={{
+                        margin: 0,
+                        height: 20,
+                        width: 20,
+                      }}
+                    ></img>
+                  </Link>
+                  <Link
+                    to="/gpulse-web"
+                    className="grey-button"
+                    title="FAZER LOGOFF."
+                    style={{
+                      display: 'flex',
+                      minWidth: 40,
+                      minHeight: 40,
+                      width: 40,
+                      height: 40,
+                      margin: 2.5,
+                      padding: 5,
+                    }}
+                  >
+                    <img
+                      alt=""
+                      src={logoff}
+                      style={{
+                        margin: 0,
+                        height: 20,
+                        width: 20,
+                      }}
+                    ></img>
+                  </Link>
+                </div>
+
+              </div>
+            </div>
           </div>
         </div>
         <div
           style={{
-            display: 'flex',
+            display: window.innerWidth > 400 ? 'flex' : 'none',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'flex-end',
-            margin: 10
+            margin: 10,
           }}
         >
           <div
@@ -3973,11 +3862,11 @@ function Prontuario() {
   function ButtonMobileMenu() {
     return (
       <button
-        className="blue-button"
+        className="grey-button"
         id="BTN MENU MOBILE"
         onClick={() => showMenuMobile()}
         onTouchStart={() => updateInvasoes()}
-        style={{ zIndex: 0, backgroundColor: 'rgba(23, 165, 137, 0.8)' }}
+        style={{ zIndex: 0 }}
       >
         <img
           alt=""
@@ -4001,36 +3890,13 @@ function Prontuario() {
     if (showmenu === 1) {
       return (
         <div
-          className="secondary"
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            borderRadius: 0,
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '100%',
-            width: '100%',
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            zIndex: 9,
-          }}
+          className="menucover"
         >
           <div
-            className="secondary"
+            className="grey-button"
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              backgroundColor: '#FFFFFF',
-              borderRadius: 5,
-              paddingTop: 30,
-              paddingBottom: 30,
-              paddingLeft: 30,
-              paddingRight: 30,
+              padding: 10,
+              backgroundColor: 'grey'
             }}
           >
             <button
@@ -4039,10 +3905,7 @@ function Prontuario() {
               style={{
                 width: 200,
                 height: 50,
-                margin: 0,
-                marginTop: 5,
-                marginLeft: 10,
-                marginRight: 10,
+                margin: 5,
                 padding: 0,
               }}
             >
@@ -4054,10 +3917,7 @@ function Prontuario() {
               style={{
                 width: 200,
                 height: 50,
-                margin: 0,
-                marginTop: 5,
-                marginLeft: 10,
-                marginRight: 10,
+                margin: 5,
                 padding: 0,
               }}
             >
@@ -4069,10 +3929,7 @@ function Prontuario() {
               style={{
                 width: 200,
                 height: 50,
-                margin: 0,
-                marginTop: 5,
-                marginLeft: 10,
-                marginRight: 10,
+                margin: 5,
                 padding: 0,
               }}
             >
@@ -4084,10 +3941,7 @@ function Prontuario() {
               style={{
                 width: 200,
                 height: 50,
-                margin: 0,
-                marginTop: 5,
-                marginLeft: 10,
-                marginRight: 10,
+                margin: 5,
                 padding: 0,
               }}
             >
@@ -4099,10 +3953,7 @@ function Prontuario() {
               style={{
                 width: 200,
                 height: 50,
-                margin: 0,
-                marginTop: 5,
-                marginLeft: 10,
-                marginRight: 10,
+                margin: 5,
                 padding: 0,
               }}
             >
@@ -4114,10 +3965,7 @@ function Prontuario() {
               style={{
                 width: 200,
                 height: 50,
-                margin: 0,
-                marginTop: 5,
-                marginLeft: 10,
-                marginRight: 10,
+                margin: 5,
                 padding: 0,
               }}
             >
@@ -4136,238 +3984,127 @@ function Prontuario() {
     if (stateprontuario === 1) {
       return (
         <div id="painel principal"
-          className="conteudo" style={{ marginRight: 10 }}
+          className="scroll"
+          style={{ borderRadius: 0, overflowY: 'scroll', paddingRight: 10 }}
         >
           <div
-            className="scroll"
+            className="secondary"
             id="DESTAQUES"
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'flex-start',
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
               borderRadius: 0,
               backgroundColor: 'transparent',
               borderWidth: 0,
               width: '100%',
               margin: 10,
               padding: 0,
-              paddingRight: 5,
-              overflowX: 'hidden',
+              paddingRight: 0,
+            }}
+          >
+            <CardStatus></CardStatus>
+            <CardAlertas></CardAlertas>
+            <CardPrecaucao></CardPrecaucao>
+            <CardDiasdeInternacao></CardDiasdeInternacao>
+            <CardEvolucoes></CardEvolucoes>
+            <CardInvasoes></CardInvasoes>
+            <CardDiagnosticos></CardDiagnosticos>
+            <CardLesoes></CardLesoes>
+            <CardAntibioticos></CardAntibioticos>
+            <CardInternacoes></CardInternacoes>
+
+          </div>
+          <div
+            id="ANAMNESE"
+            className="secondary"
+            style={{
+              margin: 0,
+              padding: 5,
+              paddingLeft: 10,
+              paddingRight: 10,
+              flexDirection: 'column',
+              justifyContent: 'center',
+              width: '100%',
+              boxShadow: 'none'
             }}
           >
             <div
-              className="secondary"
               style={{
-                margin: 0,
+                display: 'flex',
                 flexDirection: 'row',
+                margin: 0,
+                padding: 0,
                 justifyContent: 'center',
-                boxShadow: 'none',
-                width: '100%',
-
+                width: '100%'
               }}
             >
-              <div
-                id="COLUNA 01"
-                className="secondary"
-                style={{
-                  margin: 0,
-                  padding: 15,
-                  paddingRight: 5,
-                  width: '100%',
-                  boxShadow: 'none',
-                }}
+              <textarea
+                className="textarea"
+                disabled="true"
+                style={{ width: '100%', height: 140 }}
+                id="inputAp"
+                title="ANTECEDENTES PESSOAIS."
               >
-                <div
-                  className="secondary"
-                  style={{
-                    display: tipounidade == 4 ? 'none' : 'flex',
-                    flexDirection: window.innerWidth > 800 ? 'row' : 'column',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                    margin: 0,
-                    paddingTop: 5,
-                    paddingBottom: 5,
-                    boxShadow: 'none',
-                  }}
-                >
-                  <button
-                    className={status == 3 ? 'green-button' : status == 2 ? 'yellow-button' : status == 1 ? 'red-button' : status == 0 ? 'grey-button' : 'pool-button'}
-                    id="STATUS"
-                    title="STATUS DO PACIENTE."
-                    onClick={tipousuario != 4 ? () => showChangeStatus() : null} // técnico
-                    style={{
-                      position: 'relative',
-                      margin: 0,
-                      marginRight: 10,
-                      padding: 10,
-                      width: '100%',
-                      height: 120,
-                    }}
-                  >
-                    <text>
-                      {status == 3 ? 'STATUS: \nESTÁVEL' : status == 2 ? 'STATUS: \nALERTA' : status == 1 ? 'STATUS: \nINSTÁVEL' : status == 0 ? 'STATUS: \nCONFORTO' : 'STATUS: \nINDEFINIDO'}
-                    </text>
-                  </button>
-                  <button
-                    className={precaucao === 1 ? "blue-button" : precaucao === 2 ? "yellow-button" : precaucao === 3 ? "purple-button" : "red-button"}
-                    title="PRECAUÇÃO OU ISOLAMENTO DE CONTATO."
-                    onClick={tipousuario != 4 ? () => showChangePrecaucao(0) : null}
-                    style={{
-                      display: window.innerWidth > 800 ? 'flex' : 'none',
-                      width: window.innerWidth > 800 ? 120 : 0.4 * window.innerWidth,
-                      height: window.innerWidth > 800 ? 145 : 110,
-                      margin: 0,
-                      marginRight: 10,
-                      padding: 10,
-                      width: '100%',
-                      height: 120,
-                    }}>
-                    {precaucao == 1 ? 'PRECAUÇÃO PADRÃO' : precaucao == 2 ? 'PRECAUÇÃO DE CONTATO' : precaucao == 3 ? 'PRECAUÇÃO PARA GOTÍCULAS' : 'PRECAUÇÃO PARA AEROSSOL'}
-                  </button>
-                  <div
-                    className="widget"
-                    id="DIAS DE INTERNAÇÃO"
-                    style={{
-                      flexDirection: 'column',
-                      width: window.innerWidth > 800 ? 120 : 0.4 * window.innerWidth,
-                      height: window.innerWidth > 800 ? 145 : 80,
-                      margin: 0,
-                      marginRight: 0,
-                      padding: 10,
-                      width: '100%',
-                      height: 120,
-                    }}
-                  >
-                    <p
-                      className="title2"
-                      style={{
-                        marginBottom: 0,
-                        color: '#ffffff',
-                        textAlign: 'center'
-                      }}
-                    >
-                      DIAS DE INTERNAÇÃO:
-                    </p>
-                    <p
-                      className="title2"
-                      style={{ marginTop: 0, color: '#ffffff' }}
-                    >
-                      {moment().diff(moment(admissao, 'DD/MM/YYYY'), 'days')}
-                    </p>
-                  </div>
-                </div>
-                <CardAlertas></CardAlertas>
-                <CardDiagnosticos></CardDiagnosticos>
-                <CardInternacoes></CardInternacoes>
-              </div>
-              <div
-                id="COLUNA 02"
-                className="secondary"
-                style={{
-                  margin: 0,
-                  padding: 15,
-                  paddingLeft: 5,
-                  width: '100%',
-                  boxShadow: 'none',
-                }}
+                {'ANTECEDENTES PESSOAIS: ' + antecedentes}
+              </textarea>
+              <textarea
+                className="textarea"
+                disabled="true"
+                style={{ width: '100%', height: 140 }}
+                id="inputAlergias"
+                title="ALERGIAS."
               >
-                <Evolucoes></Evolucoes>
-                <div style={{ display: tipounidade != 4 ? 'flex' : 'none', width: '100%' }}>
-                  <CardVm></CardVm>
-                </div>
-                <CardAntibioticos></CardAntibioticos>
-              </div>
+                {'ALERGIAS: ' + alergias}
+              </textarea>
             </div>
             <div
-              id="ANAMNESE"
-              className="secondary"
               style={{
+                display: 'flex',
+                flexDirection: 'row',
                 margin: 0,
-                padding: 5,
-                paddingLeft: 10,
-                paddingRight: 10,
-                flexDirection: 'column',
                 justifyContent: 'center',
-                width: '100%',
-                boxShadow: 'none'
+                width: '100%'
               }}
             >
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  margin: 0,
-                  padding: 0,
-                  justifyContent: 'center',
-                  width: '100%'
-                }}
+              <textarea
+                className="textarea"
+                disabled="true"
+                style={{ width: '100%', height: 140 }}
+                id="inputMedprev"
+                title="MEDICAÇÕES PRÉVIAS."
               >
-                <textarea
-                  className="textarea"
-                  disabled="true"
-                  style={{ width: '100%', height: 140 }}
-                  id="inputAp"
-                  title="ANTECEDENTES PESSOAIS."
-                >
-                  {'ANTECEDENTES PESSOAIS: ' + antecedentes}
-                </textarea>
-                <textarea
-                  className="textarea"
-                  disabled="true"
-                  style={{ width: '100%', height: 140 }}
-                  id="inputAlergias"
-                  title="ALERGIAS."
-                >
-                  {'ALERGIAS: ' + alergias}
-                </textarea>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  margin: 0,
-                  justifyContent: 'center',
-                  width: '100%'
-                }}
+                {'MEDICAÇÕES DE USO CONTÍNUO: ' + medicacoes}
+              </textarea>
+              <textarea
+                className="textarea"
+                disabled="true"
+                style={{ width: '100%', height: 140 }}
+                id="inputExprev"
+                title="EXAMES PRÉVIOS."
               >
-                <textarea
-                  className="textarea"
-                  disabled="true"
-                  style={{ width: '100%', height: 140 }}
-                  id="inputMedprev"
-                  title="MEDICAÇÕES PRÉVIAS."
-                >
-                  {'MEDICAÇÕES DE USO CONTÍNUO: ' + medicacoes}
-                </textarea>
-                <textarea
-                  className="textarea"
-                  disabled="true"
-                  style={{ width: '100%', height: 140 }}
-                  id="inputExprev"
-                  title="EXAMES PRÉVIOS."
-                >
-                  {'EXAMES PRÉVIOS: ' + exames}
-                </textarea>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  margin: 0,
-                  justifyContent: 'center',
-                  width: '100%'
-                }}
+                {'EXAMES PRÉVIOS: ' + exames}
+              </textarea>
+            </div>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                margin: 0,
+                justifyContent: 'center',
+                width: '100%'
+              }}
+            >
+              <textarea
+                className="textarea"
+                disabled="true"
+                style={{ width: '100%', height: 140 }}
+                id="inputHda"
+                title="HISTÓRIA DA DOENÇA ATUAL."
               >
-                <textarea
-                  className="textarea"
-                  disabled="true"
-                  style={{ width: '100%', height: 140 }}
-                  id="inputHda"
-                  title="HISTÓRIA DA DOENÇA ATUAL."
-                >
-                  {'HISTÓRIA DA DOENÇA ATUAL: ' + historia}
-                </textarea>
-              </div>
+                {'HISTÓRIA DA DOENÇA ATUAL: ' + historia}
+              </textarea>
             </div>
           </div>
         </div>
@@ -4386,15 +4123,10 @@ function Prontuario() {
   }
   // EXIBIR LISTA DE ANTIBIÓTICOS USADOS.
   function CardAntibioticos() {
-    if (atblist.length > 0) {
-      return (
-        <div className="cardscroll"
-          id="LISTA DE ANTIBIÓTICOS PRESCRITOS"
-          style={{
-            width: '100%', margin: 5, padding: 5,
-            height: window.innerWidth > 800 ? 145 : 130,
-          }}>
-          <div className="title4">{'HISTÓRICO DE ANTIBIÓTICOS:'}</div>
+    return (
+      <div className="pulsewidgetscroll" id="LISTA DE ANTIBIÓTICOS PRESCRITOS">
+        <div className="title4 pulsewidgettitle">{'HISTÓRICO DE ANTIBIÓTICOS'}</div>
+        <div className="pulsewidgetcontent" style={{ display: atblist.length > 0 ? 'flex' : 'none' }}>
           {atblist.map((item) => (
             <div
               className="title1"
@@ -4429,26 +4161,39 @@ function Prontuario() {
           ))
           }
         </div>
-      )
-    } else if (atblist.length < 1) {
-      return (
-        <div
-          className="cardscroll"
+        <div className="pulsewidgetcontent"
           style={{
             display: atblist.length < 1 ? 'flex' : 'none',
-            width: '100%', margin: 5, padding: 5,
-            height: window.innerWidth > 800 ? 145 : 130,
+            color: '#8f9bbc',
+            fontWeight: 'bold',
+            fontSize: 16,
           }}>
-          <div className="title4">{'HISTÓRICO DE ANTIBIÓTICOS:'}</div>
-          <div>SEM REGISTROS DE ANTIBIÓTICOS.</div>
+          SEM REGISTROS DE ANTIBIÓTICOS
         </div>
-      )
-    } else {
-      return null;
-    }
+      </div>
+    )
   }
 
-  // COMPONENTE PARA ALTERAÇÃO DO STATUS.
+  // card status.
+  function CardStatus() {
+    return (
+      <div
+        className="pulsewidgetstatic"
+        id="STATUS"
+        title="STATUS DO PACIENTE."
+        onClick={tipousuario != 4 ? () => showChangeStatus() : null} // técnico
+        style={{
+          backgroundColor: status == 3 ? '#52be80' : status == 2 ? '#f5b041' : status == 1 ? '#ec7063' : status == 0 ? 'grey' : 'purple'
+        }}
+      >
+        <text className="title5">
+          {status == 3 ? 'STATUS: \nESTÁVEL' : status == 2 ? 'STATUS: \nALERTA' : status == 1 ? 'STATUS: \nINSTÁVEL' : status == 0 ? 'STATUS: \nCONFORTO' : 'STATUS: \nINDEFINIDO'}
+        </text>
+      </div>
+    )
+  }
+
+  // componente para alteração do status.
   const [viewstatus, setViewstatus] = useState(0);
   function ChangeStatus() {
     if (viewstatus === 1) {
@@ -4568,15 +4313,33 @@ function Prontuario() {
     setViewstatus(0);
   }
 
-  // COMPONENTE PARA ALTERAÇÃO DO TIPO DE PRECAUÇÃO.
+  // card precaução.
+  function CardPrecaucao() {
+    return (
+      <div
+        className="pulsewidgetstatic"
+        title="PRECAUÇÃO OU ISOLAMENTO DE CONTATO."
+        onClick={tipousuario != 4 ? () => showChangePrecaucao(0) : null}
+        style={{
+          backgroundColor: precaucao === 1 ? "#8f9bbc" : precaucao === 2 ? "#f5b041" : precaucao === 3 ? "#bb8fce" : "#ec7063"
+        }}
+      >
+        <text className="title5">
+          {precaucao == 1 ? 'PRECAUÇÃO PADRÃO' : precaucao == 2 ? 'PRECAUÇÃO DE CONTATO' : precaucao == 3 ? 'PRECAUÇÃO PARA GOTÍCULAS' : 'PRECAUÇÃO PARA AEROSSOL'}
+        </text>
+      </div>
+    )
+  }
+
+  // componente para alteração do tipo de precaução.
   const [viewprecaucao, setViewprecaucao] = useState(0);
   function ChangePrecaucao() {
     if (viewprecaucao === 1) {
       return (
         <div className="menucover" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-          <div className="menucontainer">
+          <div className="menucontainer" style={{ padding: 20 }}>
             <label
-              className="title2"
+              className="title2center"
               style={{ marginTop: 0, marginBottom: 15, width: 200 }}
             >
               ATUALIZAR TIPO DE PRECAUÇÃO/ISOLAMENTO
@@ -4655,6 +4418,26 @@ function Prontuario() {
     setViewprecaucao(0);
   }
 
+  // card dias de internação.
+  function CardDiasdeInternacao() {
+    return (
+      <div
+        className="pulsewidgetstatic" style={{ backgroundColor: '#8f9bbc' }}
+        id="DIAS DE INTERNAÇÃO"
+      >
+        <p
+          className="title5"
+          style={{
+            marginBottom: 0,
+            textAlign: 'center',
+          }}
+        >
+          {'DIAS DE INTERNAÇÃO: ' + moment().diff(moment(admissao, 'DD/MM/YYYY'), 'days')}
+        </p>
+      </div>
+    )
+  }
+
   // função que atualiza o paciente.
   const updateAtendimento = () => {
     var obj = {
@@ -4711,91 +4494,163 @@ function Prontuario() {
     });
   };
 
-  // COMPONENTE ÚLTIMA EVOLUÇÃO E EXAME FÍSICO.
-  function Evolucoes() {
-    var pam = Math.ceil((2 * parseInt(pad) + parseInt(pas)) / 3);
+  // card invasões.
+  function CardInvasoes() {
     return (
-      <div
-        id="EVOLUÇÃO E EXAME FÍSICO"
-        title="ÚLTIMA EVOLUÇÃO E CONTROLES."
-        className="cardscroll"
-        style={{
-          width: '100%', margin: 5, padding: 5,
-          height: 145 + 120 + 30,
-          padding: 5,
-        }}>
-        <div className="title4" style={{ whiteSpace: 'pre-wrap' }}>
-          {evolucao != '' ? 'EVOLUÇÃO (' + dataevolucao.toString().substring(0, 8) + ' - ' + dataevolucao.toString().substring(9, 14) + '):' : 'EVOLUÇÃO:'}
-        </div>
-        <div>
-          {evolucao != '' ? evolucao : 'SEM EVOLUÇÕES REGISTRADAS.'}
-        </div>
-        <div style={{
-          display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 5
-        }}>
-          <button
-            id="BRADEN"
-            className="blue-button"
+      <div id="cardinvasao"
+        className="pulsewidgetbody"
+        onMouseOver={() => {
+          document.getElementById("cardinvasao").className = "pulsewidgetbodyhover"
+        }}
+        onMouseLeave={() => {
+          document.getElementById("cardinvasao").className = "pulsewidgetbody"
+          document.getElementById("cardinvasao").scrollTop = 0
+          updateInvasoes()
+        }}
+      >
+        <div className="pulsewidgettitle" style={{ alignItems: 'center' }}>
+          <div className="title5">{'INVASÕES'}</div>
+          <img
+            alt=""
+            src={body}
             style={{
-              display: lastbraden > 0 && window.innerWidth > 800 ? 'flex' : 'none',
-              alignSelf: 'center',
-              width: 250,
-              height: 50,
-              padding: 10,
-              backgroundColor: '#8f9bbc',
+              height: '60%',
+              // width: 45,
+              borderRadius: 5,
             }}
-          >
-            {lastbraden > 14 ? 'BRADEN: ' + lastbraden + ' - RISCO BAIXO' : lastbraden > 12 && lastbraden < 15 ? 'BRADEN: ' + lastbraden + ' - RISCO MODERADO' : 'BRADEN: ' + lastbraden + ' - RISCO ELEVADO'}
-          </button>
-          <button
-            id="MORSE"
-            className="blue-button"
-            style={{
-              display: lastmorse > 0 && window.innerWidth > 800 ? 'flex' : 'none',
-              alignSelf: 'center',
-              width: 250,
-              height: 50,
-              padding: 10,
-              backgroundColor: '#8f9bbc',
-            }}
-          >
-            {lastmorse < 41 ? 'MORSE: ' + lastmorse + ' - RISCO MÉDIO' : lastmorse > 40 && lastmorse < 52 ? 'MORSE: ' + lastmorse + ' - RISCO ELEVADO' : lastmorse > 51 ? 'MORSE: ' + lastmorse + ' - RISCO MUITO ELEVADO' : 'MORSE ?'}
-          </button>
+          ></img>
         </div>
-        <div className="title4" style={{ marginTop: 5 }}>{'CONTROLES:'}</div>
-        <ViewGlasgow></ViewGlasgow>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 2.5 }}>
-          <ViewRass></ViewRass>
-          <ViewRamsay></ViewRamsay>
-        </div>
-        <div style={{
-          display: evolucao != '' ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center',
-        }}>
-          <div className={pam < 70 ? "title3" : "title2"}>{'PA: ' + pas + ' x ' + pad + ' (PAM ' + pam + ') mmHg'}</div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-            <div className={parseInt(fc) < 60 || parseInt(fc) > 120 ? "title3" : "title2"}>{'FC: ' + fc + ' bpm'}</div>
-            <div className={parseInt(fr) > 26 ? 'title3' : 'title2'}>{'FR: ' + fr + ' irpm'}</div>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-            <div className={parseInt(sao2) < 90 ? "title3" : "title2"} >{'SAO2: ' + sao2 + '%'}</div>
-            <div className={parseFloat(tax) < 35.0 || parseFloat(tax) > 37.5 ? "title3" : "title2"} >{'TAX: ' + tax + '°C'}</div>
-          </div>
-          <div className={diurese12h < 500 ? "title3" : "title2"} >{'DIURESE: ' + diurese12h + 'ml/12h'}</div>
-          <div className={ganhos12h > 2000 ? "title3" : "title2"} >{'GANHOS EM 12H: ' + ganhos12h + 'ml'}</div>
-          <div className={perdas12h > 2000 ? "title3" : "title2"} >{'PERDAS EM 12H: ' + perdas12h + 'ml'}</div>
-          <div className={(ganhos12h - perdas12h) > 2000 || (ganhos12h - perdas12h) < -2000 ? "title3" : "title2"} >
-            {ganhos12h || perdas12h != '' ? 'BH EM 12H: ' + (ganhos12h - perdas12h) + 'ml' : 'BH 12H: NÃO INFORMADO.'}
-          </div>
-          <div className={(ganhosacumulados - perdasacumuladas) > 2000 || (ganhosacumulados - perdasacumuladas) < -2000 ? 'title3' : 'title2'} >
-            {ganhosacumulados || perdasacumuladas != '' ? 'BH ACUMULADO: ' + (ganhosacumulados - perdasacumuladas) + 'ml' : 'BH ACUMULADO: NÃO INFORMADO'}
-          </div>
-        </div>
-        <div style={{ display: evolucao == '' ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
-          <text style={{ color: '#ffffff' }}>SEM REGISTRO DE DADOS CLÍNICOS.</text>
+        <div
+          id="invasaocontent"
+          className="pulsewidgetcontent"
+        >
+          <ShowInvasoes></ShowInvasoes>
         </div>
       </div>
     );
   }
+
+  // card lesoes.
+  function CardLesoes() {
+    return (
+      <div id="cardlesao"
+        className="pulsewidgetbody"
+        title="LESÕES DE PRESSÃO"
+        onMouseOver={() => {
+          document.getElementById("cardlesao").className = "pulsewidgetbodyhover"
+        }}
+        onMouseLeave={() => {
+          document.getElementById("cardlesao").className = "pulsewidgetbody"
+          document.getElementById("cardlesao").scrollTop = 0
+        }}
+      >
+        <div className="pulsewidgettitle" style={{ alignItems: 'center' }}>
+          <div className="title5">{'LESÕES'}</div>
+          <img
+            alt=""
+            src={dorso}
+            style={{
+              height: '60%',
+              // width: 45,
+              borderRadius: 5,
+            }}
+          ></img>
+        </div>
+        <div
+          id="invasaocontent"
+          className="pulsewidgetcontent"
+        >
+          <ShowLesoes></ShowLesoes>
+        </div>
+      </div>
+    );
+  }
+
+  // COMPONENTE ÚLTIMA EVOLUÇÃO E EXAME FÍSICO.
+  function CardEvolucoes() {
+    return (
+      <div
+        id="EVOLUÇÃO E EXAME FÍSICO"
+        title="ÚLTIMA EVOLUÇÃO E CONTROLES."
+        className="pulsewidgetscroll">
+        <div className="title4 pulsewidgettitle">
+          {'ÚLTIMA EVOLUÇÃO E CONTROLES'}
+        </div>
+        <div className="pulsewidgetcontent" style={{ justifyContent: 'flex-start' }}>
+          <div className="title4" style={{ whiteSpace: 'pre-wrap' }}>
+            {evolucao != '' ? 'EVOLUÇÃO (' + dataevolucao.toString().substring(0, 8) + ' - ' + dataevolucao.toString().substring(9, 14) + '):' : 'EVOLUÇÃO:'}
+          </div>
+          <div>
+            {evolucao != '' ? evolucao : 'SEM EVOLUÇÕES REGISTRADAS.'}
+          </div>
+          <div style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 5
+          }}>
+            <button
+              id="BRADEN"
+              className="blue-button"
+              style={{
+                display: lastbraden > 0 && window.innerWidth > 800 ? 'flex' : 'none',
+                alignSelf: 'center',
+                width: 250,
+                height: 50,
+                padding: 10,
+                backgroundColor: '#8f9bbc',
+              }}
+            >
+              {lastbraden > 14 ? 'BRADEN: ' + lastbraden + ' - RISCO BAIXO' : lastbraden > 12 && lastbraden < 15 ? 'BRADEN: ' + lastbraden + ' - RISCO MODERADO' : 'BRADEN: ' + lastbraden + ' - RISCO ELEVADO'}
+            </button>
+            <button
+              id="MORSE"
+              className="blue-button"
+              style={{
+                display: lastmorse > 0 && window.innerWidth > 800 ? 'flex' : 'none',
+                alignSelf: 'center',
+                width: 250,
+                height: 50,
+                padding: 10,
+                backgroundColor: '#8f9bbc',
+              }}
+            >
+              {lastmorse < 41 ? 'MORSE: ' + lastmorse + ' - RISCO MÉDIO' : lastmorse > 40 && lastmorse < 52 ? 'MORSE: ' + lastmorse + ' - RISCO ELEVADO' : lastmorse > 51 ? 'MORSE: ' + lastmorse + ' - RISCO MUITO ELEVADO' : 'MORSE ?'}
+            </button>
+          </div>
+          <div className="title4" style={{ marginTop: 5 }}>{'CONTROLES:'}</div>
+          <ViewGlasgow></ViewGlasgow>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 2.5 }}>
+            <ViewRass></ViewRass>
+            <ViewRamsay></ViewRamsay>
+          </div>
+          <div style={{
+            display: evolucao != '' ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center',
+          }}>
+            <div className={pam < 70 ? "title3" : "title2"}>{'PA: ' + pas + ' x ' + pad + ' (PAM ' + pam + ') mmHg'}</div>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+              <div className={parseInt(fc) < 60 || parseInt(fc) > 120 ? "title3" : "title2"}>{'FC: ' + fc + ' bpm'}</div>
+              <div className={parseInt(fr) > 26 ? 'title3' : 'title2'}>{'FR: ' + fr + ' irpm'}</div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
+              <div className={parseInt(sao2) < 90 ? "title3" : "title2"} >{'SAO2: ' + sao2 + '%'}</div>
+              <div className={parseFloat(tax) < 35.0 || parseFloat(tax) > 37.5 ? "title3" : "title2"} >{'TAX: ' + tax + '°C'}</div>
+            </div>
+            <div className={diurese12h < 500 ? "title3" : "title2"} >{'DIURESE: ' + diurese12h + 'ml/12h'}</div>
+            <div className={ganhos12h > 2000 ? "title3" : "title2"} >{'GANHOS EM 12H: ' + ganhos12h + 'ml'}</div>
+            <div className={perdas12h > 2000 ? "title3" : "title2"} >{'PERDAS EM 12H: ' + perdas12h + 'ml'}</div>
+            <div className={(ganhos12h - perdas12h) > 2000 || (ganhos12h - perdas12h) < -2000 ? "title3" : "title2"} >
+              {ganhos12h || perdas12h != '' ? 'BH EM 12H: ' + (ganhos12h - perdas12h) + 'ml' : 'BH 12H: NÃO INFORMADO.'}
+            </div>
+            <div className={(ganhosacumulados - perdasacumuladas) > 2000 || (ganhosacumulados - perdasacumuladas) < -2000 ? 'title3' : 'title2'} >
+              {ganhosacumulados || perdasacumuladas != '' ? 'BH ACUMULADO: ' + (ganhosacumulados - perdasacumuladas) + 'ml' : 'BH ACUMULADO: NÃO INFORMADO'}
+            </div>
+          </div>
+          <div style={{ display: evolucao == '' ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+            <text style={{ color: '#ffffff' }}>SEM REGISTRO DE DADOS CLÍNICOS.</text>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const [viewglasgow, setViewglasgow] = useState(0);
   function ViewGlasgow() {
     if (viewglasgow === 1) {
@@ -4951,7 +4806,6 @@ function Prontuario() {
   }
 
   // modulando as animações css para os menus (trabalhoso, mas faz toda a dierença).
-
   const setActive = (btn, btnAdd) => {
     var botoes = document.getElementById("MENU LATERAL").getElementsByClassName("red-button");
     for (var i = 0; i < botoes.length; i++) {
@@ -4970,7 +4824,11 @@ function Prontuario() {
     return (
       <div className="menu"
       >
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', margin: 20, marginBottom: 10 }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'row', justifyContent: 'center',
+          margin: 20, marginBottom: 10
+        }}>
           <img
             alt=""
             src={newlogo}
@@ -5108,7 +4966,7 @@ function Prontuario() {
               style={{
                 width: '100%',
                 height: 50,
-
+                opacity: tipousuario == 1 || tipousuario == 2 ? 1 : 0.5,
               }}
             >
               PROBLEMAS
@@ -5348,7 +5206,18 @@ function Prontuario() {
             <button
               id="btnCheckPrescricoes"
               className="blue-button"
-              onClick={() => { clickPrescricoes(); document.getElementById("btnCheckPrescricoes").className = "red-button" }}
+              onClick={() => {
+                clickPrescricoes();
+                var botoes = document.getElementById("MENU LATERAL").getElementsByClassName("red-button");
+                for (var i = 0; i < botoes.length; i++) {
+                  botoes.item(i).className = "blue-button";
+                }
+                var addBotoes = document.getElementById("MENU LATERAL").getElementsByClassName("animated-red-button");
+                for (var i = 0; i < addBotoes.length; i++) {
+                  addBotoes.item(i).className = "animated-blue-button";
+                }
+                document.getElementById("btnCheckPrescricoes").className = "red-button"
+              }}
               style={{
                 width: '100%',
                 height: 50,
@@ -5541,17 +5410,16 @@ function Prontuario() {
     if (vaMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>VIA AÉREA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -5565,35 +5433,35 @@ function Prontuario() {
               <button
                 onClick={() => setVaTqt()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 TQT
               </button>
               <button
                 onClick={() => setVaTot()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 TOT
               </button>
               <button
                 onClick={() => setVaMf()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 MF
               </button>
               <button
                 onClick={() => setVaCn()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CN
               </button>
               <button
                 onClick={() => setVaNone()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -5659,13 +5527,16 @@ function Prontuario() {
     if (jid == 1) {
       return (
         <div
+          id="clickjid"
           className="blue-invasion jid"
           title={'DATA DE INSERÇÃO: ' + datajid}
           style={{
             height: window.innerWidth > 800 ? 0.02 * window.innerWidth : window.innerWidth > 600 ? 0.07 * window.innerWidth : 0.09 * window.innerWidth,
             width: window.innerWidth > 800 ? 0.02 * window.innerWidth : window.innerWidth > 600 ? 0.07 * window.innerWidth : 0.09 * window.innerWidth,
           }}
-          onClick={() => clickJid()}
+          onClick={() => {
+            clickJid()
+          }}
         >
           CVC
         </div>
@@ -5703,22 +5574,21 @@ function Prontuario() {
     if (jidMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
-            <div
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>JUGULAR INTERNA DIREITA</div>
+            <button
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
               {pickdate1}
-            </div>
+            </button>
             <div style={{
               display: 'flex', flexWrap: 'wrap', width: window.innerWidth > 800 ? '' : 320,
               flexDirection: window.innerWidth > 800 ? 'column' : 'row',
@@ -5727,21 +5597,21 @@ function Prontuario() {
               <button
                 onClick={() => setCvcJid()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CVC
               </button>
               <button
                 onClick={() => setCdlJid()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CDL
               </button>
               <button
                 onClick={() => setNoneJid()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -5836,17 +5706,16 @@ function Prontuario() {
     if (jieMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>JUGULAR INTERNA ESQUERDA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -5860,21 +5729,21 @@ function Prontuario() {
               <button
                 onClick={() => setCvcJie()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CVC
               </button>
               <button
                 onClick={() => setCdlJie()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CDL
               </button>
               <button
                 onClick={() => setNoneJie()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -5969,17 +5838,16 @@ function Prontuario() {
     if (subcldMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>SUBCLÁVIA DIREITA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -5993,21 +5861,21 @@ function Prontuario() {
               <button
                 onClick={() => setCvcSubcld()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CVC
               </button>
               <button
                 onClick={() => setCdlSubcld()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CDL
               </button>
               <button
                 onClick={() => setNoneSubcld()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6102,17 +5970,16 @@ function Prontuario() {
     if (subcleMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>SUBCLÁVIA ESQUERDA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6126,21 +5993,21 @@ function Prontuario() {
               <button
                 onClick={() => setCvcSubcle()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CVC
               </button>
               <button
                 onClick={() => setCdlSubcle()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CDL
               </button>
               <button
                 onClick={() => setNoneSubcle()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6221,17 +6088,16 @@ function Prontuario() {
     if (piardMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>RADIAL DIREITA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6245,14 +6111,14 @@ function Prontuario() {
               <button
                 onClick={() => setPiard()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 PIA
               </button>
               <button
                 onClick={() => setNonePiard()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6326,17 +6192,16 @@ function Prontuario() {
     if (piareMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>RADIAL ESQUERDA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6350,14 +6215,14 @@ function Prontuario() {
               <button
                 onClick={() => setPiare()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 PIA
               </button>
               <button
                 onClick={() => setNonePiare()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6430,17 +6295,16 @@ function Prontuario() {
     if (piapeddMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>PEDIOSA DIREITA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6454,14 +6318,14 @@ function Prontuario() {
               <button
                 onClick={() => setPiapedd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 PIA
               </button>
               <button
                 onClick={() => setNonePiapedd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6535,17 +6399,16 @@ function Prontuario() {
     if (piapedeMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>PEDIOSA ESQUERDA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6559,14 +6422,14 @@ function Prontuario() {
               <button
                 onClick={() => setPiapede()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 PIA
               </button>
               <button
                 onClick={() => setNonePiapede()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6672,17 +6535,16 @@ function Prontuario() {
     if (toraxMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>DRENO TORÁCICO</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6696,28 +6558,28 @@ function Prontuario() {
               <button
                 onClick={() => setToraxD()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 DRENO TÓRAX D
               </button>
               <button
                 onClick={() => setToraxE()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 DRENO TÓRAX E
               </button>
               <button
                 onClick={() => setToraxM()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 DRENO TÓRAX M
               </button>
               <button
                 onClick={() => setToraxNone()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6806,17 +6668,16 @@ function Prontuario() {
     if (svdMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>SONDA VESICAL</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6830,14 +6691,14 @@ function Prontuario() {
               <button
                 onClick={() => setSvd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 SVD
               </button>
               <button
                 onClick={() => setNoneSvd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -6910,17 +6771,16 @@ function Prontuario() {
     if (abdMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>DRENO ABDOMINAL</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -6934,14 +6794,14 @@ function Prontuario() {
               <button
                 onClick={() => setAbd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 DRENO ABDOME
               </button>
               <button
                 onClick={() => setNoneAbd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -7028,17 +6888,16 @@ function Prontuario() {
     if (vfemdMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>VEIA FEMORAL DIREITA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -7052,21 +6911,21 @@ function Prontuario() {
               <button
                 onClick={() => setCvcVfemd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CVC
               </button>
               <button
                 onClick={() => setCdlVfemd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CDL
               </button>
               <button
                 onClick={() => setNoneVfemd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -7161,17 +7020,16 @@ function Prontuario() {
     if (vfemeMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>VEIA FEMORAL ESQUERDA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -7185,21 +7043,21 @@ function Prontuario() {
               <button
                 onClick={() => setCvcVfeme()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CVC
               </button>
               <button
                 onClick={() => setCdlVfeme()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 CDL
               </button>
               <button
                 onClick={() => setNoneVfeme()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -7280,17 +7138,16 @@ function Prontuario() {
     if (afemdMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>ARTÉRIA FEMORAL DIREITA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -7304,14 +7161,14 @@ function Prontuario() {
               <button
                 onClick={() => setAfemd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 PIA
               </button>
               <button
                 onClick={() => setNoneAfemd()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -7384,17 +7241,16 @@ function Prontuario() {
     if (afemeMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>ARTÉRIA FEMORAL ESQUERDA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -7408,14 +7264,14 @@ function Prontuario() {
               <button
                 onClick={() => setAfeme()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 PIA
               </button>
               <button
                 onClick={() => setNoneAfeme()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -7489,17 +7345,16 @@ function Prontuario() {
     if (sncMenu === 1) {
       return (
         <div
-          className="menuposition"
-          style={{
-            left: '82vw',
-          }}>
-          <div className="menucontainer">
+          className="menuposition">
+          <div className="menucontainer" style={{ padding: 10 }}>
+            <div className="title2center" style={{ width: 150, marginBottom: 10 }}>JUGULAR INTERNA DIREITA</div>
             <div
               id="datepicker"
-              className="widget"
+              className="grey-button"
               style={{
-                width: 100,
+                width: 150,
                 height: 50,
+                marginBottom: 10,
               }}
               onClick={() => showDatePicker(1, 1)}
             >
@@ -7513,14 +7368,14 @@ function Prontuario() {
               <button
                 onClick={() => setSnc()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 DVE
               </button>
               <button
                 onClick={() => setNoneSnc()}
                 className="blue-button"
-                style={{ width: window.innerWidth > 800 ? 100 : 75, margin: 2.5 }}
+                style={{ width: window.innerWidth > 800 ? 150 : 75, margin: 2.5 }}
               >
                 LIMPAR
               </button>
@@ -7557,99 +7412,69 @@ function Prontuario() {
     setSncMenu(0);
   };
 
-  // animação para visualização do boneco.
-  const showManequim = (e) => {
-    if (e.pageX > (window.innerWidth - 10)) {
-      document.getElementById("MANEQUIM").className = "supercard manequim-in";
-    } else if (e.pageX < 0.80 * window.innerWidth &&
-      (vaMenu === 1 ||
-        jidMenu === 1 ||
-        jieMenu === 1 ||
-        subcldMenu === 1 ||
-        subcleMenu === 1 ||
-        piardMenu === 1 ||
-        piareMenu === 1 ||
-        toraxMenu === 1 ||
-        svdMenu === 1 ||
-        abdMenu === 1 ||
-        vfemdMenu === 1 ||
-        vfemeMenu === 1 ||
-        afemdMenu === 1 ||
-        afemeMenu === 1 ||
-        sncMenu === 1 ||
-        piapeddMenu === 1 ||
-        piapedeMenu === 1)) {
-    } else if (e.pageX < 0.80 * window.innerWidth) {
-      document.getElementById("MANEQUIM").className = "supercard manequim-out";
-    }
-  }
-
   // RENDERIZAÇÃO DAS INVASÕES.
   const [showinvasoes, setshowinvasoes] = useState(1)
   function ShowInvasoes() {
-    if (showinvasoes === 1 && showlesoes === 0) {
-      return (
-        <div style={{ position: 'relative', disabled: tipousuario != 'TEC' ? true : false }}>
+    return (
+      <div
+        style={{ position: 'relative', disabled: tipousuario != 'TEC' ? true : false }}
+      >
+        <div
+          id="invasoes"
+          // onTouchEnd={() => updateInvasoes()}
+          disabled={tipousuario == 4 ? () => true : false}
+          style={{
+            position: 'sticky',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 5,
+            marginLeft: 0,
+            marginRight: 0,
+          }}
+        >
           <div
-            id="invasoes"
-            onTouchEnd={() => updateInvasoes()}
-            onMouseUp={tipousuario != 4 ? () => updateInvasoes() : null}
-            disabled={tipousuario == 4 ? () => true : false}
+            id="ancora"
+            className="boneco"
             style={{
-              position: 'sticky',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: 5,
-              marginLeft: 0,
-              marginRight: 0,
+              width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '90%',
+              height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '90%',
+              marginBottom: window.innerWidth > 800 ? 0 : 5,
             }}
           >
-            <div
-              id="ancora"
-              className="boneco"
+            <ShowVa></ShowVa>
+            <ShowJid></ShowJid>
+            <ShowJie></ShowJie>
+            <ShowSubcld></ShowSubcld>
+            <ShowSubcle></ShowSubcle>
+            <ShowPiard></ShowPiard>
+            <ShowPiare></ShowPiare>
+            <ShowTorax></ShowTorax>
+            <ShowAbd></ShowAbd>
+            <ShowVfemd></ShowVfemd>
+            <ShowVfeme></ShowVfeme>
+            <ShowSvd></ShowSvd>
+            <ShowAfemd></ShowAfemd>
+            <ShowAfeme></ShowAfeme>
+            <ShowPiapedd></ShowPiapedd>
+            <ShowPiapede></ShowPiapede>
+            <ShowSnc></ShowSnc>
+            <img
+              alt=""
+              src={body}
               style={{
-                width: 0.18 * window.innerWidth,
-                height: 0.9 * window.innerHeight,
-                marginBottom: window.innerWidth > 800 ? 0 : 5,
+                margin: 5,
+                padding: 0,
+                width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '',
+                height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '',
               }}
-            >
-              <ShowVa></ShowVa>
-              <ShowJid></ShowJid>
-              <ShowJie></ShowJie>
-              <ShowSubcld></ShowSubcld>
-              <ShowSubcle></ShowSubcle>
-              <ShowPiard></ShowPiard>
-              <ShowPiare></ShowPiare>
-              <ShowTorax></ShowTorax>
-              <ShowAbd></ShowAbd>
-              <ShowVfemd></ShowVfemd>
-              <ShowVfeme></ShowVfeme>
-              <ShowSvd></ShowSvd>
-              <ShowAfemd></ShowAfemd>
-              <ShowAfeme></ShowAfeme>
-              <ShowPiapedd></ShowPiapedd>
-              <ShowPiapede></ShowPiapede>
-              <ShowSnc></ShowSnc>
-              <img
-                alt=""
-                src={body}
-                style={{
-                  margin: 5,
-                  padding: 0,
-                  width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '',
-                  height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '',
-                }}
-              ></img>
-            </div>
+            ></img>
           </div>
-        </div >
-      );
-    } else {
-      return null;
-    }
-  }
+        </div>
+      </div >
+    );
+  };
 
   // function Cabeçalho.
   function Identificacao() {
@@ -8106,70 +7931,66 @@ function Prontuario() {
 
   // exibição do boneco com as lesões de pressão.
   function ShowLesoes() {
-    if (showinvasoes === 0 && showlesoes === 1) {
-      return (
-        <div style={{ position: 'relative' }} disabled={tipousuario == 4 ? true : false}>
+    return (
+      <div style={{ position: 'relative' }} disabled={tipousuario == 4 ? true : false}>
+        <div
+          id="lesões"
+          style={{
+            position: 'sticky',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            margin: 5,
+            marginLeft: 0,
+            marginRight: 0,
+          }}
+        >
           <div
-            id="lesões"
+            id="ancora"
+            className="boneco"
             style={{
-              position: 'sticky',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
-              margin: 5,
-              marginLeft: 0,
-              marginRight: 0,
+              width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '90%',
+              height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '90%',
+              marginBottom: window.innerWidth > 800 ? 0 : 5,
             }}
           >
-            <div
-              id="ancora"
-              className="boneco"
+            <ShowOccipital></ShowOccipital>
+            <ShowOmbroD></ShowOmbroD>
+            <ShowOmbroE></ShowOmbroE>
+            <ShowEscapulaD></ShowEscapulaD>
+            <ShowEscapulaE></ShowEscapulaE>
+            <ShowCotoveloD></ShowCotoveloD>
+            <ShowCotoveloE></ShowCotoveloE>
+            <ShowSacral></ShowSacral>
+            <ShowIsquioD></ShowIsquioD>
+            <ShowIsquioE></ShowIsquioE>
+            <ShowTrocanterD></ShowTrocanterD>
+            <ShowTrocanterE></ShowTrocanterE>
+            <ShowJoelhoD></ShowJoelhoD>
+            <ShowJoelhoE></ShowJoelhoE>
+            <ShowMaleoloD></ShowMaleoloD>
+            <ShowMaleoloE></ShowMaleoloE>
+            <ShowHaluxD></ShowHaluxD>
+            <ShowHaluxE></ShowHaluxE>
+            <ShowCalcaneoD></ShowCalcaneoD>
+            <ShowCalcaneoE></ShowCalcaneoE>
+            <ShowOrelhaD></ShowOrelhaD>
+            <ShowOrelhaE></ShowOrelhaE>
+            <img
+              alt=""
+              src={dorso}
               style={{
-                width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '90%',
-                height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '90%',
-                marginBottom: window.innerWidth > 800 ? 0 : 5,
+                margin: 5,
+                padding: 10,
+                width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '',
+                height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '',
               }}
-            >
-              <ShowOccipital></ShowOccipital>
-              <ShowOmbroD></ShowOmbroD>
-              <ShowOmbroE></ShowOmbroE>
-              <ShowEscapulaD></ShowEscapulaD>
-              <ShowEscapulaE></ShowEscapulaE>
-              <ShowCotoveloD></ShowCotoveloD>
-              <ShowCotoveloE></ShowCotoveloE>
-              <ShowSacral></ShowSacral>
-              <ShowIsquioD></ShowIsquioD>
-              <ShowIsquioE></ShowIsquioE>
-              <ShowTrocanterD></ShowTrocanterD>
-              <ShowTrocanterE></ShowTrocanterE>
-              <ShowJoelhoD></ShowJoelhoD>
-              <ShowJoelhoE></ShowJoelhoE>
-              <ShowMaleoloD></ShowMaleoloD>
-              <ShowMaleoloE></ShowMaleoloE>
-              <ShowHaluxD></ShowHaluxD>
-              <ShowHaluxE></ShowHaluxE>
-              <ShowCalcaneoD></ShowCalcaneoD>
-              <ShowCalcaneoE></ShowCalcaneoE>
-              <ShowOrelhaD></ShowOrelhaD>
-              <ShowOrelhaE></ShowOrelhaE>
-              <img
-                alt=""
-                src={dorso}
-                style={{
-                  margin: 5,
-                  padding: 10,
-                  width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '',
-                  height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '',
-                }}
-              ></img>
-            </div>
+            ></img>
           </div>
         </div>
-      );
-    } else {
-      return null;
-    }
+      </div>
+    );
   }
 
   // carregando as lesões de pressão do paciente.
@@ -8700,21 +8521,45 @@ function Prontuario() {
       return (
         <div className="menucover" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <div className="menucontainer">
-            <label
-              className="title2"
-              style={{ marginTop: 0, marginBottom: 15 }}
-            >
-              {'LESÃO ' + locallesao}
-            </label>
-            <div className="scroll" style={{ height: 0.5 * window.innerHeight, minHeight: 0.5 * window.innerHeight, display: 'flex', justifyContent: 'flex-start', paddingRight: 5 }}>
+            <div id="cabeçalho" className="cabecalho">
+              <div className="title5">{'LESÃO ' + locallesao}</div>
+              <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <button className="red-button" onClick={() => setshowinfolesoes(0)}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+                <button className="green-button"
+                  onClick={() => updateLesoes()}
+                >
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+              </div>
+            </div>
+            <div
+              className="corpo">
               <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <label className="title2" style={{ marginTop: 15 }}>ABERTURA:</label>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', mrginRight: 10 }}>
+                  <label className="title2">ABERTURA:</label>
                   <button
                     id="datepicker1"
-                    className="widget"
+                    className="grey-button"
                     style={{
-                      width: 100,
+                      width: 150,
                       height: 50,
                     }}
                     onClick={() => showDatePicker(1, 1)}
@@ -8723,12 +8568,12 @@ function Prontuario() {
                   </button>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <label className="title2" style={{ marginTop: 15 }}>FECHAMENTO:</label>
+                  <label className="title2">FECHAMENTO:</label>
                   <div
                     id="datepicker2"
-                    className="widget"
+                    className="grey-button"
                     style={{
-                      width: 100,
+                      width: 150,
                       height: 50,
                     }}
                     onClick={() => showDatePicker(1, 2)}
@@ -8744,35 +8589,35 @@ function Prontuario() {
                 <button
                   className={estagiolesao == 1 ? "red-button" : "blue-button"}
                   onClick={() => setestagiolesao(1)}
-                  style={{ width: window.innerWidth > 800 ? 100 : '100%' }}
+                  style={{ width: 150 }}
                 >
                   ESTÁGIO 1
                 </button>
                 <button
                   className={estagiolesao == 2 ? "red-button" : "blue-button"}
                   onClick={() => setestagiolesao(2)}
-                  style={{ width: window.innerWidth > 800 ? 100 : '100%' }}
+                  style={{ width: 150 }}
                 >
                   ESTÁGIO 2
                 </button>
                 <button
                   className={estagiolesao == 3 ? "red-button" : "blue-button"}
                   onClick={() => setestagiolesao(3)}
-                  style={{ width: window.innerWidth > 800 ? 100 : '100%' }}
+                  style={{ width: 150 }}
                 >
                   ESTÁGIO 3
                 </button>
                 <button
                   className={estagiolesao == 4 ? "red-button" : "blue-button"}
                   onClick={() => setestagiolesao(4)}
-                  style={{ width: window.innerWidth > 800 ? 100 : '100%' }}
+                  style={{ width: 150 }}
                 >
                   ESTÁGIO 4
                 </button>
                 <button
                   className={estagiolesao == 5 ? "red-button" : "blue-button"}
                   onClick={() => setestagiolesao(5)}
-                  style={{ width: window.innerWidth > 800 ? 100 : '100%', padding: 10 }}
+                  style={{ width: 150, padding: 10 }}
                 >
                   NÃO CLASSIFICÁVEL
                 </button>
@@ -8783,7 +8628,7 @@ function Prontuario() {
               <button
                 className="blue-button"
                 onClick={() => setshowcurativoslist(1)}
-                style={{ paddingLeft: 10, paddingRight: 10, width: 250 }}
+                style={{ paddingLeft: 10, paddingRight: 10, width: '100%' }}
               >
                 {curativolesao}
               </button>
@@ -8799,7 +8644,7 @@ function Prontuario() {
                 onMouseLeave={(e) => setobservacoeslesao(e.target.value)}
                 title="INFORMAR AQUI OBSERVAÇÕES E OUTROS DETALHES REFERENTES À LESÃO."
                 style={{
-                  width: window.innerWidth > 800 ? 0.4 * window.innerWidth : 250,
+                  width: '100%',
                   minHeight: tipousuario === 1 || 5 ? 125 : 290, // médico ou enfermeira.
                 }}
                 type="text"
@@ -8807,48 +8652,6 @@ function Prontuario() {
                 defaultValue={observacoeslesao}
                 id="inputObservacoesLesao"
               ></textarea>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <button
-                className="green-button"
-                onClick={() => updateLesoes()}
-                style={{
-                  width: 50,
-                  margin: 2.5,
-                  marginTop: 25,
-                  flexDirection: 'column',
-                }}
-              >
-                <img
-                  alt=""
-                  src={salvar}
-                  style={{
-                    margin: 10,
-                    height: 30,
-                    width: 30,
-                  }}
-                ></img>
-              </button>
-              <button
-                className="red-button"
-                onClick={() => setshowinfolesoes(0)}
-                style={{
-                  width: 50,
-                  margin: 2.5,
-                  marginTop: 25,
-                  flexDirection: 'column',
-                }}
-              >
-                <img
-                  alt=""
-                  src={deletar}
-                  style={{
-                    margin: 10,
-                    height: 30,
-                    width: 30,
-                  }}
-                ></img>
-              </button>
             </div>
           </div>
         </div>
@@ -9725,11 +9528,11 @@ function Prontuario() {
             width: 300,
             height: '100%',
             padding: 10, paddingLeft: 0,
-            boxShadow: '0 0 0.5em black'
+            boxShadow: '0 0 0.5em black',
           }}
         >
           <div className="title2" style={{ color: "#ffffff" }}>{'LISTA DE PACIENTES:  ' + nomeunidade}</div>
-          <div className="scroll" style={{ height: 0.8 * window.innerHeight, width: '100%', justifyContent: 'flex-start', borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
+          <div className="scrolldrop" style={{ height: 0.8 * window.innerHeight, width: '100%', justifyContent: 'flex-start', borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
             {listatendimentos.filter(item => item.hospital == nomehospital && item.unidade == nomeunidade && item.ativo > 0).map((item) => (
               <div
                 key={item.id}
@@ -9770,7 +9573,7 @@ function Prontuario() {
     <div
       className="main fade-in"
       id="PRINCIPAL"
-      onMouseMove={(e) => { showSideBar(e); showManequim(e) }}
+      onMouseMove={(e) => { showSideBar(e) }}
       style={{
         display: 'flex',
         margin: 0,
@@ -9787,7 +9590,7 @@ function Prontuario() {
       <div
         style={{
           display: window.innerWidth < 800 ? 'flex' : 'none',
-          position: 'fixed', bottom: 10, right: 10, zIndex: 1,
+          position: 'fixed', bottom: 10, left: 10, zIndex: 1,
         }}
       >
         <ButtonMobileMenu></ButtonMobileMenu>
@@ -10003,6 +9806,7 @@ function Prontuario() {
       <div id="POPUPS">
         <Toast valortoast={valortoast} cor={cor} mensagem={mensagem} tempo={tempo} />
         <DatePicker valordatepicker={valordatepicker} mododatepicker={mododatepicker} />
+        <ShowMenuSnc></ShowMenuSnc>
         <ShowMenuVa></ShowMenuVa>
         <ShowMenuJid></ShowMenuJid>
         <ShowMenuJie></ShowMenuJie>
@@ -10019,7 +9823,8 @@ function Prontuario() {
         <ShowMenuAfeme></ShowMenuAfeme>
         <ShowMenuPiapedd></ShowMenuPiapedd>
         <ShowMenuPiapede></ShowMenuPiapede>
-        <ShowMenuSnc></ShowMenuSnc>
+        <ShowInfoLesoes></ShowInfoLesoes>
+        <ShowCurativosList></ShowCurativosList>
         <ChangeStatus></ChangeStatus>
         <ChangePrecaucao></ChangePrecaucao>
         <UpdateVm></UpdateVm>
@@ -10056,17 +9861,6 @@ function Prontuario() {
         </div>
         <Menu></Menu>
         <SideBar></SideBar>
-        <div
-          id="MANEQUIM"
-          className="supercard"
-          style={{
-            display: tipounidade == 4 || stateprontuario == 9 ? 'none' : 'flex',
-          }}
-        >
-          <ShowInvasoes></ShowInvasoes>
-          <ShowInfoLesoes></ShowInfoLesoes>
-          <ShowCurativosList></ShowCurativosList>
-        </div>
         <UpdateAtendimento viewupdateatendimento={viewupdateatendimento}></UpdateAtendimento>
         <GetSpeech></GetSpeech>
         <ShowSpeech></ShowSpeech>

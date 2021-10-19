@@ -87,6 +87,29 @@ function Ambulatorio() {
     }
   }, [tipounidade])
 
+  function CabecalhoSelecionarPaciente() {
+    return (
+      <div className="scrollheader">
+        <div className="rowheader">
+          <button
+            className="header-button"
+            title="NOME."
+            style={{ minWidth: 150, width: '100%', margin: 2.5 }}
+          >
+            NOME
+          </button>
+          <button
+            className="rowitemheader"
+            title="DATA DE NASCIMENTO."
+            style={{ minWidth: 50, width: '30%', margin: 2.5 }}
+          >
+            DATA DE NASCIMENTO
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   const [viewlistpacientes, setviewlistpacientes] = useState(0);
   function ShowPacientesSelector() {
     return (
@@ -94,7 +117,9 @@ function Ambulatorio() {
         className="menucover"
         onClick={() => setviewlistpacientes(0)}
         style={{ zIndex: 9, display: viewlistpacientes == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="menucontainer" style={{ padding: 10 }} onClick={(e) => e.stopPropagation()}>
+        <div className="menucontainer"
+          style={{ padding: 10, width: window.innerWidth > 400 ? '80vw' : '100vw' }}
+          onClick={(e) => e.stopPropagation()}>
           <input
             className="input"
             autoComplete="off"
@@ -111,18 +136,19 @@ function Ambulatorio() {
             maxLength={100}
             defaultValue={filtrapaciente}
           ></input>
+          <CabecalhoSelecionarPaciente></CabecalhoSelecionarPaciente>
           <div
             className="scroll"
             id="LISTA DE PACIENTES"
             style={{
-              height: '50vh',
-              width: '40vw',
+              height: window.innerWidth < 400 ? '100vh' : '50vh',
+              width: '100%',
             }}
           >
             {arraypacientes.sort(((a, b) => a.nome > b.nome ? 1 : -1)).map((item) => (
               <div
                 key={item.id}
-                className="row" style={{ width: '100%' }}
+                className="row"
                 onClick={(e) => { selectPaciente(item); e.stopPropagation() }}>
                 <button
                   className="hover-button"
@@ -134,13 +160,41 @@ function Ambulatorio() {
                 <button
                   className="rowitem"
                   title="DATA DE NASCIMENTO."
-                  style={{ minWidth: 50, width: 100, margin: 2.5 }}
+                  style={{ minWidth: 50, width: '30%', margin: 2.5 }}
                 >
                   {item.dn}
                 </button>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+    )
+  }
+
+  function CabecalhoSelecionarMedico() {
+    return (
+      <div className="scrollheader">
+        <div className="rowheader">
+          <button
+            className="header-button"
+            title="NOME."
+            style={{ minWidth: 150, width: '100%', margin: 2.5 }}
+          >
+            NOME
+          </button>
+          <button
+            className="rowitemheader"
+            style={{ display: window.innerWidth > 400 ? 'flex' : 'none', minWidth: 50, width: '50%', margin: 2.5 }}
+          >
+            ESPECIALIDADE
+          </button>
+          <button
+            className="rowitemheader"
+            style={{ minWidth: 50, width: '50%', margin: 2.5 }}
+          >
+            ESPECIALIDADE
+          </button>
         </div>
       </div>
     )
@@ -153,7 +207,9 @@ function Ambulatorio() {
         className="menucover"
         onClick={(e) => { setviewlistmedicos(0); e.stopPropagation() }}
         style={{ zIndex: 9, display: viewlistmedicos == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="menucontainer" style={{ padding: 10 }} onClick={(e) => e.stopPropagation()}>
+        <div className="menucontainer"
+          style={{ padding: 10, width: window.innerWidth > 400 ? '80vw' : '100vw' }}
+          onClick={(e) => e.stopPropagation()}>
           <input
             className="input"
             autoComplete="off"
@@ -170,12 +226,13 @@ function Ambulatorio() {
             maxLength={100}
             defaultValue={filtramedico}
           ></input>
+          <CabecalhoSelecionarMedico></CabecalhoSelecionarMedico>
           <div
             className="scroll"
             id="LISTA DE MÉDICOS"
             style={{
-              height: '50vh',
-              width: '70vw',
+              height: window.innerWidth < 400 ? '100vh' : '50vh',
+              width: '100%',
             }}
           >
             {arraymedicos.sort(((a, b) => a.nome > b.nome ? 1 : -1)).map((item) => (
@@ -197,14 +254,14 @@ function Ambulatorio() {
                 <div
                   className="rowitem"
                   title="CONSELHO."
-                  style={{ display: window.innerWidth > 800 ? 'flex' : 'none', minWidth: '15vw', width: '15vw', margin: 2.5 }}
+                  style={{ display: window.innerWidth > 400 ? 'flex' : 'none', width: '50%', margin: 2.5 }}
                 >
                   {item.conselho}
                 </div>
                 <div
                   className="rowitem"
                   title="ESPECIALIDADE."
-                  style={{ width: window.innerWidth > 800 ? 300 : 150, margin: 2.5 }}
+                  style={{ width: '50%', margin: 2.5 }}
                 >
                   {item.especialidade}
                 </div>
@@ -225,15 +282,17 @@ function Ambulatorio() {
   // cabeçalho para lista de consultas agendadas.
   function CabecalhoListaDeConsultas() {
     return (
-      <div className="rowheader" style={{ marginBottom: 0, paddingBottom: -10, paddingLeft: 20, paddingRight: 40, opacity: 0.3, fontSize: 12 }}>
-        <div className="rowitem" style={{ width: '50%' }}>
-          NOME DO PACIENTE
-        </div>
-        <div className="rowitem" style={{ width: '20%' }}>
-          DATA E HORA
-        </div>
-        <div className="rowitem" style={{ width: '30%' }}>
-          PROFISSIONAL
+      <div className="scrollheader">
+        <div className="rowheader" style={{ paddingRight: 15 }} /* paddingRight necessário para corrigir a presença dos botões animados (ocultos)*/>
+          <div className="rowitemheader" style={{ width: '100%' }}>
+            NOME DO PACIENTE
+          </div>
+          <div className="rowitemheader" style={{ width: '20%' }}>
+            {window.innerWidth > 400 ? 'DATA E HORA' : 'DATA'}
+          </div>
+          <div className="rowitemheader" style={{ display: window.innerWidth > 400 ? 'flex' : 'none', width: '60%' }}>
+            PROFISSIONAL
+          </div>
         </div>
       </div>
     )
@@ -254,15 +313,23 @@ function Ambulatorio() {
           paddingTop: 0,
           paddingBottom: 0,
         }}>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', height: '100%', verticalAlign: 'center' }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: window.innerWidth > 400 ? 'row' : 'column',
+            justifyContent: window.innerWidth > 400 ? 'center' : 'flex-start',
+            height: '100%', verticalAlign: 'center'
+          }}>
           <DatePicker></DatePicker>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', width: '100%' }}>
+          <div
+            className="scrollgroup"
+            style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', width: '100%' }}>
             <CabecalhoListaDeConsultas></CabecalhoListaDeConsultas>
             <div
               className="scroll"
               id="LISTA DE CONSULTAS"
               style={{
-                height: 0.85 * window.innerHeight - 60, paddingTop: 0,
+                height: 0.85 * window.innerHeight - 60,
               }}
             >
               {atendimentos.filter(item => JSON.stringify(item.admissao).substring(1, 11) == pickdate1).map((item) => (
@@ -275,13 +342,13 @@ function Ambulatorio() {
                     id="lista de consultas ambulatoriais"
                     onClick={() => selecionarConsulta(item)}
                   >
-                    <div className="rowitem" style={{ width: '50%' }}>
+                    <div className="rowitem" style={{ width: '100%' }}>
                       {item.nome}
                     </div>
                     <div className="rowitem" style={{ width: '20%' }}>
                       {item.admissao}
                     </div>
-                    <div className="rowitem" style={{ width: '30%' }}>
+                    <div className="rowitem" style={{ width: '60%', display: window.innerWidth > 400 ? 'flex' : 'none' }}>
                       {'DR(A). ' + item.assistente}
                     </div>
                   </div>
@@ -399,12 +466,11 @@ function Ambulatorio() {
               borderRadius: 5,
             }}>
             <div
-              className="secondary"
+              className="title2"
               style={{
                 alignItems: 'center',
                 textAlign: 'center',
                 width: 400,
-                color: '#1f7a8c',
                 fontWeight: 'bold',
               }}>
               {'CONFIRMAR CANCELAMENTO DA CONSULTA?'}
@@ -447,12 +513,13 @@ function Ambulatorio() {
     }
   };
 
-  // função para excluir o registro de cirurgia agendada no banco de dados.
+  // função para excluir o registro de consulta agendada no banco de dados.
   const deleteConsulta = () => {
-    axios.get(html + '/deleteatendimento/' + idatendimento).then(() => {
-      setmodaldeleteconsulta(0);
+    setmodaldeleteconsulta(0);
+    axios.get(html + '/deleteatendimento/' + idatendimento);
+    setTimeout(() => {
       loadAtendimentos();
-    });
+    }, 2000);
   }
 
   // filtrando pacientes e médicos para agendamento de consulta ambulatorial.
@@ -591,15 +658,16 @@ function Ambulatorio() {
           justifyContent: 'center',
           backgroundColor: 'transparent',
           zIndex: 1,
-          margin: window.innerWidth < 800 ? 5 : 0,
+          margin: window.innerWidth < 400 ? 5 : 0,
           padding: 15,
-          width: window.innerWidth > 800 ? '' : 0.95 * window.innerWidth,
+          width: window.innerWidth > 400 ? '' : 0.95 * window.innerWidth,
           height: '100%',
+          alignSelf: 'center',
         }}>
         <div style={{
           display: 'flex',
           flexDirection: 'row',
-          width: '395',
+          width: '100%',
           alignItems: 'center',
           justifyContent: 'center',
           padding: 5,
@@ -810,11 +878,11 @@ function Ambulatorio() {
                   />
                 </div>
               </div>
-              <div style={{ display: 'flex', flexDirection: window.innerWidth > 800 ? 'row' : 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                  <div className="title2" style={{ fontSize: 14 }}>PACIENTE:</div>
+              <div style={{ display: 'flex', flexDirection: window.innerWidth > 800 ? 'row' : 'column', justifyContent: 'center', alignItems: 'center', width: '80vw' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                  <div className="title2">PACIENTE:</div>
                   <button
-                    className="blue-button" style={{ width: '30vw', padding: 10 }}
+                    className="blue-button" style={{ width: '100%', padding: 10 }}
                     onClick={() => {
                       setnomepaciente('');
                       setfiltrapaciente('');
@@ -826,10 +894,10 @@ function Ambulatorio() {
                     {nomepaciente}
                   </button>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: 5 }}>
-                  <div className="title2" style={{ fontSize: 14 }}>MÉDICO:</div>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginLeft: 5, width: '100%' }}>
+                  <div className="title2">MÉDICO:</div>
                   <button
-                    className="blue-button" style={{ width: '30vw', padding: 10 }}
+                    className="blue-button" style={{ width: '100%', padding: 10 }}
                     onClick={() => {
                       setmedico('');
                       setfiltramedico('');
@@ -903,12 +971,22 @@ function Ambulatorio() {
       }}
     >
       <Header link={"/unidades"} titulo={'AMBULATORIO: ' + nomeunidade}></Header>
-      <ShowAgendaAmbulatorio></ShowAgendaAmbulatorio>
-      <TelaConsulta></TelaConsulta>
-      <DatePickerPopUp valordatepicker={valordatepicker} mododatepicker={mododatepicker} />
-      <ShowPacientesSelector></ShowPacientesSelector>
-      <ShowMedicosSelector></ShowMedicosSelector>
-      <ModalDeleteConsulta></ModalDeleteConsulta>
+      <div style={{ width: '100vw', display: window.innerWidth > 400 ? 'flex' : 'none' }}>
+        <ShowAgendaAmbulatorio></ShowAgendaAmbulatorio>
+        <TelaConsulta></TelaConsulta>
+        <DatePickerPopUp valordatepicker={valordatepicker} mododatepicker={mododatepicker} />
+        <ShowPacientesSelector></ShowPacientesSelector>
+        <ShowMedicosSelector></ShowMedicosSelector>
+        <ModalDeleteConsulta></ModalDeleteConsulta>
+      </div>
+      <div className="scroll" style={{ display: window.innerWidth < 400 ? 'flex' : 'none' }}>
+        <ShowAgendaAmbulatorio></ShowAgendaAmbulatorio>
+        <TelaConsulta></TelaConsulta>
+        <DatePickerPopUp valordatepicker={valordatepicker} mododatepicker={mododatepicker} />
+        <ShowPacientesSelector></ShowPacientesSelector>
+        <ShowMedicosSelector></ShowMedicosSelector>
+        <ModalDeleteConsulta></ModalDeleteConsulta>
+      </div>
       <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo} />
     </div>
   );

@@ -25,7 +25,7 @@ function Header({ link, titulo }) {
         alignItems: 'center',
         margin: 0,
         padding: 0,
-        width: '100%',
+        width: '100vw',
         height: '18vh',
         backgroundColor: 'grey',
         boxShadow: '0px 1px 5px 1px rgba(0, 0, 0, 0.3)',
@@ -36,7 +36,7 @@ function Header({ link, titulo }) {
         id="logo"
         src={logo}
         style={{
-          display: link !== "/prontuario" ? 'flex' : 'none',
+          display: link !== "/prontuario" && window.innerWidth > 400 ? 'flex' : 'none',
           margin: 5, marginLeft: 10,
           padding: 10,
           height: 0.15 * window.innerHeight,
@@ -60,8 +60,11 @@ function Header({ link, titulo }) {
       <div
         className="title1"
         style={{
+          alignSelf: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
           color: '#ffffff',
-          fontSize: window.innerWidth < 800 ? 18 : 22,
+          width: '100%',
           padding: 5,
         }}
       >
@@ -77,15 +80,23 @@ function Header({ link, titulo }) {
       >
         <div
           className="title2"
-          style={{ fontSize: 14, color: '#ffffff', textAlign: 'right' }}
+          // style={{position: 'absolute', top: 10, right: 10, fontSize: 14}}
+          style={{
+            justifyContent: 'flex-end', marginRight: 0,
+            height: window.innerWidth > 400 ? 30 : 20,
+            maxHeight: window.innerWidth > 400 ? 20 : 30,
+            verticalAlign: 'center',
+            width: window.innerWidth > 400 ? 200 : 100,
+            color: '#ffffff', textAlign: 'right',
+          }}
         >
-          {'OLÁ, ' + nomeusuario}
+          {'OLÁ, ' + JSON.stringify(nomeusuario).substring(2, JSON.stringify(nomeusuario).length - 2).split(" ").slice(0, 1)}
         </div>
         <div
           style={{
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             alignItems: 'flex-end',
           }}
         >

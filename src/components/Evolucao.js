@@ -51,8 +51,6 @@ function Evolucao(
   // chave para exibição do componente.
   const [viewcomponent, setviewcomponent] = useState(viewevolucao);
 
-
-
   // capturando dados vitais do último balanço (preenchido pelo técnico de enfermagem):
   const getLastBalanco = () => {
     // alert(listbalancos.slice(-1).map(item => item.pas))
@@ -853,11 +851,11 @@ function Evolucao(
   // renderização do componente.
   if (viewcomponent !== 0) {
     return (
-      <div className="menucover fade-in" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div className="menucover fade-in">
         <Toast valortoast={valortoast} cor={cor} mensagem={mensagem} tempo={tempo} />
-        <div className="menucontainer" style={{ width: 0.9 * window.innerWidth, height: 0.9 * window.innerHeight, justifyContent: 'flex-start' }}>
+        <div className="menucontainer" style={{ height: '100vh', width: '100vw', borderRadius: 0 }}>
           <div id="cabeçalho" className="cabecalho">
-            <div className="title5">{viewcomponent == 1 ? 'INSERIR EVOLUÇÃO' : 'EDITAR EVOLUÇÃO'}</div>
+            <div>{viewcomponent == 1 ? 'INSERIR EVOLUÇÃO' : 'EDITAR EVOLUÇÃO'}</div>
             <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
               <button className="red-button" onClick={() => setviewcomponent(0)}>
                 <img
@@ -871,9 +869,7 @@ function Evolucao(
                 ></img>
               </button>
               <button className="green-button"
-                onClick={viewcomponent == 1 ? () => insertData() : () => updateData()}
-              // onMouseOver={() => poop == '' ? toast(1, '#ec7063', 'FAVOR INFORMAR EVACUAÇÃO.', 3000) : null}
-              >
+                onClick={viewcomponent == 1 ? () => insertData() : () => updateData()}>
                 <img
                   alt=""
                   src={salvar}
@@ -889,12 +885,15 @@ function Evolucao(
           <div className="corpo"
             style={{
               display: 'flex', flexDirection: 'row', justifyContent: 'center',
-              alignItems: 'center', padding: 20, height: '100%', width: '100%',
+              alignItems: 'center', padding: 0, margin: 0, height: '100vh', width: '100vw',
             }}
           >
             <div id="MENU DA EVOLUÇÃO"
               className="widget"
-              style={{ flexDirection: 'column', width: 200, backgroundColor: 'grey', margin: 10 }}
+              style={{
+                display: window.innerWidth > 400 ? 'flex' : 'none',
+                flexDirection: 'column', width: '20vw', backgroundColor: 'grey', margin: 10
+              }}
             >
               <button className={page == 1 ? "red-button" : "blue-button"} style={{ width: '100%', margin: 10 }} onClick={() => setpage(1)}>
                 EVOLUÇÃO
@@ -912,10 +911,12 @@ function Evolucao(
             <div id="PÁGINAS DA EVOLUÇÃO"
               style={{
                 display: 'flex', flexDirection: 'column', justifyContent: 'center',
-                alignItems: 'center', margin: 5, width: '100%', height: '100%',
+                alignItems: 'center', margin: 0, padding: 0,
+                width: window.innerWidth > 400 ? '70vw' : '80vw',
+                height: window.innerWidth > 400 ? '70vh' : '80vh',
               }}>
               <div id="EVOLUÇÃO(TEXTO)"
-                style={{ display: page == 1 ? 'flex' : 'none', padding: 20, width: '100%', height: '100%' }}>
+                style={{ display: page == 1 ? 'flex' : 'none', width: '100%', height: '100%', padding: 5 }}>
                 <textarea
                   autoComplete="off"
                   className="textarea"
@@ -927,7 +928,7 @@ function Evolucao(
                   style={{
                     width: '100%',
                     height: '100%',
-                    margin: 0,
+                    padding: 0, margin: 0,
                   }}
                   type="text"
                   maxLength={600}
@@ -1437,7 +1438,7 @@ function Evolucao(
             </div>
           </div>
         </div>
-      </div>
+      </div >
     )
   } else {
     return null;

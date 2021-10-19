@@ -27,6 +27,7 @@ function Hospitais() {
   function ShowHospitais() {
     return (
       <div
+        className="scrollgroup"
         style={{
           display: 'flex',
           width: window.innerWidth,
@@ -41,13 +42,12 @@ function Hospitais() {
             display: 'flex',
             flexDirection: window.innerWidth < 800 ? 'column' : 'row',
             justifyContent: 'flex-start',
-            width: '100%',
+            width: '100vw',
             height: '82vh',
             flexWrap: window.innerWidth < 800 ? 'nowrap' : 'wrap',
             alignItems: 'flex-start',
             borderRadius: 5,
             margin: 0,
-            paddingRight: 20,
           }}
         >
           {hospitais.map((item) => GetData(item))}
@@ -153,9 +153,10 @@ function Hospitais() {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          alignSelf: window.innerWidth < 400 ? 'center' : 'flex-start',
           borderRadius: 5,
           padding: 10,
-          width: window.innerWidth < 800 ? '95%' : 0.217 * window.innerWidth,
+          width: window.innerWidth < 400 ? '95%' : '21vw',
         }}
       >
         <p
@@ -230,6 +231,7 @@ function Hospitais() {
                 margin: 2.5,
                 marginTop: 10,
                 padding: 0,
+                fontSize: 14,
               }}
             >
               {'OCUPAÇÃO: ' +
@@ -318,12 +320,12 @@ function Hospitais() {
     <div
       className="main fade-in"
       style={{
-        display: 'flex',
+        display: renderchart == 1 ? 'flex' : 'none',
         flexDirection: 'column',
         justifyContent: 'flex-start',
         verticalAlign: 'center',
         overflowX: 'hidden',
-        overflowY: window.innerWidth > 800 ? 'hidden' : 'scroll',
+        overflowY: 'hidden',
         margin: 0,
         padding: 0,
         height: window.innerHeight,

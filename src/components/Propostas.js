@@ -215,8 +215,9 @@ function Propostas(
                 onBlur={(e) => (e.target.placeholder = 'PROPOSTA...')}
                 title="PROPOSTA."
                 style={{
-                  width: 0.4 * window.innerWidth,
+                  width: '100%',
                   height: 100,
+                  alignSelf: 'center',
                 }}
                 type="text"
                 maxLength={200}

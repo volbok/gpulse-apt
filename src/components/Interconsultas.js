@@ -231,7 +231,7 @@ function Interconsultas(
             <button
               className="blue-button"
               style={{
-                width: 250,
+                width: '100%',
                 padding: 10,
               }}
               onClick={() => setshowespecialidades(1)}

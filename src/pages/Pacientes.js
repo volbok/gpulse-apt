@@ -95,12 +95,59 @@ function Pacientes() {
   // cabeçalho da lista de pacientes (unidades de internação).
   function CabecalhoInternacao() {
     return (
-      <div className="rowheader" style={{ marginBottom: 0, paddingBottom: -10, paddingLeft: 25, paddingRight: 25, opacity: 0.3, fontSize: 12 }}>
-        <div className="rowitem" style={{ width: 50, margin: 2.5, textAlign: 'center', alignSelf: 'center' }}>BOX</div>
-        <div className="rowitem" style={{ width: '70%', margin: 2.5, textAlign: 'center', alignSelf: 'center' }}>PACIENTE</div>
-        <div className="rowitem" style={{ width: '20%', margin: 2.5, textAlign: 'center', alignSelf: 'center' }}>IDADE</div>
-        <div className="rowitem" style={{ width: '30%', margin: 2.5, textAlign: 'center', alignSelf: 'center' }}>DIAS DE INTERNAÇÃO</div>
-        <div className="rowitem" style={{ width: '30%', margin: 2.5, textAlign: 'center', alignSelf: 'center' }}>MÉDICO ASSISTENTE</div>
+      <div
+        className="scrollheader"
+        id="CABEÇALHO DA LISTA DE PACIENTES INTERNADOS"
+      >
+        <div className="rowheader">
+          <button
+            className="header-button"
+            style={{ backgroundColor: 'transparent' }}
+            title="BOX"
+            disabled="true"
+          >
+            BOX
+          </button>
+          <button
+            className="header-button"
+            style={{
+              width: '100%'
+            }}
+          >
+            <div>
+              NOME
+            </div>
+          </button>
+          <button
+            className="rowitemheader"
+            style={{
+              display: window.innerWidth < 400 ? 'none' : 'flex',
+              width: '20%',
+            }}
+          >
+            IDADE
+          </button>
+          <button
+            className="rowitemheader"
+            style={{
+              display: window.innerWidth < 400 ? 'none' : 'flex',
+              width: '30%',
+            }}
+          >
+            TEMPO DE INTERNAÇÃO
+          </button>
+          <button
+            className="rowitemheader"
+            style={{
+              display: window.innerWidth < 400 ? 'none' : 'flex',
+              width: '30%',
+            }}
+          >
+            <div>
+              MÉDICO ASSISTENTE
+            </div>
+          </button>
+        </div>
       </div>
     )
   }
@@ -110,7 +157,10 @@ function Pacientes() {
     if (atendimentos.length > 0) {
       return (
         <div
-          className="scroll" style={{ paddingTop: 0 }}
+          className="scroll"
+          style={{
+            height: '40vh',
+          }}
           id="LISTA DE PACIENTES"
         >
           {atendimentos.sort(((a, b) => a.box > b.box ? 1 : -1)).map((item) => (
@@ -123,7 +173,7 @@ function Pacientes() {
               }}
             >
               <button
-                className="widget"
+                className="grey-button"
                 style={{ minWidth: 50, margin: 2.5, color: '#ffffff', backgroundColor: 'grey' }}
                 title="BOX"
                 disabled="true"
@@ -139,8 +189,8 @@ function Pacientes() {
                     item.status == 1 ? "INSTÁVEL. CLIQUE PARA EVOLUIR." : item.status == 2 ? "EM ALERTA. CLIQUE PARA EVOLUIR." : item.status == 3 ? "ESTÁVEL. CLIQUE PARA EVOLUIR." : item.status == 4 ? "CONFORTO. CLIQUE PARA EVOLUIR." : "STATUS NÃO DEFINIDO. CLIQUE PARA EVOLUIR."
                 }
                 style={{
-                  width: '70%',
-                  backgroundColor: item.status == 1 ? "#ec7063" : item.status == 2 ? "#f4d03f" : item.status == 3 ? "#52be80" : item.status == 4 ? "lihgtgrey" : "blue-button"
+                  width: '100%',
+                  backgroundColor: item.status == 1 ? "#ec7063" : item.status == 2 ? "#f4d03f" : item.status == 3 ? "#52be80" : item.status == 4 ? "lihgtgrey" : ""
                 }}
               >
                 <div>
@@ -150,7 +200,7 @@ function Pacientes() {
               <button
                 className="rowitem"
                 style={{
-                  display: window.innerWidth < 800 ? 'none' : 'flex',
+                  display: window.innerWidth < 400 ? 'none' : 'flex',
                   width: '20%',
                 }}
               >
@@ -162,6 +212,7 @@ function Pacientes() {
               <button
                 className="rowitem"
                 style={{
+                  display: window.innerWidth < 400 ? 'none' : 'flex',
                   width: '30%',
                 }}
               >
@@ -170,7 +221,7 @@ function Pacientes() {
               <button
                 className="rowitem"
                 style={{
-                  display: window.innerWidth < 800 ? 'none' : 'flex',
+                  display: window.innerWidth < 400 ? 'none' : 'flex',
                   width: '30%',
                 }}
               >
@@ -197,10 +248,10 @@ function Pacientes() {
         >
           <div className="title2"
             style={{
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 10,
-              padding: 0,
+              fontSize: 16,
+              opacity: 0.5,
+              alignSelf: 'center',
+              textAlign: 'center',
             }}>
             {'NÃO HÁ PACIENTES INTERNADOS NESTA UNIDADE.'}
           </div>
@@ -310,13 +361,69 @@ function Pacientes() {
 
   function CabecalhoPa() {
     return (
-      <div className="rowheader" style={{ marginBottom: 0, paddingBottom: 0, paddingLeft: 15, paddingRight: 35, opacity: 0.3, fontSize: 12 }}>
-        <div className="rowitem" style={{ width: '15%', textAlign: 'center', alignSelf: 'center' }}>ADMISSÃO</div>
-        <div className="rowitem" style={{ width: '15%', textAlign: 'center', alignSelf: 'center' }}>TEMPO DE ESPERA</div>
-        <div className="rowitem" style={{ width: 50, textAlign: 'center', alignSelf: 'center' }}>BOX</div>
-        <div className="rowitem" style={{ width: '55%', textAlign: 'center', alignSelf: 'center', marginRight: 15 }}>PACIENTE</div>
-        <div className="rowitem" style={{ width: 50, textAlign: 'center', alignSelf: 'center' }}></div>
-        <div className="rowitem" style={{ width: '15%', textAlign: 'center', alignSelf: 'center' }}>IDADE</div>
+      <div
+        className="scrollheader"
+        id="CABEÇALHO DA LISTA DE PACIENTES NO PRONTO-ATENDIMENTO"
+      >
+        <div className="rowheader">
+          <button
+            className="rowitem"
+            title="HORA DE ENTRADA."
+            style={{
+              display: window.innerWidth > 400 ? 'flex' : 'none',
+              width: '15%',
+            }}
+            disabled="true"
+          >
+            ENTRADA
+          </button>
+          <button
+            className="rowitem"
+            title="TEMPO DE ESPERA."
+            style={{
+              display: window.innerWidth > 1024 ? 'flex' : 'none',
+              justifyContent: 'center',
+              width: '20%',
+            }}
+            disabled="true"
+          >
+            ESPERA
+          </button>
+          <button
+            className="rowitem"
+            title="BOX/LEITO."
+            style={{ minWidth: 50, width: 50 }}
+          >
+            BOX
+          </button>
+          <button
+            className="header-button"
+            style={{
+              width: '100%',
+            }}
+          >
+            NOME
+          </button>
+          <button
+            title="CLIQUE PARA CHAMAR O PACIENTE."
+            className="header-button"
+            style={{
+              display: window.innerWidth > 400 ? 'flex' : 'none',
+              height: 50,
+              width: 50,
+            }}
+          >
+          </button>
+          <button
+            className="rowitem"
+            style={{
+              minWidth: window.innerWidth > 800 ? '15%' : 50,
+              width: window.innerWidth > 800 ? '15%' : 50,
+            }}
+          >
+            IDADE
+          </button>
+        </div>
       </div>
     )
   }
@@ -326,7 +433,7 @@ function Pacientes() {
     if (atendimentos.length > 0) {
       return (
         <div
-          className="scroll" style={{ paddingTop: 0 }}
+          className="scroll"
           id="LISTA DE PACIENTES"
         >
           {arrayatendimentos.sort(((a, b) => a.classificacao > b.classificacao ? 1 : -1)).map((item) => (
@@ -342,6 +449,7 @@ function Pacientes() {
                 className="rowitem"
                 title="HORA DE ENTRADA."
                 style={{
+                  display: window.innerWidth > 400 ? 'flex' : 'none',
                   width: '15%',
                 }}
                 disabled="true"
@@ -352,9 +460,9 @@ function Pacientes() {
                 className="rowitem"
                 title="TEMPO DE ESPERA."
                 style={{
-                  display: window.innerWidth > 800 ? 'flex' : 'none',
+                  display: window.innerWidth > 1024 ? 'flex' : 'none',
                   justifyContent: 'center',
-                  width: '15%',
+                  width: '20%',
                 }}
                 disabled="true"
               >
@@ -379,7 +487,7 @@ function Pacientes() {
                 }
                 style={{
                   height: 50,
-                  width: '55%',
+                  width: '100%',
                 }}
               >
                 <div>
@@ -392,6 +500,7 @@ function Pacientes() {
                 className="blue-button"
                 disabled={item.ativo == 2 ? true : false}
                 style={{
+                  display: window.innerWidth > 400 ? 'flex' : 'none',
                   opacity: item.ativo == 2 ? 0.5 : 1,
                   height: 50,
                   width: 50,
@@ -421,21 +530,16 @@ function Pacientes() {
           className="scroll"
           id="LISTA DE PACIENTES"
           style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            borderRadius: 5,
-            margin: 5,
-            height: '100%'
+            height: '100%',
+            overflowY: 'hidden',
           }}
         >
           <div className="title2"
             style={{
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 10,
-              padding: 0,
-              height: '100%',
-              minHeight: '100%',
+              fontSize: 16,
+              opacity: 0.5,
+              alignSelf: 'center',
+              textAlign: 'center',
             }}>
             {'NÃO HÁ PACIENTES INTERNADOS NÃO CLASSIFICADOS NESTA UNIDADE.'}
           </div>
@@ -468,7 +572,7 @@ function Pacientes() {
           '#ec7063', // vermelho.
           '#f5b041', // amarelo.
           '#52be80', // verde.
-          '#lightgrey', // conforto.
+          'lightgrey', // conforto.
           '#aed6f1', // indefinido.
           'grey', // vago.
         ],
@@ -518,18 +622,19 @@ function Pacientes() {
             flexDirection: window.innerWidth > 800 ? 'column' : window.innerWidth > 600 ? 'row' : 'column',
             justifyContent: 'center',
             alignItems: 'center',
+            alignSelf: 'center',
             backgroundColor: '#f2f2f2',
             borderColor: '#f2f2f2',
             borderRadius: 5,
             padding: 10,
-            margin: 20,
+            margin: window.innerWidth > 400 ? 20 : 5,
           }}
         >
-          <div id="chart" style={{ display: renderchart == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center' }}>
+          <div id="chart" style={{ display: renderchart == 1 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
             <Doughnut
               data={tipounidade == 2 ? dataChart : dataChartPa}
-              width={window.innerWidth < 800 ? 180 : 250}
-              height={window.innerWidth < 800 ? 180 : 250}
+              width={window.innerWidth < 400 ? 150 : 250}
+              height={window.innerWidth < 400 ? 150 : 250}
               plugins={ChartDataLabels}
               options={{
                 plugins: {
@@ -947,11 +1052,11 @@ function Pacientes() {
         onBlur={(e) => (e.target.placeholder = 'BUSCAR PACIENTE...')}
         onChange={() => filterPaciente()}
         style={{
-          width: '40vw',
+          width: '60vw',
           padding: 20,
-          margin: 20, marginLeft: 15,
-          alignSelf: 'flex-start',
-          textAlign: 'left'
+          margin: 20,
+          alignSelf: 'center',
+          textAlign: 'center'
         }}
         type="text"
         id="inputFilterPaciente"
@@ -971,11 +1076,11 @@ function Pacientes() {
         onBlur={(e) => (e.target.placeholder = 'BUSCAR PACIENTE...')}
         onChange={() => filterPacientePa()}
         style={{
-          width: '40vw',
+          width: '60vw',
           padding: 20,
-          margin: 20, marginLeft: 15,
-          alignSelf: 'flex-start',
-          textAlign: 'left'
+          margin: 20,
+          alignSelf: 'center',
+          textAlign: 'center'
         }}
         type="text"
         id="inputFilterPacientePa"
@@ -1028,7 +1133,7 @@ function Pacientes() {
   }
 
   // renderização do componente.
-  if (viewtoten === 0) {
+  if (viewtoten === 0 && renderchart == 1) {
     return (
       <div
         className="main fade-in"
@@ -1036,19 +1141,19 @@ function Pacientes() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-start',
-          overflowY: window.innerWidth > 800 ? 'hidden' : 'scroll',
+          overflowY: 'hidden',
           overflowX: 'hidden',
           width: window.innerWidth,
           margin: 0,
           padding: 0,
         }}
       >
-        <Header link={"/unidades"} titulo={'PACIENTES: ' + nomeunidade}></Header>
+        <Header link={"/unidades"} titulo={nomehospital + ' - ' + nomeunidade}></Header>
         <div
           id="PRINCIPAL"
           style={{
-            display: tipounidade == 2 ? 'flex' : 'none',
-            flexDirection: window.innerWidth < 800 ? 'column' : 'row',
+            display: tipounidade == 2 && window.innerWidth > 400 ? 'flex' : 'none',
+            flexDirection: 'row',
             justifyContent: 'flex-start',
             width: '100%',
             height: window.innerWidth < 800 ? 0.785 * window.innerHeight : '100%',
@@ -1056,6 +1161,7 @@ function Pacientes() {
           }}>
           <Chart></Chart>
           <div
+            className="scrollgroup"
             style={{
               display: tipounidade == 2 ? 'flex' : 'none',
               flexDirection: 'column',
@@ -1072,8 +1178,8 @@ function Pacientes() {
         <div
           id="PRINCIPAL"
           style={{
-            display: tipounidade == 1 ? 'flex' : 'none',
-            flexDirection: window.innerWidth < 800 ? 'column' : 'row',
+            display: tipounidade == 1 && window.innerWidth > 400 ? 'flex' : 'none',
+            flexDirection: 'row',
             justifyContent: 'flex-start',
             width: '100%',
             height: window.innerWidth < 800 ? 0.785 * window.innerHeight : '100%',
@@ -1081,6 +1187,7 @@ function Pacientes() {
           }}>
           <Chart></Chart>
           <div
+            className="scrollgroup"
             style={{
               display: tipounidade == 1 ? 'flex' : 'none',
               flexDirection: 'column',
@@ -1096,9 +1203,63 @@ function Pacientes() {
             <ConsultorioSelector></ConsultorioSelector>
           </div>
         </div>
+        <div
+          id="PRINCIPAL"
+          className="scroll"
+          style={{
+            display: tipounidade == 2 && window.innerWidth < 400 ? 'flex' : 'none',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            width: '100%',
+            marginTop: 5
+          }}>
+          <Chart></Chart>
+          <div
+            className="scrollgroup"
+            style={{
+              display: tipounidade == 2 ? 'flex' : 'none',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              height: '100%',
+            }}>
+            <FilterPacientes></FilterPacientes>
+            <CabecalhoInternacao></CabecalhoInternacao>
+            <ShowPacientes></ShowPacientes>
+          </div>
+        </div>
+        <div
+          id="PRINCIPAL"
+          className="scrollgroup"
+          style={{
+            display: tipounidade == 1 && window.innerWidth < 400 ? 'flex' : 'none',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            width: '100%',
+            height: window.innerWidth < 400 ? 0.785 * window.innerHeight : '100%',
+            marginTop: 5
+          }}>
+          <Chart></Chart>
+          <div
+            style={{
+              display: tipounidade == 1 ? 'flex' : 'none',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              height: '100%',
+            }}>
+            <ShowToten></ShowToten>
+            <FilterPacientes></FilterPacientes>
+            <CabecalhoInternacao></CabecalhoInternacao>
+            <ShowPacientes></ShowPacientes>
+            <ConsultorioSelector></ConsultorioSelector>
+          </div>
+        </div>
       </div >
     );
-  } else if (viewtoten === 1) {
+  } else if (viewtoten === 1 && renderchart == 1) {
     return (
       <div
         className="main fade-in"

@@ -1,14 +1,15 @@
 // PAINEL DE CONTROLE (MAR/21)
 export function Stuff() {
     return (
-        <div className="scroll"
+        <div className="scrolldrop"
             style={{
                 flexDirection: 'row',
                 padding: 0,
                 margin: 5,
                 marginTop: 10,
                 marginBottom: 0,
-                width: '50vw', height: 330, minHeight: 330,
+                width: '70vw',
+                height: '30vh',
                 flexWrap: 'wrap', justifyContent: 'flex-start'
             }}>
             <button
@@ -233,16 +234,16 @@ export function Stuff() {
 export function MoreStuff() {
     return (
         <div
-            className="scroll"
+            className="scrolldrop"
             style={{
                 flexDirection: 'row',
                 padding: 0,
                 margin: 5,
                 marginTop: 10,
                 marginBottom: 0,
-                width: '40vw', height: 330, minHeight: 330,
-                flexWrap: 'wrap', justifyContent: 'flex-start',
-                alignItems: 'flex-start',
+                width: '30vw',
+                height: '30vh',
+                flexWrap: 'wrap', justifyContent: 'flex-start'
             }}>
             <button
                 className="blue-button"

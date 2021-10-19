@@ -2,7 +2,8 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useEffect, useContext } from 'react'
-import logo from '../images/newlogoinverted.svg'
+import logoinverted from '../images/newlogoinverted.svg'
+import logo from '../images/newlogo.svg'
 import ghap from '../images/ghap.PNG'
 import Toast from '../components/Toast'
 import { useHistory } from 'react-router-dom'
@@ -190,7 +191,7 @@ function Login() {
 
   // renderização do componente.
   return (
-    <div className="main fade-in" style={{backgroundColor: '#f6f1e4'}}>
+    <div className="main fade-in" style={{ backgroundColor: '#f6f1e4' }}>
       <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo}></Toast>
       <div
         style={{
@@ -208,32 +209,25 @@ function Login() {
       >
         <img
           alt=""
-          src={logo}
+          src={logoinverted}
           style={{
             display: window.innerWidth > 800 ? 'flex' : 'none',
             height: '35%',
           }}
         ></img>
         <div
-          className="title2"
-          style={{
-            margin: 10,
-            marginTop: window.innerWidth > 800 ? 15 : -100,
-            marginBottom: window.innerWidth > 800 ? 0 : 50,
-            fontSize: 26,
-            color: window.innerWidth < 800 ? '#ffffff' : '#8f9bbc',
-          }}
+          className="title4" style={{fontSize: 26}}
         >
           gPulse
         </div>
         <div
-          className="title2"
+          className={window.innerWidth < 400 ? "title5" : "title4"}
           style={{
             position: 'absolute',
             bottom: 0,
             margin: 10,
-            fontSize: 10,
-            color: window.innerWidth < 800 ? '#ffffff' : '',
+            fontSize: 12,
+            zIndex: 90,
           }}
         >
           Powered By GHAP Tecnologia
@@ -246,7 +240,7 @@ function Login() {
           bottom: 0,
           right: 0,
           width: window.innerWidth > 800 ? '50%' : '100%',
-          backgroundColor: window.innerWidth > 800 ? '#8f9bbc' : 'transparent',
+          backgroundColor: '#8f9bbc',
           borderRadius: 5,
           margin: window.innerWidth > 800 ? 10 : 0,
           display: 'flex',
@@ -265,6 +259,11 @@ function Login() {
             marginBottom: window.innerWidth > 800 ? 0 : 60,
           }}
         ></img>
+        <div
+          className="logintitle" style={{ marginTop: -40 }}
+        >
+          gPulse
+        </div>
         <div
           style={{
             marginTop: 20,

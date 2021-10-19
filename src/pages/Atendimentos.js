@@ -246,8 +246,9 @@ function Atendimentos() {
             padding: 5,
             margin: 0,
             width: '35vw',
+            backgroundColor: 'rgba(143, 155, 188, 0.8)',
           }}>
-          <div className="scrolldrop" style={{ backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none', alignSelf: 'center' }}>
+          <div className="scrollmenu" style={{ backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none', alignSelf: 'center' }}>
             <div style={{ position: 'absolute', top: 5, right: 5, color: 'transparent' }}>{atendimentoid}</div>
             <div className="title2" style={{ fontSize: 14, color: '#ffffff', textAlign: 'center' }}>{'PACIENTE: ' + nomepaciente}</div>
             <div className="title2" style={{ fontSize: 14, color: '#ffffff', textAlign: 'center' }}>{dn ? 'DN: ' + dn : 'DN: NÃO INFORMADA'}</div>
@@ -275,6 +276,7 @@ function Atendimentos() {
           padding: 5,
           margin: 0,
           width: '35vw',
+          backgroundColor: 'rgba(143, 155, 188, 0.8)',
         }}>
         <div className="title2" style={{ textAlign: 'center', fontSize: 14, color: '#ffffff' }}>{'SELECIONE UM PACIENTE DA LISTA PARA VISUALIZAR SEUS DADOS.'}</div>
       </div>;
@@ -326,6 +328,50 @@ function Atendimentos() {
     return console.log(pacientes.filter(item => item.nome === filtername));
   }
 
+  // cabeçalho para a lista de pacientes.
+  function CabecalhoPacientes() {
+    return (
+      <div className="scrollheader"
+        style={{
+          overflowY: 'scroll', paddingRight: 20, backgroundColor: 'transparent',
+          borderColor: 'transparent', borderWidth: 5, borderStyle: 'solid',
+        }}>
+        <div className="rowheader">
+          <button
+            className="header-button"
+            style={{
+              width: '100%',
+              padding: 10,
+              textAlign: 'left',
+            }}
+          >
+            NOME
+          </button>
+          <div
+            className="rowitemheader"
+            style={{
+              width: '30%',
+              alignSelf: 'center'
+            }}
+          >
+            DATA DE NASCIMENTO
+          </div>
+          <div
+            className="rowitemheader"
+            title="DOCUMENTO DO PACIENTE."
+            style={{
+              width: '40%',
+              padding: 10,
+              alignSelf: 'center',
+            }}
+          >
+            DOCUMENTO
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // renderização da lista de pacientes.
   function ShowPacientes() {
     return (
@@ -335,22 +381,24 @@ function Atendimentos() {
         margin: 0, marginRight: 5, padding: 0, width: '100%'
       }}>
         <ShowFilter></ShowFilter>
+        <CabecalhoPacientes></CabecalhoPacientes>
         <div
-          className="scroll"
+          className="scroll" style={{ overflowY: 'scroll', paddingRight: 10 }}
           id="LISTA DE PACIENTES"
         >
           {arraypacientes.map((item) => (
-            <p
+            <div
               key={item.id}
-              className="row"
+              className="row" style={{ opacity: 1 }}
               onClick={() => selectPaciente(item)}
             >
               <button
-                className={item.id == idpaciente ? "red-button" : "blue-button"}
+                className="blue-button"
                 style={{
                   width: '100%',
                   padding: 10,
                   textAlign: 'left',
+                  backgroundColor: item.id == idpaciente ? '#ec7063' : '#8f9bbc',
                 }}
               >
                 {item.nome}
@@ -363,7 +411,7 @@ function Atendimentos() {
                 }
                 className="title2"
                 style={{
-                  width: 180,
+                  width: '30%',
                   alignSelf: 'center'
                 }}
               >
@@ -373,7 +421,7 @@ function Atendimentos() {
                 className="title2"
                 title="DOCUMENTO DO PACIENTE."
                 style={{
-                  width: 250,
+                  width: '40%',
                   padding: 10,
                   alignSelf: 'center',
                 }}
@@ -406,7 +454,7 @@ function Atendimentos() {
                   }}
                 ></img>
               </button>
-            </p>
+            </div>
           ))}
         </div>
       </div>
@@ -655,7 +703,7 @@ function Atendimentos() {
                 </button>
               </div>
             </div>
-            <div className="scroll" style={{ height: '70vh', width: '70vw' }}>
+            <div className="scroll" style={{ height: '70vh', width: '70vw', overflowY: 'scroll', paddingRight: 10 }}>
               <p className="title2" style={{ fontSize: 14 }}>NOME:</p>
               <input
                 className="input"
@@ -1011,7 +1059,7 @@ function Atendimentos() {
           HOSPITAIS
         </p>
         <div
-          className="scroll"
+          className="scrolldrop"
           id="LISTA DE HOSPITAIS"
           style={{
             display: 'flex',
@@ -1060,12 +1108,13 @@ function Atendimentos() {
         width: '100%',
         paddingLeft: 5,
         paddingRight: 5,
+        marginLeft: 10,
       }}>
         <p className="title2" style={{ fontSize: 18, width: '100%' }}>
           UNIDADES
         </p>
         <div
-          className="scroll"
+          className="scrolldrop"
           id="ATENDIMENTOS"
           style={{
             display: 'flex',
@@ -1074,7 +1123,7 @@ function Atendimentos() {
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             height: '50vh',
-            width: '30vw',
+            width: 'calc(24vw + 65px)',
           }}
         >
           {unidades.map((item) => (
@@ -1082,8 +1131,8 @@ function Atendimentos() {
               key={item.id}
               className="blue-button"
               style={{
-                width: '12.8vw',
-                height: '12.8vw',
+                width: '12vw',
+                height: '12vw',
                 margin: 5,
                 padding: 10,
                 color: '#ffffff',
@@ -1501,7 +1550,7 @@ function Atendimentos() {
           <div
             className="secondary"
             style={{
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#f2f2f2',
               borderRadius: 5,
               padding: 30,
               display: 'flex',
