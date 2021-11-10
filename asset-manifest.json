@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/gpulse-apt/static/css/main.c09a866b.chunk.css",
-    "main.js": "/gpulse-apt/static/js/main.cbbebcf0.chunk.js",
-    "main.js.map": "/gpulse-apt/static/js/main.cbbebcf0.chunk.js.map",
+    "main.css": "/gpulse-apt/static/css/main.22cfa6e8.chunk.css",
+    "main.js": "/gpulse-apt/static/js/main.db4ec123.chunk.js",
+    "main.js.map": "/gpulse-apt/static/js/main.db4ec123.chunk.js.map",
     "runtime-main.js": "/gpulse-apt/static/js/runtime-main.e2a09a16.js",
     "runtime-main.js.map": "/gpulse-apt/static/js/runtime-main.e2a09a16.js.map",
     "static/css/2.33125e16.chunk.css": "/gpulse-apt/static/css/2.33125e16.chunk.css",
@@ -10,7 +10,7 @@
     "static/js/2.dd80df4e.chunk.js.map": "/gpulse-apt/static/js/2.dd80df4e.chunk.js.map",
     "index.html": "/gpulse-apt/index.html",
     "static/css/2.33125e16.chunk.css.map": "/gpulse-apt/static/css/2.33125e16.chunk.css.map",
-    "static/css/main.c09a866b.chunk.css.map": "/gpulse-apt/static/css/main.c09a866b.chunk.css.map",
+    "static/css/main.22cfa6e8.chunk.css.map": "/gpulse-apt/static/css/main.22cfa6e8.chunk.css.map",
     "static/js/2.dd80df4e.chunk.js.LICENSE.txt": "/gpulse-apt/static/js/2.dd80df4e.chunk.js.LICENSE.txt",
     "static/media/3x4.fbc973c4.jpg": "/gpulse-apt/static/media/3x4.fbc973c4.jpg",
     "static/media/Roboto-Bold.4f39c579.ttf": "/gpulse-apt/static/media/Roboto-Bold.4f39c579.ttf",
@@ -45,7 +45,7 @@
     "static/js/runtime-main.e2a09a16.js",
     "static/css/2.33125e16.chunk.css",
     "static/js/2.dd80df4e.chunk.js",
-    "static/css/main.c09a866b.chunk.css",
-    "static/js/main.cbbebcf0.chunk.js"
+    "static/css/main.22cfa6e8.chunk.css",
+    "static/js/main.db4ec123.chunk.js"
   ]
 }
