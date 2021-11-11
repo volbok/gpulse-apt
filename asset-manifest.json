@@ -1,17 +1,17 @@
 {
   "files": {
-    "main.css": "/gpulse-apt/static/css/main.265c6085.chunk.css",
-    "main.js": "/gpulse-apt/static/js/main.968dae93.chunk.js",
-    "main.js.map": "/gpulse-apt/static/js/main.968dae93.chunk.js.map",
+    "main.css": "/gpulse-apt/static/css/main.ffffecef.chunk.css",
+    "main.js": "/gpulse-apt/static/js/main.d9853e20.chunk.js",
+    "main.js.map": "/gpulse-apt/static/js/main.d9853e20.chunk.js.map",
     "runtime-main.js": "/gpulse-apt/static/js/runtime-main.e2a09a16.js",
     "runtime-main.js.map": "/gpulse-apt/static/js/runtime-main.e2a09a16.js.map",
     "static/css/2.33125e16.chunk.css": "/gpulse-apt/static/css/2.33125e16.chunk.css",
-    "static/js/2.e9e4450c.chunk.js": "/gpulse-apt/static/js/2.e9e4450c.chunk.js",
-    "static/js/2.e9e4450c.chunk.js.map": "/gpulse-apt/static/js/2.e9e4450c.chunk.js.map",
+    "static/js/2.f011c402.chunk.js": "/gpulse-apt/static/js/2.f011c402.chunk.js",
+    "static/js/2.f011c402.chunk.js.map": "/gpulse-apt/static/js/2.f011c402.chunk.js.map",
     "index.html": "/gpulse-apt/index.html",
     "static/css/2.33125e16.chunk.css.map": "/gpulse-apt/static/css/2.33125e16.chunk.css.map",
-    "static/css/main.265c6085.chunk.css.map": "/gpulse-apt/static/css/main.265c6085.chunk.css.map",
-    "static/js/2.e9e4450c.chunk.js.LICENSE.txt": "/gpulse-apt/static/js/2.e9e4450c.chunk.js.LICENSE.txt",
+    "static/css/main.ffffecef.chunk.css.map": "/gpulse-apt/static/css/main.ffffecef.chunk.css.map",
+    "static/js/2.f011c402.chunk.js.LICENSE.txt": "/gpulse-apt/static/js/2.f011c402.chunk.js.LICENSE.txt",
     "static/media/3x4.fbc973c4.jpg": "/gpulse-apt/static/media/3x4.fbc973c4.jpg",
     "static/media/Roboto-Bold.4f39c579.ttf": "/gpulse-apt/static/media/Roboto-Bold.4f39c579.ttf",
     "static/media/back.015df188.svg": "/gpulse-apt/static/media/back.015df188.svg",
@@ -44,8 +44,8 @@
   "entrypoints": [
     "static/js/runtime-main.e2a09a16.js",
     "static/css/2.33125e16.chunk.css",
-    "static/js/2.e9e4450c.chunk.js",
-    "static/css/main.265c6085.chunk.css",
-    "static/js/main.968dae93.chunk.js"
+    "static/js/2.f011c402.chunk.js",
+    "static/css/main.ffffecef.chunk.css",
+    "static/js/main.d9853e20.chunk.js"
   ]
 }
