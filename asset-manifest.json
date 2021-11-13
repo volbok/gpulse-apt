@@ -1,23 +1,24 @@
 {
   "files": {
-    "main.css": "/gpulse-apt/static/css/main.9ff8fea4.chunk.css",
-    "main.js": "/gpulse-apt/static/js/main.e82b412d.chunk.js",
-    "main.js.map": "/gpulse-apt/static/js/main.e82b412d.chunk.js.map",
+    "main.css": "/gpulse-apt/static/css/main.733bc7f3.chunk.css",
+    "main.js": "/gpulse-apt/static/js/main.69c107b9.chunk.js",
+    "main.js.map": "/gpulse-apt/static/js/main.69c107b9.chunk.js.map",
     "runtime-main.js": "/gpulse-apt/static/js/runtime-main.e2a09a16.js",
     "runtime-main.js.map": "/gpulse-apt/static/js/runtime-main.e2a09a16.js.map",
     "static/css/2.33125e16.chunk.css": "/gpulse-apt/static/css/2.33125e16.chunk.css",
-    "static/js/2.41127e5b.chunk.js": "/gpulse-apt/static/js/2.41127e5b.chunk.js",
-    "static/js/2.41127e5b.chunk.js.map": "/gpulse-apt/static/js/2.41127e5b.chunk.js.map",
+    "static/js/2.458d7e32.chunk.js": "/gpulse-apt/static/js/2.458d7e32.chunk.js",
+    "static/js/2.458d7e32.chunk.js.map": "/gpulse-apt/static/js/2.458d7e32.chunk.js.map",
     "index.html": "/gpulse-apt/index.html",
     "static/css/2.33125e16.chunk.css.map": "/gpulse-apt/static/css/2.33125e16.chunk.css.map",
-    "static/css/main.9ff8fea4.chunk.css.map": "/gpulse-apt/static/css/main.9ff8fea4.chunk.css.map",
-    "static/js/2.41127e5b.chunk.js.LICENSE.txt": "/gpulse-apt/static/js/2.41127e5b.chunk.js.LICENSE.txt",
+    "static/css/main.733bc7f3.chunk.css.map": "/gpulse-apt/static/css/main.733bc7f3.chunk.css.map",
+    "static/js/2.458d7e32.chunk.js.LICENSE.txt": "/gpulse-apt/static/js/2.458d7e32.chunk.js.LICENSE.txt",
     "static/media/3x4.fbc973c4.jpg": "/gpulse-apt/static/media/3x4.fbc973c4.jpg",
     "static/media/Roboto-Bold.4f39c579.ttf": "/gpulse-apt/static/media/Roboto-Bold.4f39c579.ttf",
     "static/media/back.015df188.svg": "/gpulse-apt/static/media/back.015df188.svg",
     "static/media/body.a2b59915.png": "/gpulse-apt/static/media/body.a2b59915.png",
     "static/media/call.f3c0c06f.svg": "/gpulse-apt/static/media/call.f3c0c06f.svg",
     "static/media/cardsdraw.4d6f4138.svg": "/gpulse-apt/static/media/cardsdraw.4d6f4138.svg",
+    "static/media/change.ccbc9712.svg": "/gpulse-apt/static/media/change.ccbc9712.svg",
     "static/media/clock.c89a4f78.svg": "/gpulse-apt/static/media/clock.c89a4f78.svg",
     "static/media/copiar.0cd844be.svg": "/gpulse-apt/static/media/copiar.0cd844be.svg",
     "static/media/curativo.00a1a152.svg": "/gpulse-apt/static/media/curativo.00a1a152.svg",
@@ -44,8 +45,8 @@
   "entrypoints": [
     "static/js/runtime-main.e2a09a16.js",
     "static/css/2.33125e16.chunk.css",
-    "static/js/2.41127e5b.chunk.js",
-    "static/css/main.9ff8fea4.chunk.css",
-    "static/js/main.e82b412d.chunk.js"
+    "static/js/2.458d7e32.chunk.js",
+    "static/css/main.733bc7f3.chunk.css",
+    "static/js/main.69c107b9.chunk.js"
   ]
 }
