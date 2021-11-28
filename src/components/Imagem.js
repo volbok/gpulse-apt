@@ -148,9 +148,10 @@ function Imagem(
           className="input"
           autoComplete="off"
           placeholder="BUSCAR EXAME..."
+          onClick={() => document.getElementById("inputJustificativa").style.display = "none"}
           onFocus={(e) => (e.target.placeholder = '')}
           onBlur={(e) => (e.target.placeholder = 'BUSCAR EXAME...')}
-          onChange={() => filterImagem()}
+          onChange={() => { filterImagem(); document.getElementById("inputJustificativa").style.display = "none" }}
           style={{
             width: window.innerWidth > 400 ? '60vw' : '75vw',
             margin: 20,
@@ -161,7 +162,7 @@ function Imagem(
           maxLength={100}
         ></input>
         <div
-          className="scrolldrop"
+          className="scroll"
           id="LISTA DE EXAMES DE IMAGEM DISPONÍVEIS"
           style={{
             display: arrayfilterimagem.length > 0 ? 'flex' : 'none',
@@ -177,7 +178,7 @@ function Imagem(
               className="row"
             >
               <button
-                onClick={() => addImagem(item)}
+                onClick={() => { addImagem(item); document.getElementById("inputJustificativa").style.display = "flex" }}
                 className="hover-button"
                 style={{
                   width: '100%',
@@ -189,7 +190,7 @@ function Imagem(
           ))}
         </div>
         <div
-          className="scrolldrop"
+          className="scroll"
           id="LISTA DE EXAMES DE IMAGEM SELECIONADOS"
           style={{
             display: arrayfilterimagem.length > 0 ? 'none' : 'flex',
@@ -260,7 +261,9 @@ function Imagem(
   if (viewcomponent != 0) {
     return (
       <div className="menucover fade-in" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="menucontainer">
+        <div className="menucontainer"
+          onClick={(e) => { document.getElementById("inputJustificativa").style.display = "flex"; e.stopPropagation() }}
+        >
           <div className="menucontainer">
             <div id="cabeçalho" className="cabecalho">
               <div className="title5">{'SOLICITAR EXAME DE IMAGEM'}</div>

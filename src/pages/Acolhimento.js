@@ -115,7 +115,7 @@ function Acolhimento() {
               </button>
               <div
                 className="title2center"
-                style={{ width: '30%', margin: 2.5}}
+                style={{ width: '30%', margin: 2.5 }}
               >
                 {moment().diff(moment(item.dn, 'DD/MM/YYYY'), 'years') > 1 ? moment().diff(moment(item.dn, 'DD/MM/YYYY'), 'years') + ' ANOS' : moment().diff(moment(item.dn, 'DD/MM/YYYY'), 'years') + ' ANO'}
               </div>
@@ -150,40 +150,38 @@ function Acolhimento() {
   function CabecalhoPacientes() {
     return (
       <div className="scrollheader">
-        <div
-          className="rowheader"
-        >
-          <button
+        <div className="rowheader">
+          <div
             className="rowitemheader"
-            style={{ width: '30%', margin: 2.5}}
+            style={{ width: '30%', margin: 2.5 }}
             disabled="true"
           >
             ENTRADA
-          </button>
-          <button
+          </div>
+          <div
             className="rowitemheader"
-            style={{ width: '30%', margin: 2.5}}
+            style={{ width: '30%', margin: 2.5 }}
           >
             TEMPO DE ESPERA
-          </button>
-          <button
+          </div>
+          <div
             className="rowitemheader"
-            style={{ width: '30%', margin: 2.5}}
+            style={{ width: '30%', margin: 2.5 }}
           >
             UNIDADE
-          </button>
+          </div>
           <button
-            className="rowitemheader"
+            className="header-button"
             style={{ width: '100%', margin: 2.5 }}
           >
             NOME
           </button>
-          <button
+          <div
             className="rowitemheader"
-            style={{ width: '30%', margin: 2.5}}
+            style={{ width: '30%', margin: 2.5 }}
           >
             IDADE
-          </button>
+          </div>
         </div>
       </div>
     );
@@ -477,7 +475,7 @@ function Acolhimento() {
                 id="inputFluxo"
                 defaultValue={descritor}
               ></input>
-              <div className="scrolldrop"
+              <div className="scroll"
                 id="LISTA DE DESCRITORES"
                 style={{
                   display: viewfluxo === 1 ? 'flex' : 'none',
@@ -688,7 +686,6 @@ function Acolhimento() {
       <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo}></Toast>
       <ShowClassificador></ShowClassificador>
       <div
-        className="scrollgroup"
         style={{
           display: 'flex',
           flexDirection: 'column',

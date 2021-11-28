@@ -136,8 +136,7 @@ function Evolucao(
     var bh = document.getElementById('inputBh').value.toUpperCase();
     // definindo preenchimentos obrigatórios de campos, para médicos e enfermeiros.
     if (funcao < 3 || funcao == 5) {
-      if (evolucao != '' && pas != '' && pad != '' && fc != '' && fr != '' && sao2 != '' &&
-        tax != '' && diu != '' && poop != '' && bh != '') {
+      if (evolucao != '') {
         var obj = {
           idpaciente: idpaciente,
           idatendimento: idatendimento,
@@ -240,8 +239,7 @@ function Evolucao(
     var diu = document.getElementById('inputDiurese').value.toUpperCase();
     var bh = document.getElementById('inputBh').value.toUpperCase();
     if (funcao < 3 || funcao == 5) {
-      if (evolucao != '' && pas != '' && pad != '' && fc != '' && fr != '' && sao2 != '' &&
-        tax != '' && diu !== '' && poop != '' && bh != '') {
+      if (evolucao != '') {
         var obj = {
           idpaciente: idpaciente,
           idatendimento: idatendimento,

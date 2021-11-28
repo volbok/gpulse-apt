@@ -2,9 +2,9 @@
 import axios from 'axios'
 import React, { useState } from 'react'
 import { useEffect, useContext } from 'react'
-import logoinverted from '../images/newlogoinverted.svg'
-import logo from '../images/newlogo.svg'
-import ghap from '../images/ghap.PNG'
+import Logo from '../components/Logo'
+import LogoInverted from '../components/LogoInverted'
+import ghap from '../images/ghapmarca.png'
 import Toast from '../components/Toast'
 import { useHistory } from 'react-router-dom'
 import Context from '../Context'
@@ -191,7 +191,7 @@ function Login() {
 
   // renderização do componente.
   return (
-    <div className="main fade-in" style={{ backgroundColor: '#f6f1e4' }}>
+    <div className="main fade-in" style={{ backgroundColor: '#f2f2f2' }}>
       <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo}></Toast>
       <div
         style={{
@@ -209,17 +209,14 @@ function Login() {
       >
         <img
           alt=""
-          src={logoinverted}
+          src={ghap}
           style={{
-            display: window.innerWidth > 800 ? 'flex' : 'none',
-            height: '35%',
+            display: window.innerWidth > 400 ? 'flex' : 'none',
+            height: '20%',
+            marginTop: window.innerWidth > 800 ? 0 : 0,
+            marginBottom: window.innerWidth > 800 ? 0 : 60,
           }}
         ></img>
-        <div
-          className="title4" style={{fontSize: 26}}
-        >
-          gPulse
-        </div>
         <div
           className={window.innerWidth < 400 ? "title5" : "title4"}
           style={{
@@ -234,13 +231,13 @@ function Login() {
         </div>
       </div>
       <div
+        className="corprincipal"
         style={{
           position: 'absolute',
           top: 0,
           bottom: 0,
           right: 0,
           width: window.innerWidth > 800 ? '50%' : '100%',
-          backgroundColor: '#8f9bbc',
           borderRadius: 5,
           margin: window.innerWidth > 800 ? 10 : 0,
           display: 'flex',
@@ -250,21 +247,14 @@ function Login() {
           boxShadow: window.innerWidth > 800 ? '0px 1px 5px 1px rgba(0, 0, 0, 0.3)' : 'none',
         }}
       >
-        <img
-          alt=""
-          src={window.innerWidth > 800 ? ghap : logo}
-          style={{
-            height: '20%',
-            marginTop: window.innerWidth > 800 ? 0 : 0,
-            marginBottom: window.innerWidth > 800 ? 0 : 60,
-          }}
-        ></img>
+        <Logo height={window.innerWidth > 400 ? 0.12 * window.innerWidth : '40vw'}></Logo>
         <div
-          className="logintitle" style={{ marginTop: -40 }}
+          className="logintitle" style={{ display: window.innerWidth > 400 ? 'none' : 'flex', marginTop: 10 }}
         >
           gPulse
         </div>
         <div
+          className="corfundo"
           style={{
             marginTop: 20,
             display: 'flex',
@@ -272,7 +262,7 @@ function Login() {
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 5,
-            backgroundColor: '#ffffff',
+            // backgroundColor: '#ffffff',
             padding: 20,
             boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.3)',
           }}
@@ -284,14 +274,15 @@ function Login() {
               className="input"
               type="text"
               id="inputUsuario"
-              onChange={() => setLogin()}
               onFocus={(e) => (e.target.placeholder = '')}
               onBlur={(e) => (e.target.placeholder = 'LOGIN')}
+              onChange={() => setLogin()}
               style={{
                 marginTop: 10,
                 marginBottom: 10,
                 width: 200,
                 height: 50,
+                background: '#ffffff'
               }}
             ></input>
           </div>

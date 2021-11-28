@@ -261,13 +261,17 @@ function Diagnostico(
             </div>
           </div>
           <div className="corpo">
-            <div id="FILTROS DE DIAGNÓSTICOS" style={{ display: 'flex', flexDirection: window.innerWidth > 400 ? 'row' : 'column', justifyContent: 'center', width: '100%' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '20vw' }}>
+            <div id="FILTROS DE DIAGNÓSTICOS"
+              style={{
+                display: 'flex', flexDirection: window.innerWidth > 400 ? 'row' : 'column',
+                justifyContent: 'center', width: '100%',
+                alignItems: 'center',
+              }}>
+              <div id="divInicio" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: window.innerWidth > 400 ? '20vw' : '90vw', alignSelf: 'center' }}>
                 <label className="title2">
                   DATA DO DIAGNÓSTICO:
                 </label>
                 <label
-                  style={{ width: '90%' }}
                   autoComplete="off"
                   className="input"
                   placeholder="INÍCIO"
@@ -283,7 +287,7 @@ function Diagnostico(
                   {pickdate1}
                 </label>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '20vw' }}>
+              <div id="divCid" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: window.innerWidth > 400 ? '20vw' : '90vw', alignSelf: 'center' }}>
                 <label className="title2">
                   CID:
                 </label>
@@ -292,19 +296,20 @@ function Diagnostico(
                   className="input"
                   placeholder="CID..."
                   defaultValue={viewcomponent == 2 ? cid : ''}
-                  onFocus={(e) => (e.target.placeholder = '')}
+                  onFocus={(e) => {
+                    (e.target.placeholder = '');
+                    document.getElementById("divDiagnostico").style.display = "none";
+                    // document.getElementById("divInicio").style.display = "none";
+                  }}
                   onBlur={(e) => (e.target.placeholder = 'CID...')}
                   onChange={() => filterCid()}
                   title="CID."
-                  style={{
-                    width: '90%'
-                  }}
                   type="text"
                   maxLength={5}
                   id="inputCid"
                 ></input>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '30vw' }}>
+              <div id="divDiagnostico" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: window.innerWidth > 400 ? '30vw' : '90vw', alignSelf: 'center' }}>
                 <label className="title2">
                   DIAGNÓSTICO:
                 </label>
@@ -313,7 +318,11 @@ function Diagnostico(
                   className="input"
                   placeholder="DIAGNÓSTICO..."
                   defaultValue={viewcomponent == 2 ? diagnostico : ''}
-                  onFocus={(e) => (e.target.placeholder = '')}
+                  onFocus={(e) => {
+                    (e.target.placeholder = '');
+                    document.getElementById("divCid").style.display = "none";
+                    // document.getElementById("divInicio").style.display = "none";
+                  }}
                   onBlur={(e) => (e.target.placeholder = 'DIAGNÓSTICO...')}
                   onChange={() => filterDiagnostico()}
                   title="DIAGNÓSTICO."
@@ -324,9 +333,9 @@ function Diagnostico(
               </div>
             </div>
             <div
-              className="scrolldrop"
+              className="scroll"
               id="LISTA DE DIAGNÓSTICOS"
-              style={{ width: '100%', height: '30vh', marginTop: 20 }}
+              style={{ width: '80vw', height: '30vh', marginTop: 20 }}
             >
               {arraydiagnostico.map((item) => (
                 <p
@@ -349,7 +358,7 @@ function Diagnostico(
                   <button
                     className={item.codigo == selectcid ? "red-button" : "hover-button"}
                     style={{
-                      width: window.innerWidth > 800 ? '100%' : 200,
+                      width: window.innerWidth > 800 ? '100%' : '100%',
                       margin: 2.5,
                       padding: 5,
                       flexDirection: 'column',

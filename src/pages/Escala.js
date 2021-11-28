@@ -1,47 +1,48 @@
 /* eslint eqeqeq: "off" */
-import React, { useState } from 'react';
-import { useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { useSelector, useDispatch } from 'react-redux';
 import MaskedInput from 'react-maskedinput';
 import deletar from '../images/deletar.svg';
 import novo from '../images/novo.svg';
 import moment, { locale } from 'moment';
 import 'moment/locale/pt-br';
-import Toast from './Toast';
-import Header from './Header';
-import {Link} from "react-router-dom";
+import Toast from '../components/Toast';
+import Header from '../components/Header';
+import Context from '../Context'
+import { useHistory } from 'react-router-dom'
 
 function Escala() {
   moment.locale('pt-br');
   var html = 'https://pulsarapp-server.herokuapp.com';
-
-  const changeState = useDispatch();
-  const idusuario = useSelector((state) => state.idusuario);
-  const usuario = useSelector((state) => state.nomeusuario);
-  const tipo = useSelector((state) => state.tipo);
-  const hospital = useSelector((state) => state.nomehospital);
-  const unidade = useSelector((state) => state.nomeunidade);
-
-  const viewEscala = useSelector((state) => state.escala);
+  // recuperando estados globais (Context.API).
+  const {
+    idusuario,
+    nomeusuario,
+    tipousuario,
+    settipounidade,
+    setnomeunidade, nomeunidade,
+    especialidadeusuario,
+    nomehospital,
+    setidatendimento,
+  } = useContext(Context)
+  // history (react-router-dom).
+  let history = useHistory()
 
   useEffect(() => {
-    if (viewEscala === 1) {
-      // carregando a lista de plantonistas.
-      loadPlantonistas();
-      // carregando a lista de escalas.
-      loadEscalas(previousdate, selecteddate, nextdate);
-      // preparando datepicker.
-      currentMonth();
-      loadEscalasMonth();
-    }
+    // carregando a lista de plantonistas.
+    loadPlantonistas();
+    // carregando a lista de escalas.
+    // loadEscalas(previousdate, selecteddate, nextdate);
+    // preparando datepicker.
+    currentMonth();
+    loadEscalasMonth();
     // eslint-disable-next-line
-  }, [viewEscala]);
+  }, []);
 
   // carregamento da lista de plantonistas disponíveis pela empresa.
   const [plantonistas, setplantonistas] = useState([]);
   const loadPlantonistas = () => {
-    axios.get(html + "/escaladoctors/'" + hospital + "'/'" + unidade + "'").then((response) => {
+    axios.get(html + "/escaladoctors/'" + nomehospital + "'/'" + nomeunidade + "'").then((response) => {
       setplantonistas(response.data);
       var x = [0, 1];
       x = response.data;
@@ -58,79 +59,54 @@ function Escala() {
   function ShowPlantonistas() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <p className="title2" style={{ fontSize: 18 }}>{'PLANTONISTAS - ' + unidade}</p>
+        <p className="title2" style={{ fontSize: 18 }}>{'PLANTONISTAS - ' + nomeunidade}</p>
         <div
-          className="scroll"
+          className="scroll" style={{ height: '55vh', width: '25vw' }}
           id="LISTA DE PLANTONISTAS"
-          style={{
-            display: 'flex',
-            flex: 2,
-            justifyContent: 'flex-start',
-            borderRadius: 5,
-            margin: 5,
-            marginRight: 0,
-            minHeight: 400,
-            maxHeight: 400,
-          }}
         >
           {plantonistas.map((item) => (
-            <p
-              key={item.id}
-              className="row"
+            <button
+              className={item.usuario == plantonista ? "red-button" : "blue-button"}
               style={{
-                position: 'relative',
-                margin: 0,
+                width: '100%',
+                color: '#ffffff',
               }}
+              onClick={() => selectPlantonista(item)}
             >
-              <button
-                className="widget"
-                style={{
-                  width: 255,
-                  color: '#ffffff',
-                  backgroundColor:
-                    item.usuario === plantonista ? '#ec7063' : '#1f7a8c',
-                }}
-                onClick={() => selectPlantonista(item)}
-              >
-                {item.usuario}
-              </button>
-            </p>
+              {item.usuario}
+            </button>
           ))}
         </div>
-        <button
-          className="blue-button"
-          style={{
-            width: 250,
-            color: '#ffffff',
-            alignSelf: 'center',
-          }}
-          onClick={() => showUsuarios()}
-        >
-          GERIR PLANTONISTAS
-        </button>
       </div>
     );
   }
 
+  function GerirColaboradores() {
+    return (
+      <button
+        className="blue-button"
+        style={{
+          width: 250,
+          color: '#ffffff',
+          alignSelf: 'center',
+        }}
+        onClick={() => showUsuarios()}
+      >
+        GERIR COLABORADORES
+      </button>
+    )
+  }
+
   // abrindo a tela usuários.
   const showUsuarios = () => {
-    //setviewinsertescala(0);
-    changeState({
-      type: 'USUARIOS_ON',
-      // payloads.
-      payloadIdusuario: idusuario,
-      payloadNomeusuario: usuario,
-      payloadTipo: tipo,
-      payloadNomehospital: hospital,
-      payloadNomeunidade: unidade,
-    });
+
   }
 
   // carregamento dos registros de escala para o setor, para uma data selecionada.
   const [escalas, setescalas] = useState([]);
   const loadEscalas = (x, y, z) => {
     console.log(x + ' a ' + y + '.');
-    axios.get(html + "/escaladay/'" + hospital + "'/'" + unidade + "'/'" + x + "'/'" + y + "'/'" + z + "'").then((response) => {
+    axios.get(html + "/escaladay/'" + nomehospital + "'/'" + nomeunidade + "'/'" + x + "'/'" + y + "'/'" + z + "'").then((response) => {
       setescalas(response.data);
     });
   };
@@ -144,7 +120,7 @@ function Escala() {
     var year = moment(startdate).format('YYYY');
     var inicio = year + '-' + month + '-01';
     var termino = moment(inicio, 'YYYY/MM/DD').add(30, 'days').format('YYYY-MM-DD');
-    axios.get(html + "/escalamonth/'" + hospital + "'/'" + unidade + "'/'" + inicio + "'/'" + termino + "'").then((response) => {
+    axios.get(html + "/escalamonth/'" + nomehospital + "'/'" + nomeunidade + "'/'" + inicio + "'/'" + termino + "'").then((response) => {
       x = response.data;
       // construindo uma array apenas com a data de início da escala.
       arrayinicio = x.map((item) => moment(item.inicio, 'YYYY-MM-DD hh:mm:ss').format('DD'));
@@ -167,13 +143,9 @@ function Escala() {
           className="scroll"
           id="LISTA DE ESCALAS"
           style={{
-            display: 'flex',
-            justifyContent: 'flex-start',
-            borderRadius: 5,
-            margin: 0,
-            minHeight: window.innerHeight - 200,
-            maxHeight: window.innerHeight - 200,
-            width: 0.6 * (window.innerWidth),
+            width: '70vw',
+            height: '82vh',
+            margin: 20,
           }}
         >
           {escalas.map((item) => (
@@ -183,50 +155,43 @@ function Escala() {
               className="row"
               style={{
                 position: 'relative',
-                margin: 0,
+                margin: 5,
               }}
             >
               <button
-                className="widget"
+                className="blue-button"
                 style={{
                   width: '60%',
                   margin: 2.5,
                   color: '#ffffff',
-                  backgroundColor:
-                    item.usuario === escala ? '#ec7063' : '#1f7a8c',
                 }}
               >
                 {item.usuario}
               </button>
               <button
-                className="widget"
+                className="rowitem"
                 style={{
                   width: '20%',
                   margin: 2.5,
-                  color: '#ffffff',
-                  backgroundColor:
-                    item.usuario === escala ? '#ec7063' : '#1f7a8c',
+                  // color: '#ffffff',
                 }}
               >
                 {item.inicio.substring(8, 10) + '/' + item.inicio.substring(5, 7) + ' - ' + item.inicio.substring(11, 16)}
               </button>
               <button
-                className="widget"
+                className="rowitem"
                 style={{
                   width: '20%',
                   margin: 2.5,
-                  color: '#ffffff',
-                  backgroundColor:
-                    item.usuario === escala ? '#ec7063' : '#1f7a8c',
+                  // color: '#ffffff',
                 }}
               >
                 {item.termino.substring(8, 10) + '/' + item.termino.substring(5, 7) + ' - ' + item.termino.substring(11, 16)}
               </button>
               <button
-                className="delete-button"
+                className="animated-red-button"
                 title="EXCLUIR ESCALA."
                 onClick={() => clickDeleteEscala(item)}
-                style={{ margin: 2.5, height: 50, width: 50 }}
               >
                 <img
                   alt=""
@@ -248,8 +213,9 @@ function Escala() {
               display: 'flex',
               flexDirection: 'row',
               justifyContent: 'flex-end',
-              margin: 5,
-              paddingRight: 7,
+              margin: 0,
+              marginTop: 10,
+              padding: 0,
               width: '100%',
             }}>
             <NovaEscalaBtn></NovaEscalaBtn>
@@ -262,19 +228,16 @@ function Escala() {
           className="scroll"
           id="LISTA DE ESCALAS"
           style={{
-            display: 'flex',
-            justifyContent: 'center',
-            borderRadius: 5,
-            margin: 0,
-            minHeight: window.innerHeight - 210,
-            maxHeight: window.innerHeight - 210,
-            width: 0.6 * (window.innerWidth),
-          }}
-        >
-          <p className="title2" style={{ fontSize: 14, alignSelf: 'center' }}>
+            width: '70vw',
+            height: '82vh',
+            margin: 20,
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}>
+          <div className="title2" style={{ fontSize: 14, alignSelf: 'center' }}>
             {'SEM PLANTONISTAS ESCALADOS PARA O DIA ' + pickdate + '.'}
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', margin: 0, marginTop: 10 }}>
             <NovaEscalaBtn></NovaEscalaBtn>
           </div>
         </div>
@@ -374,130 +337,98 @@ function Escala() {
   function NovaEscalaView() {
     if (viewinsertescala === 1) {
       return (
-        <div
-          className="secondary"
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            borderRadius: 0,
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '100%',
-            width: '100%',
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            zIndex: 3,
-          }}
-        >
-          <div
-            className="secondary"
-            style={{
-              backgroundColor: '#FFFFFF',
-              borderRadius: 5,
-              paddingTop: 30,
-              paddingBottom: 30,
-              paddingLeft: 30,
-              paddingRight: 30,
-            }}
-          >
-            <div
-              style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-              <div>
-                <ShowPlantonistas></ShowPlantonistas>
+        <div className="menucover fade-in" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="menucontainer">
+            <div id="cabeçalho" className="cabecalho">
+              <div className="title5">{'ATUALIZAR ESCALA'}</div>
+              <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <button className="red-button" onClick={() => setviewinsertescala(0)}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
               </div>
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                padding: 50,
-              }}>
-                <p className="title2" style={{ fontSize: 14 }}>PLANTONISTA:</p>
-                <p className="input"
-                  style={{ height: 50, width: 200, padding: 10, alignSelf: 'center', color: plantonista ? '#1f7a8c' : '#a6acaf' }}
-                  defaultValue="SELECIONE"
-                  title="PLANTONISTA ESCALADO.">
-                  {plantonista ? plantonista : 'SELECIONE'}
-                </p>
-                <p className="title2" style={{ fontSize: 14 }}>HORA DE INÍCIO:</p>
-                <MaskedInput
-                  id="inputInicio"
-                  title="HORA DE INICIO DO PLANTÃO."
-                  placeholder="07:00"
-                  autoComplete="off"
-                  onFocus={(e) => (e.target.placeholder = '')}
-                  onBlur={(e) => (e.target.placeholder = '07:00')}
-                  className="input"
-                  style={{
-                    margin: 5,
-                    width: 200,
-                    height: 50,
-                    alignSelf: 'center',
-                  }}
-                  mask="11:11"
-                />
-                <p className="title2" style={{ fontSize: 14 }}>HORA DE TÉRMINO:</p>
-                <MaskedInput
-                  id="inputTermino"
-                  title="HORA DE TÉRMINO DO PLANTÃO."
-                  placeholder="19:00"
-                  autoComplete="off"
-                  onFocus={(e) => (e.target.placeholder = '')}
-                  onBlur={(e) => (e.target.placeholder = '19:00')}
-                  className="input"
-                  style={{
-                    margin: 5,
-                    width: 200,
-                    height: 50,
-                    alignSelf: 'center',
-                  }}
-                  mask="11:11"
-                />
-                <p className="title2" style={{ fontSize: 14 }}>DATA DE TÉRMINO:</p>
-                <div
-                  class="radio-toolbar"
-                  style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 5 }}
-                >
-                  <input
-                    type="radio"
-                    id="radio1"
-                    name="data"
-                    value={moment(pickdate, 'DD/MM/YY').format('DD/MM/YY')}
-                    onClick={() => sendData()}
-                  ></input>
-                  <label style={{ margin: 0, marginRight: 5, width: 100 }} for="radio1">{moment(pickdate, 'DD/MM/YY').format('DD/MM/YY')}</label>
-                  <input
-                    type="radio"
-                    id="radio2"
-                    name="data"
-                    value={moment(pickdate, 'DD/MM/YY').add(1, 'day').format('DD/MM/YY')}
-                    onClick={() => editScale()}
-                  ></input>
-                  <label style={{ margin: 0, width: 100 }} for="radio2">{moment(pickdate, 'DD/MM/YY').add(1, 'day').format('DD/MM/YY')}</label>
+            </div>
+            <div
+              className="corpo"
+            >
+              <div
+                style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <div>
+                  <ShowPlantonistas></ShowPlantonistas>
                 </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    margin: 0,
-                  }}
-                >
-                  <button className="red-button" style={{ margin: 5 }}
-                    onClick={() => setviewinsertescala(0)}>
-                    <img
-                      alt=""
-                      src={deletar}
-                      style={{
-                        margin: 10,
-                        height: 30,
-                        width: 30,
-                      }}
-                    ></img>
-                  </button>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  padding: 50,
+                }}>
+                  <p className="title2" style={{ fontSize: 14 }}>PLANTONISTA:</p>
+                  <p className="input"
+                    style={{ height: 50, width: '20vw', padding: 10, alignSelf: 'center' }}
+                    defaultValue="SELECIONE"
+                    title="PLANTONISTA ESCALADO.">
+                    {plantonista ? plantonista : 'SELECIONE'}
+                  </p>
+                  <p className="title2" style={{ fontSize: 14 }}>HORA DE INÍCIO:</p>
+                  <MaskedInput
+                    id="inputInicio"
+                    title="HORA DE INICIO DO PLANTÃO."
+                    placeholder="07:00"
+                    autoComplete="off"
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = '07:00')}
+                    className="input"
+                    style={{
+                      margin: 5,
+                      width: 100,
+                      height: 50,
+                      alignSelf: 'center',
+                    }}
+                    mask="11:11"
+                  />
+                  <p className="title2" style={{ fontSize: 14 }}>HORA DE TÉRMINO:</p>
+                  <MaskedInput
+                    id="inputTermino"
+                    title="HORA DE TÉRMINO DO PLANTÃO."
+                    placeholder="19:00"
+                    autoComplete="off"
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = '19:00')}
+                    className="input"
+                    style={{
+                      margin: 5,
+                      width: 100,
+                      height: 50,
+                      alignSelf: 'center',
+                    }}
+                    mask="11:11"
+                  />
+                  <p className="title2" style={{ fontSize: 14 }}>DATA DE TÉRMINO:</p>
+                  <div
+                    style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 5 }}
+                  >
+                    <button
+                      className="blue-button"
+                      onClick={() => sendData()}
+                      style={{ width: 100 }}
+                    >
+                      {moment(pickdate, 'DD/MM/YYYY').format('DD/MM/YYYY')}
+                    </button>
+                    <button
+                      className="blue-button"
+                      onClick={() => editScale()}
+                      style={{ width: 100 }}
+                    >
+                      {moment(pickdate, 'DD/MM/YYYY').add(1, 'day').format('DD/MM/YYYY')}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -522,24 +453,24 @@ function Escala() {
     var inicio = document.getElementById('inputInicio').value;
     var termino = '23:59';
     var obj = {
-      hospital: hospital,
-      unidade: unidade,
+      hospital: nomehospital,
+      unidade: nomeunidade,
       usuario: plantonista,
-      inicio: moment(pickdate, 'DD/MM/YY').format('YYYY-MM-DD ') + inicio,
-      termino: moment(finaldate, 'DD/MM/YY').format('YYYY-MM-DD ') + termino,
+      inicio: moment(pickdate, 'DD/MM/YYYY').format('YYYY-MM-DD ') + inicio,
+      termino: moment(finaldate, 'DD/MM/YYYY').format('YYYY-MM-DD ') + termino,
     };
     axios.post(html + '/insertescala', obj);
     // definindo plantão de meia-noite até o dia seguinte. 
     setTimeout(() => {
-      finaldate = moment(pickdate, 'DD/MM/YY').add(1, 'day').format('DD/MM/YY');
+      finaldate = moment(pickdate, 'DD/MM/YYYY').add(1, 'day').format('DD/MM/YYYY');
       var inicio = '00:00';
       var termino = document.getElementById('inputTermino').value;
       var obj = {
-        hospital: hospital,
-        unidade: unidade,
+        hospital: nomehospital,
+        unidade: nomeunidade,
         usuario: plantonista,
-        inicio: moment(finaldate, 'DD/MM/YY').format('YYYY-MM-DD ') + inicio,
-        termino: moment(finaldate, 'DD/MM/YY').format('YYYY-MM-DD ') + termino,
+        inicio: moment(finaldate, 'DD/MM/YYYY').format('YYYY-MM-DD ') + inicio,
+        termino: moment(finaldate, 'DD/MM/YYYY').format('YYYY-MM-DD ') + termino,
       };
       axios.post(html + '/insertescala', obj);
       setviewinsertescala(0);
@@ -568,11 +499,11 @@ function Escala() {
       setviewinsertescala(0);
     } else {
       var obj = {
-        hospital: hospital,
-        unidade: unidade,
+        hospital: nomehospital,
+        unidade: nomeunidade,
         usuario: plantonista,
-        inicio: moment(pickdate, 'DD/MM/YY').format('YYYY-MM-DD ') + inicio,
-        termino: moment(pickdate, 'DD/MM/YY').format('YYYY-MM-DD ') + termino,
+        inicio: moment(pickdate, 'DD/MM/YYYY').format('YYYY-MM-DD ') + inicio,
+        termino: moment(pickdate, 'DD/MM/YYYY').format('YYYY-MM-DD ') + termino,
       };
       axios.post(html + '/insertescala', obj);
       setviewinsertescala(0);
@@ -599,8 +530,8 @@ function Escala() {
   const [arraylist, setarraylist] = useState([]);
   // preparando o primeiro dia do mês.
   var month = moment().format('MM');
-  var year = moment().format('YY');
-  const [startdate] = useState(moment('01/' + month + '/' + year, 'DD/MM/YY'));
+  var year = moment().format('YYYY');
+  const [startdate] = useState(moment('01/' + month + '/' + year, 'DD/MM/YYYY'));
   // descobrindo o primeiro dia do calendário (último domingo do mês anteior).
   const firstSunday = (x, y) => {
     while (x.weekday() > 0) {
@@ -615,18 +546,18 @@ function Escala() {
   }
   // criando array com 42 dias a partir da startdate.
   const setArrayDate = (x, y) => {
-    arraydate = [x.format('DD/MM/YY')];
+    arraydate = [x.format('DD/MM/YYYY')];
     while (y.diff(x, 'days') > 1) {
       x.add(1, 'day');
-      arraydate.push(x.format('DD/MM/YY').toString());
+      arraydate.push(x.format('DD/MM/YYYY').toString());
     }
   }
   // criando a array de datas baseada no mês atual.
   const currentMonth = () => {
     var month = moment(startdate).format('MM');
-    var year = moment(startdate).format('YY');
-    var x = moment('01/' + month + '/' + year, 'DD/MM/YY');
-    var y = moment('01/' + month + '/' + year, 'DD/MM/YY').add(42, 'days');
+    var year = moment(startdate).format('YYYY');
+    var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');
+    var y = moment('01/' + month + '/' + year, 'DD/MM/YYYY').add(42, 'days');
     firstSunday(x, y);
     setArrayDate(x, y);
     setarraylist(arraydate);
@@ -635,9 +566,9 @@ function Escala() {
   const previousMonth = () => {
     startdate.subtract(30, 'days');
     var month = moment(startdate).format('MM');
-    var year = moment(startdate).format('YY');
-    var x = moment('01/' + month + '/' + year, 'DD/MM/YY');
-    var y = moment('01/' + month + '/' + year, 'DD/MM/YY').add(42, 'days');
+    var year = moment(startdate).format('YYYY');
+    var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');
+    var y = moment('01/' + month + '/' + year, 'DD/MM/YYYY').add(42, 'days');
     firstSunday(x, y);
     setArrayDate(x, y);
     setarraylist(arraydate);
@@ -647,9 +578,9 @@ function Escala() {
   const nextMonth = () => {
     startdate.add(30, 'days');
     var month = moment(startdate).format('MM');
-    var year = moment(startdate).format('YY');
-    var x = moment('01/' + month + '/' + year, 'DD/MM/YY');
-    var y = moment('01/' + month + '/' + year, 'DD/MM/YY').add(42, 'days');
+    var year = moment(startdate).format('YYYY');
+    var x = moment('01/' + month + '/' + year, 'DD/MM/YYYY');
+    var y = moment('01/' + month + '/' + year, 'DD/MM/YYYY').add(42, 'days');
     firstSunday(x, y);
     setArrayDate(x, y);
     setarraylist(arraydate);
@@ -657,16 +588,16 @@ function Escala() {
   }
 
   // selecionando uma data no datepicker e definindo intervalo para carregamento da escala.
-  const [pickdate, setpickdate] = useState(moment().format('DD/MM/YY'));
+  const [pickdate, setpickdate] = useState(moment().format('DD/MM/YYYY'));
   var selecteddate = moment().format('YYYY-MM-DD');
   var previousdate = moment().subtract(1, 'day').format('YYYY-MM-DD');
   var nextdate = moment().add(1, 'day').format('YYYY-MM-DD');
   const selectDate = (date) => {
     setpickdate(date);
     finaldate = date;
-    selecteddate = moment(date, 'DD/MM/YY').format('YYYY-MM-DD');
-    previousdate = moment(date, 'DD/MM/YY').subtract(1, 'day').format('YYYY-MM-DD');
-    nextdate = moment(date, 'DD/MM/YY').add(1, 'day').format('YYYY-MM-DD');
+    selecteddate = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+    previousdate = moment(date, 'DD/MM/YYYY').subtract(1, 'day').format('YYYY-MM-DD');
+    nextdate = moment(date, 'DD/MM/YYYY').add(1, 'day').format('YYYY-MM-DD');
     loadEscalas(previousdate, selecteddate, nextdate);
   }
 
@@ -683,7 +614,7 @@ function Escala() {
       <div
         className="secondary"
         style={{
-          backgroundColor: '#ffffff',
+          backgroundColor: 'transparent',
           display: 'flex',
         }}>
         <div style={{
@@ -760,22 +691,21 @@ function Escala() {
             borderRadius: 5,
             margin: 0,
             padding: 5,
-            width: 395,
-            height: 340,
+            // height: '100%',
+            width: 420
           }}
         >
           {arraylist.map((item) => (
             <button
-              className="widget"
+              className={checkDate(item.substring(0, 2)).length > 0 && pickdate !== item ? "green-button" :
+                checkDate(item.substring(0, 2)).length > 0 && pickdate === item ? "red-button" :
+                  checkDate(item.substring(0, 2)).length < 1 && pickdate !== item ? "blue-button" : "red-button"
+              }
               onClick={() => selectDate(item)}
               style={{
                 width: 50,
                 height: 50,
                 margin: 2.5,
-                backgroundColor:
-                  (checkDate(item.substring(0, 2)).length > 0 && pickdate !== item) ? '#52be80' :
-                    (checkDate(item.substring(0, 2)).length > 0 && pickdate === item) ? '#ec7063' :
-                      (checkDate(item.substring(0, 2)).length < 1 && pickdate !== item) ? '#1f7a8c' : '#ec7063',
                 opacity: item.substring(3, 5) === moment(startdate).format('MM') ? 1 : 0.5,
               }}
               title={item}
@@ -804,51 +734,39 @@ function Escala() {
   }
 
   // renderização do componente.
-  if (viewEscala === 1) {
-    return (
-      <div>
+  return (
+    <div>
+      <div
+        className="main fade-in"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        <Header link={"/unidades"} titulo={'ESCALA DE TRABALHO'}></Header>
+        <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo}></Toast>
+        <NovaEscalaView></NovaEscalaView>
         <div
-          className="main fade-in"
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
             margin: 0,
             padding: 0,
-          }}
-        >
-          <Header link={"/pages/unidades"} titulo={'ESCALA DE TRABALHO'}></Header>
-          <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo}></Toast>
-          <NovaEscalaView></NovaEscalaView>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              margin: 0,
-              padding: 0,
-              paddingLeft: 5,
-              paddingRight: 5,
-              width: window.innerWidth,
-              minHeight: window.innerHeight - 155,
-              maxHeight: window.innerHeight - 155,
-            }}>
-            <DatePicker></DatePicker>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-              }}>
-              <Labels></Labels>
-              <ShowEscalas></ShowEscalas>
-            </div>
-          </div>
+            paddingLeft: 5,
+            paddingRight: 5,
+            width: window.innerWidth,
+            height: '82vh'
+          }}>
+          <DatePicker></DatePicker>
+          <ShowEscalas></ShowEscalas>
         </div>
       </div>
-    )
-  } else {
-    return null;
-  }
+    </div>
+  )
 }
 
 export default Escala;

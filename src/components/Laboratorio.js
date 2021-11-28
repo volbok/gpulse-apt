@@ -804,15 +804,16 @@ function Laboratorio({ viewlaboratorio }) {
       <div id="OUTRUN" style={{
         display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
         width: '100%',
-        height: '50vh', padding: 0, paddingTop: 5, paddingLeft: window.innerWidth > 400 ? 10 : 0, 
+        height: '50vh', padding: 0, paddingTop: 5, paddingLeft: window.innerWidth > 400 ? 10 : 0,
       }}>
         <input
           className="input"
           autoComplete="off"
           placeholder="BUSCAR EXAME..."
-          onFocus={(e) => (e.target.placeholder = '')}
+          onFocus={(e) => { (e.target.placeholder = ''); }}
           onBlur={(e) => (e.target.placeholder = 'BUSCAR EXAME...')}
-          onChange={() => filterLab()}
+          onClick={() => document.getElementById("SELEÇÃO DE EXAMES").style.display = "none"}
+          onChange={() => { filterLab(); document.getElementById("SELEÇÃO DE EXAMES").style.display = "none" }}
           style={{
             width: '100%', marginBottom: 10,
           }}
@@ -822,7 +823,7 @@ function Laboratorio({ viewlaboratorio }) {
           maxLength={100}
         ></input>
         <div
-          className="scrolldrop"
+          className="scroll"
           id="LISTA DE EXAMES LABORATORIAIS PARA SELEÇÃO"
           style={{
             display: arrayfilterlab.length > 0 ? 'flex' : 'none',
@@ -847,7 +848,7 @@ function Laboratorio({ viewlaboratorio }) {
           ))}
         </div>
         <div
-          className="scrolldrop"
+          className="scroll"
           id="LISTA DE EXAMES LABORATORIAIS PARA SELEÇÃO"
           style={{
             display: arrayfilterlab.length > 0 ? 'none' : 'flex',
@@ -953,6 +954,7 @@ function Laboratorio({ viewlaboratorio }) {
           </div>
           <div
             className="corpo"
+            onClick={() => document.getElementById("SELEÇÃO DE EXAMES").style.display = "flex"}
           >
             <div className="title2" style={{ fontSize: 14 }}>DATA E HORA DA COLETA:</div>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 10, width: window.innerWidth > 400 ? '40vw' : '90vw' }}>
@@ -1021,10 +1023,12 @@ function Laboratorio({ viewlaboratorio }) {
               width: '100%',
               padding: 10,
             }}>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '50vh' }}>
-                <div className="title2center" style={{ marginTop: 15, marginBottom: 20 }}>SELEÇÃO RÁPIDA DE EXAMES:</div>
+              <div id="SELEÇÃO DE EXAMES"
+                style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '50vh' }}>
                 <div
-                  className="scrolldrop"
+                  className="title2center" style={{ marginTop: 15, marginBottom: 20 }}>SELEÇÃO RÁPIDA DE EXAMES:</div>
+                <div
+                  className="scroll"
                   style={{
                     flexDirection: 'row',
                     flexWrap: 'wrap',

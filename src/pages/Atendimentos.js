@@ -237,7 +237,6 @@ function Atendimentos() {
       return (
         <div id="cardpaciente" className="widget"
           style={{
-            // position: 'absolute', top: '20vh', right: 0, bottom: 0, left: 0.7 * window.innerWidth,
             position: 'relative',
             display: 'flex',
             flexDirection: 'column',
@@ -245,7 +244,7 @@ function Atendimentos() {
             borderRadius: 0,
             padding: 5,
             margin: 0,
-            width: '35vw',
+            width: '40vw',
             backgroundColor: 'rgba(143, 155, 188, 0.8)',
           }}>
           <div className="scrollmenu" style={{ backgroundColor: 'transparent', borderColor: 'transparent', boxShadow: 'none', alignSelf: 'center' }}>
@@ -268,14 +267,13 @@ function Atendimentos() {
     } else {
       return <div className="widget"
         style={{
-          // position: 'absolute', top: '20vh', right: 0, bottom: 0, left: 0.7 * window.innerWidth,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           borderRadius: 0,
           padding: 5,
           margin: 0,
-          width: '35vw',
+          width: '40vw',
           backgroundColor: 'rgba(143, 155, 188, 0.8)',
         }}>
         <div className="title2" style={{ textAlign: 'center', fontSize: 14, color: '#ffffff' }}>{'SELECIONE UM PACIENTE DA LISTA PARA VISUALIZAR SEUS DADOS.'}</div>
@@ -331,17 +329,12 @@ function Atendimentos() {
   // cabeçalho para a lista de pacientes.
   function CabecalhoPacientes() {
     return (
-      <div className="scrollheader"
-        style={{
-          overflowY: 'scroll', paddingRight: 20, backgroundColor: 'transparent',
-          borderColor: 'transparent', borderWidth: 5, borderStyle: 'solid',
-        }}>
-        <div className="rowheader">
+      <div className="scrollheader">
+        <div className="rowheader" style={{ paddingRight: 18 }}>
           <button
             className="header-button"
             style={{
               width: '100%',
-              padding: 10,
               textAlign: 'left',
             }}
           >
@@ -351,7 +344,8 @@ function Atendimentos() {
             className="rowitemheader"
             style={{
               width: '30%',
-              alignSelf: 'center'
+              alignSelf: 'center',
+              paddingRight: 15,
             }}
           >
             DATA DE NASCIMENTO
@@ -361,7 +355,6 @@ function Atendimentos() {
             title="DOCUMENTO DO PACIENTE."
             style={{
               width: '40%',
-              padding: 10,
               alignSelf: 'center',
             }}
           >
@@ -376,14 +369,13 @@ function Atendimentos() {
   function ShowPacientes() {
     return (
       <div style={{
-        // position: 'absolute', top: '20vh', left: 0, right: 0.3 * window.innerWidth,
         display: 'flex', flexDirection: 'column', justifyContent: 'center',
         margin: 0, marginRight: 5, padding: 0, width: '100%'
       }}>
         <ShowFilter></ShowFilter>
         <CabecalhoPacientes></CabecalhoPacientes>
         <div
-          className="scroll" style={{ overflowY: 'scroll', paddingRight: 10 }}
+          className="scroll" style={{ height: '100%' }}
           id="LISTA DE PACIENTES"
         >
           {arraypacientes.map((item) => (
@@ -396,7 +388,6 @@ function Atendimentos() {
                 className="blue-button"
                 style={{
                   width: '100%',
-                  padding: 10,
                   textAlign: 'left',
                   backgroundColor: item.id == idpaciente ? '#ec7063' : '#8f9bbc',
                 }}
@@ -422,7 +413,6 @@ function Atendimentos() {
                 title="DOCUMENTO DO PACIENTE."
                 style={{
                   width: '40%',
-                  padding: 10,
                   alignSelf: 'center',
                 }}
               >
@@ -703,7 +693,7 @@ function Atendimentos() {
                 </button>
               </div>
             </div>
-            <div className="scroll" style={{ height: '70vh', width: '70vw', overflowY: 'scroll', paddingRight: 10 }}>
+            <div className="scroll" style={{ height: '80vh', width: '80vw', alignItems: 'center' }}>
               <p className="title2" style={{ fontSize: 14 }}>NOME:</p>
               <input
                 className="input"
@@ -1059,12 +1049,9 @@ function Atendimentos() {
           HOSPITAIS
         </p>
         <div
-          className="scrolldrop"
+          className="scroll"
           id="LISTA DE HOSPITAIS"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
             marginRight: 0,
             height: '50vh',
             width: '30vw',
@@ -1075,7 +1062,7 @@ function Atendimentos() {
               key={item.id}
               className="widget"
               style={{
-                padding: 10,
+                alignSelf: 'center',
                 width: '100%',
                 color: '#ffffff',
                 backgroundColor:
@@ -1102,19 +1089,20 @@ function Atendimentos() {
   // exibindo a lista de unidades.
   function ShowUnidades() {
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        paddingLeft: 5,
-        paddingRight: 5,
-        marginLeft: 10,
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
+          paddingLeft: 5,
+          paddingRight: 5,
+          marginLeft: 10,
+        }}>
         <p className="title2" style={{ fontSize: 18, width: '100%' }}>
           UNIDADES
         </p>
         <div
-          className="scrolldrop"
+          className="scroll"
           id="ATENDIMENTOS"
           style={{
             display: 'flex',
@@ -1123,7 +1111,7 @@ function Atendimentos() {
             alignItems: 'flex-start',
             flexWrap: 'wrap',
             height: '50vh',
-            width: 'calc(24vw + 65px)',
+            width: 'calc(24vw + 70px)',
           }}
         >
           {unidades.map((item) => (
@@ -1140,7 +1128,7 @@ function Atendimentos() {
               onClick={(e) => { selectUnidade(item); e.stopPropagation() }}
             >
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <div className="title2" style={{ fontSize: 18, color: '#ffffff', textAlign: 'center' }}>{item.unidade}</div>
+                <div className="title2" style={{ color: '#ffffff', textAlign: 'center' }}>{item.unidade}</div>
                 <div>{'VAGAS: ' + leitos.filter((x) => x.unidade === item.unidade).map((x) => x.leitos - (atendimentos.filter((x) => x.unidade === item.unidade && x.ativo > 0)).length)}
                 </div>
               </div>

@@ -68,7 +68,7 @@ function Interconsultas(
             alignItems: 'center'
           }}>
           <div className="menucontainer" style={{ padding: 30 }}>
-            <div className="scrolldrop"
+            <div className="scroll"
               id="LISTA DE ESPECIALIDADES"
               style={{
                 padding: 0, paddingRight: 5,

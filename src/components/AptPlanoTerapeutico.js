@@ -198,17 +198,18 @@ function AptPlanoTerapeutico() {
             flexDirection: window.innerWidth > 400 ? 'row' : 'column',
             justifyContent: 'center', padding: 5, marginTop: 0, alignSelf: 'center', alignItems: 'center',
           }}>
-          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: 90, opacity: adf == 1 ? 1 : 0.3 }} className="green-button" onClick={() => setadf(1)}>
+          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: window.innerWidth > 400 ? 90 : '', opacity: adf == 1 ? 1 : 0.3 }} className="green-button" onClick={() => setadf(1)}>
             AUSENTE
           </button>
-          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: 90, opacity: adf == 2 ? 1 : 0.3 }} className="yellow-button" onClick={() => setadf(2)}>
+          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: window.innerWidth > 400 ? 90 : '', opacity: adf == 2 ? 1 : 0.3 }} className="yellow-button" onClick={() => setadf(2)}>
             IMINENTE
           </button>
           <button
             style={{
               width:
                 adf != 3 && window.innerWidth > 400 ? '12vw' : adf == 3 && window.innerWidth > 400 ? '26vw' : '90vw',
-              height: 90, opacity: adf == 3 ? 1 : 0.3
+              height: window.innerWidth > 400 ? 90 : window.innerWidth < 400 && adf == 3 ? 90 : '',
+              opacity: adf == 3 ? 1 : 0.3
             }}
             className="red-button" onClick={() => setadf(3)}>
             <div>ESTABELECIDO</div>
@@ -251,17 +252,17 @@ function AptPlanoTerapeutico() {
             flexDirection: window.innerWidth > 400 ? 'row' : 'column',
             justifyContent: 'center', padding: 5, marginTop: 0, alignSelf: 'center', alignItems: 'center',
           }}>
-          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: 90, opacity: crf == 1 ? 1 : 0.3 }} className="green-button" onClick={() => setcrf(1)}>
+          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: window.innerWidth > 400 ? 90 : '', opacity: crf == 1 ? 1 : 0.3 }} className="green-button" onClick={() => setcrf(1)}>
             PACIENTE ROBUSTO
           </button>
-          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: 90, opacity: crf == 2 ? 1 : 0.3, maxHeight: 200 }} className="yellow-button" onClick={() => setcrf(2)}>
+          <button style={{ width: window.innerWidth > 400 ? '12vw' : '90vw', height: window.innerWidth > 400 ? 90 : '', opacity: crf == 2 ? 1 : 0.3, maxHeight: 200 }} className="yellow-button" onClick={() => setcrf(2)}>
             RISCO DE FRAGILIZAÇÃO
           </button>
           <button
             style={{
               width:
                 crf != 3 && window.innerWidth > 400 ? '12vw' : crf == 3 && window.innerWidth > 400 ? '26vw' : '90vw',
-              height: 90, opacity: crf == 3 ? 1 : 0.3
+              height: window.innerWidth > 400 ? 90 : window.innerWidth < 400 && crf == 3 ? 90 : '',
             }} className="red-button" onClick={() => setcrf(3)}>
             PACIENTE FRÁGIL
             <div id="CRF - opções - paciente frágil" style={{ display: crf == 3 ? 'flex' : 'none', justifyContent: 'space-evenly' }}>
@@ -477,7 +478,7 @@ function AptPlanoTerapeutico() {
   function LinhaDeCuidados() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div className="title4" style={{ margin: 20, marginTop: 25 }}>LINHA DE CUIDADOS</div>
+        <div className="title4" style={{ margin: 15 }}>LINHA DE CUIDADOS</div>
         <div id="LINHA DE CUIDADOS" style={{
           display: 'flex',
           flexDirection: window.innerWidth > 400 ? 'row' : 'column',
@@ -565,7 +566,6 @@ function AptPlanoTerapeutico() {
       {
         id: 1,
         idpaciente: idpaciente,
-        idatendimento: idatendimento,
         idplanoterapeutico: idplanoterapeutico,
         meta: 'VOLTAR A DEAMBULAR.',
         dominio: 'MOTRICIDADE',
@@ -699,10 +699,29 @@ function AptPlanoTerapeutico() {
   // lista de planos terapêuticos relativos ao paciente em atendimento (histórico).
   function ListaDePlanosTerapeuticos() {
     return (
-      <div className="scroll">
+      <div className="scroll"
+        style={{
+          display: 'flex',
+          alignSelf: 'center',
+          flexDirection: 'row',
+          height: 80,
+          minHeight: 80,
+          width: '100%',
+          // width: window.innerWidth > 1024 ? '60vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '85vw',
+          // minWidth: window.innerWidth > 1024 ? '45vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '85vw',
+          margin: 0,
+          padding: 0,
+          scrollBehavior: 'smooth',
+          alignItems: 'center',
+          overflowX: 'scroll',
+          overflowY: 'hidden',
+          borderRadius: 5,
+          backgroundColor: 'transparent', borderColor: 'transparent',
+        }}
+      >
         {planosterapeuticos.map(item => (
-          <div className="row">
-            <button onClick={() => selectIVCF(item)}>{item.data}</button>
+          <div className="card" onClick={() => selectIVCF(item)}>
+            {item.data}
           </div>
         ))}
       </div>
@@ -712,33 +731,45 @@ function AptPlanoTerapeutico() {
   function PlanoTerapeutico() {
     return (
       <div id="PLANO TERAPÊUTICO"
+        className="card"
         style={{
-          display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-          width: window.innerWidth < 400 ? '90vw' : window.innerWidth > 400 && window.innerWidth < 1024 ? '75vw' : '100%',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center',
+          marginTop: 20,
+          padding: 0, paddingBottom: 10,
+          width: window.innerWidth < 400 ? '90vw' : window.innerWidth > 400 && window.innerWidth < 1025 ? '70vw' : '78vw',
         }}>
-        <div className="row"
+        <div
+          className="row"
           style={{
             display: 'flex',
             flexDirection: window.innerWidth > 400 ? 'row' : 'column',
             justifyContent: 'space-between',
-            margin: 10, padding: 10, alignSelf: 'center', width: '100%',
+            margin: 0, padding: 5, alignSelf: 'center', width: '100%',
+            backgroundColor: 'grey',
+            borderTopLeftRadius: 5, borderTopRightRadius: 5,
+            borderBottomLeftRadius: 0, borderBottomRightRadius: 0,
           }}>
-          <div className="title4" style={{ width: '100%', textAlign: 'left' }}>
-            {'PLANO TERAPÊUTICO ' + lastplanoterapeutico.map(item => item.id)}
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <button title="INÍCIO" className="grey-button" style={{ width: window.innerWidth > 400 ? '10vw' : 100 }}>
-              {lastplanoterapeutico.map(item => item.data)}
-            </button>
-            <button title="STATUS" className="green-button" style={{ width: window.innerWidth > 400 ? '10vw' : 100 }}>
-              {lastplanoterapeutico.map(item => item.status) == 1 ? 'ATIVO' :
-                lastplanoterapeutico.map(item => item.status) == 2 ? 'INTERRROMPIDO' :
-                  'CONCLUÍDO'
-              }
-            </button>
-            <button title="INTERROMPER PLANO TERAPÊUTICO" className="animated-yellow-button">
-              !
-            </button>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
+            <div style={{ display: 'flex', flexDirection: window.innerWidth > 400 ? 'row' : 'column', justifyContent: 'center', width: '100%' }}>
+              <div className="title5" style={{ width: '100%', textAlign: 'left', justifyContent: 'flex-start' }}>
+                {'PLANO TERAPÊUTICO ' + lastplanoterapeutico.map(item => item.id)}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <button title="INÍCIO" className="blue-button" style={{ width: window.innerWidth > 400 ? '10vw' : 100 }}>
+                  {lastplanoterapeutico.map(item => item.data)}
+                </button>
+                <button title="STATUS" className="green-button" style={{ width: window.innerWidth > 400 ? '10vw' : 100 }}>
+                  {lastplanoterapeutico.map(item => item.status) == 1 ? 'ATIVO' :
+                    lastplanoterapeutico.map(item => item.status) == 2 ? 'INTERRROMPIDO' :
+                      'CONCLUÍDO'
+                  }
+                </button>
+                <button title="INTERROMPER PLANO TERAPÊUTICO" className="animated-yellow-button">
+                  !
+                </button>
+              </div>
+            </div>
+            <ListaDePlanosTerapeuticos></ListaDePlanosTerapeuticos>
           </div>
         </div>
         <div className="title2center" style={{ margin: 0, marginTop: 5 }}>OBJETIVOS PRIMÁRIOS</div>
@@ -754,29 +785,31 @@ function AptPlanoTerapeutico() {
     return (
       <div id="atividades por categoria profissional"
         style={{
-          position: 'relative',
           display: 'flex',
           flexDirection: window.innerWidth > 1024 ? 'row' : 'column',
-          justifyContent: 'center',
+          justifyContent: 'center', position: 'relative',
           marginTop: 20,
         }}>
         <MenuCategoria></MenuCategoria>
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignSelf: 'center' }}>
           <div id="scrollplanoterapeutico" className="scroll"
             style={{
-              display: 'flex',
+              alignSelf: 'center',
               flexDirection: 'column',
               backgroundColor: 'transparent', borderColor: 'transparent',
               overflowY: 'hidden', scrollBehavior: 'smooth',
-              height: window.innerWidth > 1024 ? '75vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '55vh' : '40vh',
+              padding: 0,
+              // backgroundColor: 'red', borderColor: 'red',
+              height: window.innerWidth > 1024 ? '65vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '50vh' : '60vh',
+              width: window.innerWidth > 1024 ? '60vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '67vw' : '80vw'
             }}>
             <Metas></Metas>
             <Intervencoes></Intervencoes>
             <Metricas></Metricas>
             <Evolucoes></Evolucoes>
           </div>
+          <SpecialScroll></SpecialScroll>
         </div>
-        <SpecialScroll></SpecialScroll>
       </div>
     )
   }
@@ -791,18 +824,14 @@ function AptPlanoTerapeutico() {
         //onMouseOver={() => document.getElementById("specialscroll").style.opacity = 1}
         //onMouseOut={() => document.getElementById("specialscroll").style.opacity = 0.2}
         style={{
-          width: 10,
-          position: 'absolute',
-          top: window.innerWidth > 1024 ? '5vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '18vh' : '20vh',
-          bottom: 0,
-          right: window.innerWidth > 1024 ? '0.5vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? 0 : '1vw',
+          width: '3w', height: 300,
           display: 'flex', flexDirection: 'row', justifyContent: 'center',
           alignSelf: 'center', alignItems: 'center',
         }}>
         <div
           className="corprincipal"
           style={{
-            width: 10, height: '30vh', margin: 0, padding: 0,
+            width: 10, height: '50%', margin: 0, padding: 0,
             borderRadius: 50, position: 'relative', display: 'flex',
             flexDirection: 'column', justifyContent: 'space-between'
           }}>
@@ -837,7 +866,7 @@ function AptPlanoTerapeutico() {
           </buttom>
           <buttom className="corprincipal" title="EVOLUÇÕES"
             onClick={() => {
-              var position = document.getElementById("MEDIDA").offsetHeight + 50;
+              var position = document.getElementById("MEDIDA").offsetHeight;
               document.getElementById("scrollplanoterapeutico").scrollTo(0, 3 * position);
             }}
             style={{
@@ -860,96 +889,177 @@ function AptPlanoTerapeutico() {
         style={{
           display: 'flex',
           alignSelf: 'center',
-          // backgroundColor: 'transparent',
-          // borderColor: 'transparent',
+          // backgroundColor: 'transparent', borderColor: 'transparent',
           flexDirection: window.innerWidth > 1024 ? 'column' : 'row',
-          height: window.innerWidth > 1024 ? '65vh' : 85,
-          minHeight: 85,
-          width: window.innerWidth > 1024 ? '15vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '70vw' : '85vw',
+          height: window.innerWidth > 1024 ? '65vh' : 80,
+          minHeight: 80,
+          width: window.innerWidth > 1024 ? '15vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '85vw',
+          minWidth: window.innerWidth > 1024 ? '15vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '85vw',
           margin: 0,
+          scrollBehavior: 'smooth',
           marginTop: window.innerWidth > 1024 ? 0 : 10,
           marginBottom: window.innerWidth > 1024 ? 0 : 10,
-          marginRight: window.innerWidth > 1024 ? 5 : 0,
-          paddingRight: window.innerWidth > 1024 ? 10 : 0,
+          marginRight: window.innerWidth > 1024 ? 0 : 0,
+          paddingRight: window.innerWidth > 1024 ? 10 : 5,
           alignItems: 'center',
           overflowX: window.innerWidth > 1024 ? 'hidden' : 'scroll',
           overflowY: window.innerWidth > 1024 ? 'scroll' : 'hidden',
+          borderRadius: 5,
         }}>
-        <button className="blue-button"
-          onClick={() => setcategoria(1)}
+        <button className={categoria == 1 ? "red-button" : "blue-button"}
+          id="btnmedico"
+          onClick={() => {
+            setcategoria(1);
+            if (window.innerWidth < 1240) {
+              setTimeout(() => {
+                document.getElementById("lista de profissionais").scrollTo(0, 0);
+                document.getElementById("btnmedico").style.minWidth = '60vw';
+              }, 250);
+            }
+          }}
           style={{
             pading: 10,
             width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
+            minWidth: 140
           }}>
           MÉDICO
         </button>
-        <button className="blue-button"
-          onClick={() => setcategoria(2)}
+
+        <button className={categoria == 2 ? "red-button" : "blue-button"}
+          id="btnenfermeiro"
+          onClick={() => {
+            setcategoria(2);
+            if (window.innerWidth < 1240) {
+              setTimeout(() => {
+                document.getElementById("btnenfermeiro").style.minWidth = '60vw';
+                setTimeout(() => {
+                  var position = document.getElementById("btnmedico").offsetWidth + 5;
+                  document.getElementById("lista de profissionais").scrollTo(position - 5, 0);
+                }, 250);
+              }, 250);
+            }
+          }}
           style={{
             pading: 10,
             width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
+            minWidth: 140
           }}>
           ENFERMEIRO
         </button>
-        <button className="blue-button"
-          onClick={() => setcategoria(3)}
+
+        <button className={categoria == 3 ? "red-button" : "blue-button"}
+          id="btnfisioterapia"
+          onClick={() => {
+            setcategoria(3);
+            if (window.innerWidth < 1240) {
+              setTimeout(() => {
+                document.getElementById("btnfisioterapia").style.minWidth = '60vw';
+                setTimeout(() => {
+                  var position = document.getElementById("btnmedico").offsetWidth + 5;
+                  document.getElementById("lista de profissionais").scrollTo(2 * position - 5, 0);
+                }, 250);
+              }, 250);
+            }
+          }}
           style={{
             pading: 10,
             width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
+            minWidth: 140
           }}>
-          FISIOTERAPEUTA
+          FISIOTERAPIA
         </button>
-        <button className="blue-button"
-          onClick={() => setcategoria(4)}
+
+        <button className={categoria == 4 ? "red-button" : "blue-button"}
+          id="btnfonoaudiologo"
+          onClick={() => {
+            setcategoria(4);
+            if (window.innerWidth < 1240) {
+              setTimeout(() => {
+                document.getElementById("btnfonoaudiologo").style.minWidth = '60vw';
+                setTimeout(() => {
+                  var position = document.getElementById("btnmedico").offsetWidth + 5;
+                  document.getElementById("lista de profissionais").scrollTo(3 * position - 5, 0);
+                }, 250);
+              }, 250);
+            }
+          }}
           style={{
             pading: 10,
             width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
+            minWidth: 140
           }}>
           FONOAUDIÓLOGO
         </button>
-        <button className="blue-button"
-          onClick={() => setcategoria(5)}
+
+        <button className={categoria == 5 ? "red-button" : "blue-button"}
+          id="btnterapeutaocupacional"
+          onClick={() => {
+            setcategoria(5);
+            if (window.innerWidth < 1240) {
+              setTimeout(() => {
+                document.getElementById("btnterapeutaocupacional").style.minWidth = '60vw';
+                setTimeout(() => {
+                  var position = document.getElementById("btnmedico").offsetWidth + 5;
+                  document.getElementById("lista de profissionais").scrollTo(4 * position - 5, 0);
+                }, 250);
+              }, 250);
+            }
+          }}
           style={{
             pading: 10,
             width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
+            minWidth: 140
           }}>
           TERAPEUTA OCUPACIONAL
         </button>
-        <button className="blue-button"
-          onClick={() => setcategoria(6)}
+
+        <button className={categoria == 6 ? "red-button" : "blue-button"}
+          id="btnpsicologo"
+          onClick={() => {
+            setcategoria(6);
+            if (window.innerWidth < 1240) {
+              setTimeout(() => {
+                document.getElementById("btnpsicologo").style.minWidth = '60vw';
+                setTimeout(() => {
+                  var position = document.getElementById("btnmedico").offsetWidth + 5;
+                  document.getElementById("lista de profissionais").scrollTo(5 * position - 5, 0);
+                }, 250);
+              }, 250);
+            }
+          }}
           style={{
             pading: 10,
             width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
+            minWidth: 140
           }}>
           PSICÓLOGO
         </button>
-        <button className="blue-button"
-          onClick={() => setcategoria(7)}
+
+        <button className={categoria == 7 ? "red-button" : "blue-button"}
+          id="btnassistentesocial"
+          onClick={() => {
+            setcategoria(7);
+            if (window.innerWidth < 1240) {
+              setTimeout(() => {
+                document.getElementById("btnassistentesocial").style.minWidth = '60vw';
+                setTimeout(() => {
+                  var position = document.getElementById("btnmedico").offsetWidth + 5;
+                  document.getElementById("lista de profissionais").scrollTo(6 * position - 5, 0);
+                }, 250);
+              }, 250);
+            }
+          }}
           style={{
             pading: 10,
             width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
+            minWidth: 140
           }}>
           ASSISTENTE SOCIAL
         </button>
-        <button className="blue-button"
-          onClick={() => setcategoria(8)}
-          style={{
-            pading: 10,
-            width: window.innerWidth > 1024 ? '100%' : 150,
-            minWidth: window.innerWidth > 1024 ? '100%' : 150,
-          }}>
-          RELIGIOSO
-        </button>
+
       </div>
     )
-  }, []);
+  }, [categoria]);
 
   // OBJETIVOS PRIMÁRIO E SECUNDÁRIOS DO PLANO TERAPÊUTICO.
   // carregar objetivos primários e secundários relacionados ao plano terapêutico ativo.
@@ -980,12 +1090,17 @@ function AptPlanoTerapeutico() {
   // exibição de objetivos primários e secundários.
   function ObjetivosPrimarios() {
     return (
-      <div className="scroll">
+      <div className="scroll"
+        style={{
+          width: window.innerWidth < 400 ? '85vw' : window.innerWidth > 400 && window.innerWidth < 1025 ? '65vw' : '75vw',
+          backgroundColor: "#f2f2f2", borderColor: "#f2f2f2",
+        }}
+      >
         {objetivos.filter(item => item.tipo == 1).map(item => (
           <div id="ITEM DE OBJETIVO PRIMÁRIO" className="row"
             style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center',
-              width: window.innerWidth < 400 ? '85vw' : '100%',
+              width: window.innerWidth < 400 ? '80vw' : window.innerWidth > 400 && window.innerWidth > 1025 ? '70vw' : '100%',
             }}>
             <div
               style={{
@@ -1062,12 +1177,16 @@ function AptPlanoTerapeutico() {
   }
   function ObjetivosSecundarios() {
     return (
-      <div className="scroll" style={{ height: 200 }}>
+      <div className="scroll"
+        style={{
+          height: 200, backgroundColor: "#f2f2f2", borderColor: "#f2f2f2",
+          width: window.innerWidth < 400 ? '85vw' : window.innerWidth > 400 && window.innerWidth < 1025 ? '65vw' : '75vw'
+        }}>
         {objetivos.filter(item => item.tipo == 2).map(item => (
           <div id="ITEM DE OBJETIVO SECUNDÁRIO" className="row"
             style={{
               display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center',
-              width: window.innerWidth < 400 ? '85vw' : '100%',
+              width: window.innerWidth < 400 ? '80vw' : window.innerWidth > 400 && window.innerWidth > 1025 ? '70vw' : '100%',
               minHeight: window.innerWidth < 400 ? '' : 65,
             }}>
             <div
@@ -1390,13 +1509,15 @@ function AptPlanoTerapeutico() {
   // exibição de metas por categoria profissional.
   function Metas() {
     return (
-      <div id="MEDIDA" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div id="MEDIDA"
+        style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
         <div id="METAS" className="title4">METAS</div>
         <div id="view das metas" className="scroll"
           style={{
-            width: window.innerWidth > 1024 ? '60vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '68.5vw' : '71vw',
-            height: window.innerWidth > 1024 ? '65vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '47.5vh' : '30vh',
+            width: window.innerWidth > 1024 ? '58vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '75vw',
+            height: window.innerWidth > 1024 ? '56vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '43vh' : '51vh',
             margin: 0,
+            backgroundColor: '#f2f2f2', borderColor: '#f2f2f2'
           }}>
           {metas.filter(item => item.profissional == categoria).map(item => getMetas(item))}
         </div>
@@ -1657,13 +1778,14 @@ function AptPlanoTerapeutico() {
   // exibição de metas por categoria profissional.
   function Intervencoes() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
         <div id="INTERVENCOES" className="title4">INTERVENÇÕES TERAPÊUTICAS</div>
         <div id="view das intervenções" className="scroll"
           style={{
-            width: window.innerWidth > 1024 ? '60vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '68.5vw' : '71vw',
-            height: window.innerWidth > 1024 ? '65vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '47.5vh' : '30vh',
+            width: window.innerWidth > 1024 ? '58vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '75vw',
+            height: window.innerWidth > 1024 ? '56vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '43vh' : '51vh',
             margin: 0,
+            backgroundColor: '#f2f2f2', borderColor: '#f2f2f2'
           }}>
           {intervencoes.filter(item => item.profissional == categoria).map(item => getIntervencoes(item))}
         </div>
@@ -1741,13 +1863,14 @@ function AptPlanoTerapeutico() {
 
   function Metricas() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
         <div id="METRICAS" className="title4">MÉTODOS DE MENSURAÇÃO</div>
-        <div id="view das escalas" className="scroll"
+        <div id="view das métricas" className="scroll"
           style={{
-            width: window.innerWidth > 1024 ? '60vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '68.5vw' : '71vw',
-            height: window.innerWidth > 1024 ? '65vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '47.5vh' : '30vh',
+            width: window.innerWidth > 1024 ? '58vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '75vw',
+            height: window.innerWidth > 1024 ? '56vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '43vh' : '51vh',
             margin: 0,
+            backgroundColor: '#f2f2f2', borderColor: '#f2f2f2'
           }}>
           {tiposescalas.map(item => (
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start' }}>
@@ -1796,135 +1919,140 @@ function AptPlanoTerapeutico() {
       <div
         className="scroll"
         style={{
-          margin: 0,
-          padding: 0, paddingRight: 0,
+          display: 'flex', flexDirection: 'row', justifyContent: 'flex-start',
+          margin: 5, padding: 0, paddingRight: 0,
           overflowY: 'hidden', overflowX: 'scroll',
-          width: '50vw',
-          display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start',
+          width: '50vw'
         }}
       >
-        <div>
+        <div style={{ alignSelf: 'flex-start' }}>
           <Line
             data={dataChartEscalas}
             padding={10}
             width={valores.length * 0.1 * window.innerWidth}
             height={0.13 * window.innerWidth}
             plugins={ChartDataLabels}
-            options={{
-              layout: {
-                padding: 5,
-              },
-              scales: {
-                xAxes: [
-                  {
-                    display: window.innerWidth > 400 ? true : false,
-                    ticks: {
-                      fontColor: '#61636e',
-                      fontWeight: 'bold',
+            options={
+              {
+                layout: {
+                  padding: 10
+                },
+                scales: {
+                  xAxes: [
+                    {
+                      display: window.innerWidth > 400 ? true : false,
+                      ticks: {
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
                     },
-                    gridLines: {
-                      zeroLineColor: 'transparent',
-                      lineWidth: 0,
-                      drawOnChartArea: true,
+                  ],
+                  yAxes: [
+                    {
+                      display: false,
+                      ticks: {
+                        suggestedMin: item.min,
+                        suggestedMax: item.max + 10,
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
                     },
-                  },
-                ],
-                yAxes: [
-                  {
+                  ],
+                },
+                plugins: {
+                  datalabels: {
                     display: false,
-                    ticks: {
-                      suggestedMin: item.min,
-                      suggestedMax: item.max + 10,
-                      fontColor: '#61636e',
-                      fontWeight: 'bold',
+                    color: '#ffffff',
+                    font: {
+                      weight: 'bold',
+                      size: 16,
                     },
-                    gridLines: {
-                      zeroLineColor: 'transparent',
-                      lineWidth: 0,
-                      drawOnChartArea: true,
-                    },
-                  },
-                ],
-              },
-              plugins: {
-                datalabels: {
-                  display: false,
-                  color: '#ffffff',
-                  font: {
-                    weight: 'bold',
-                    size: 16,
                   },
                 },
-              },
-              tooltips: {
-                enabled: window.innerWidth > 400 ? true : false,
-                displayColors: false,
-              },
-              hover: { mode: null },
-              elements: {},
-              animation: {
-                duration: 500,
-              },
-              title: {
-                display: false,
-                text: 'ESCALA',
-              },
-              legend: {
-                display: false,
-                position: 'bottom',
-              },
-              maintainAspectRatio: true,
-              responsive: false,
-            }}
+                tooltips: {
+                  enabled: window.innerWidth > 400 ? true : false,
+                  displayColors: false,
+                },
+                hover: { mode: null },
+                elements: {},
+                animation: {
+                  duration: 500,
+                },
+                title: {
+                  display: false,
+                  text: 'ESCALA',
+                },
+                legend: {
+                  display: false,
+                  position: 'bottom',
+                },
+                maintainAspectRatio: true,
+                responsive: false,
+              }}
           />
         </div>
       </div >
     )
   }
 
-  // EVOLUÇÕES MULTIPROFISSIONAIS.
-  /* apenas o texto livre, extraído da última evolução de cada 
-  categoria profissional).*/
-  // carregando registros de evoluções.
-
   // última evolução por categoria profissional.
   function Evolucoes() {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div id="EVOLUCOES" className="title4">EVOLUÇÕES</div>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
+        <div id="EVOLUÇÃO" className="title4">EVOLUÇÃO</div>
         <div id="view das evoluções" className="scroll"
           style={{
-            width: window.innerWidth > 1024 ? '60vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '68.5vw' : '71vw',
-            height: window.innerWidth > 1024 ? '65vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '47.5vh' : '30vh',
-            margin: 0,
+            width: window.innerWidth > 1024 ? '58vw' : window.innerWidth < 1025 && window.innerWidth > 400 ? '65vw' : '75vw',
+            height: window.innerWidth > 1024 ? '56vh' : window.innerWidth < 1025 && window.innerWidth > 400 ? '43vh' : '51vh',
+            margin: 0, marginBottom: 10,
+            backgroundColor: '#f2f2f2', borderColor: '#f2f2f2'
           }}>
-          {listevolucoes.filter(item => item.idpaciente == idpaciente && item.funcao == categoria).map(item => item.evolucao)}
+          {listevolucoes.filter(item => item.idpaciente == idpaciente && item.funcao == categoria).map(item => item.evolucao).slice(-1)}
         </div>
       </div>
     )
   }
 
   return (
-    <div
-      id="scroll"
-      className="scroll"
-      style={{
-        scrollBehavior: 'smooth',
-        width: '100%',
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
-        borderColor: 'transparent', backgroundColor: 'transparent',
-        paddingRight: 10,
-      }}>
-      <div className="title4" style={{ margin: 20, marginTop: 20 }}>ESCALA DE MORAES</div>
-      <Regua></Regua>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <AvaliacaoDeDeclinioFuncional></AvaliacaoDeDeclinioFuncional>
-        <ClassificacaoDeRiscoFuncional></ClassificacaoDeRiscoFuncional>
+    <div style={{
+      display: 'flex', flexDirection: 'column',
+      justifyContent: 'center', height: '100%',
+      // width: window.innerWidth < 1024 ? '65vw' : window.innerWidth < 400 ? '100vw' : '82vw',
+      width: '100%',
+    }}>
+      <div
+        id="scroll"
+        className="scroll"
+        style={{
+          scrollBehavior: 'smooth',
+          width: '100%',
+          height: '80vh',
+          display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+          alignSelf: 'center', verticalAlign: 'center',
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          paddingRight: 10,
+        }}>
+        <div className="title4" style={{ margin: 15, marginTop: 15 }}>ESCALA DE MORAES</div>
+        <Regua></Regua>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <AvaliacaoDeDeclinioFuncional></AvaliacaoDeDeclinioFuncional>
+          <ClassificacaoDeRiscoFuncional></ClassificacaoDeRiscoFuncional>
+        </div>
+        <DeterminantesDoDeclinioFuncionalEstabelecido></DeterminantesDoDeclinioFuncionalEstabelecido>
+        <LinhaDeCuidados></LinhaDeCuidados>
+        <PlanoTerapeutico></PlanoTerapeutico>
       </div>
-      <DeterminantesDoDeclinioFuncionalEstabelecido></DeterminantesDoDeclinioFuncionalEstabelecido>
-      <LinhaDeCuidados></LinhaDeCuidados>
-      <div className="title4" style={{ margin: 0, marginTop: 25, marginBottom: 15 }}>PLANO TERAPÊUTICO</div>
-      <PlanoTerapeutico></PlanoTerapeutico>
     </div>
   )
 }

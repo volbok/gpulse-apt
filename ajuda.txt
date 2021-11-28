@@ -1,0 +1,21 @@
+AJUDA PARA O GIT.
+
+1. Mudar usuário:
+
+repo local:
+git config user.name <"nome">
+git config user.email <"email">
+
+repo remoto:
+git config --global user.name <"nome">
+git config --global user.email <"email">
+
+2. Criar repositório:
+git init
+git remote add origin <https://github.com/volbok/gpulse>
+
+3. Commit:
+git checkout <branch>
+git add . (staging)
+git commit -m <"frase que descreve a commit.">
+git push -u origin <branch>

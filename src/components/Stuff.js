@@ -1,16 +1,13 @@
 // PAINEL DE CONTROLE (MAR/21)
 export function Stuff() {
   return (
-    <div className="scrolldrop"
+    <div
       style={{
+        display: 'flex',
+        flexWrap: 'wrap',
         flexDirection: 'row',
-        padding: 0,
-        margin: 5,
-        marginTop: 10,
-        marginBottom: 0,
-        width: '70vw',
-        height: '50vh',
-        flexWrap: 'wrap', justifyContent: 'flex-start'
+        justifyContent: 'space-evenly',
+        paddingTop: 7.5, paddingBottom: 7.5,
       }}>
       <button
         className="blue-button"
@@ -100,24 +97,6 @@ export function Stuff() {
         </div>
         <div style={{ flexDirection: 'column', color: 'yellow' }}>
           {1}
-        </div>
-      </button>
-      <button
-        className="blue-button"
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: window.innerWidth > 800 ? 150 : 50,
-          height: window.innerWidth > 800 ? 150 : 50,
-          margin: 5,
-          padding: 5,
-        }}
-      >
-        <div style={{ flexDirection: 'column' }}>
-          {'PARTOS NO DIA: '}
-        </div>
-        <div style={{ flexDirection: 'column', color: 'yellow' }}>
-          {30}
         </div>
       </button>
       <button
@@ -228,23 +207,6 @@ export function Stuff() {
           {'60/100'}
         </div>
       </button>
-    </div>
-  );
-}
-export function MoreStuff() {
-  return (
-    <div
-      className="scrolldrop"
-      style={{
-        flexDirection: 'row',
-        padding: 0,
-        margin: 5,
-        marginTop: 10,
-        marginBottom: 0,
-        width: '30vw',
-        height: '50vh',
-        flexWrap: 'wrap', justifyContent: 'flex-start'
-      }}>
       <button
         className="blue-button"
         style={{

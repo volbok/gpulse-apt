@@ -21,6 +21,8 @@ import '../design.css';
 // importando imagens.
 import body from '../images/body.png';
 import dorso from '../images/dorso.svg';
+import Logo from '../components/Logo';
+import LogoInverted from '../components/LogoInverted';
 import newlogo from '../images/newlogo.svg';
 import logoinverted from '../images/newlogoinverted.svg'
 import deletar from '../images/deletar.svg';
@@ -30,6 +32,7 @@ import salvar from '../images/salvar.svg';
 import copiar from '../images/copiar.svg';
 import invasoes from '../images/invasoes.svg';
 import curativo from '../images/curativo.svg';
+import settingsimg from '../images/settings.svg'
 import viewimage from '../images/viewimage.svg';
 import imprimir from '../images/imprimir.svg';
 import novo from '../images/novo.svg';
@@ -39,8 +42,14 @@ import logoff from '../images/power.svg';
 import back from '../images/back.svg';
 import foto from '../images/3x4.jpg';
 import clock from '../images/clock.svg';
+import info from '../images/info.svg';
+import leito0 from '../images/leito0.svg';
+import leito30 from '../images/leito30.svg';
+import leito90 from '../images/leito90.svg';
+import fowler from '../images/leitofowler.svg';
 // importando componentes de sobreposição.
 import UpdateAtendimento from '../components/UpdateAtendimento';
+import Settings from '../components/Settings';
 import Evolucao from '../components/Evolucao';
 import Diagnostico from '../components/Diagnosticos';
 import Problemas from '../components/Problemas';
@@ -55,6 +64,18 @@ import Toast from '../components/Toast';
 import DatePicker from '../components/DatePicker';
 import Prescricao from '../components/Prescricao';
 import PrintFormulario from '../components/PrintFormulario';
+
+// importando gráficos.
+import { Line, Doughnut } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import 'chartjs-plugin-style';
+
+// componentes do Paulo de Tarso (APT).
+import AptPlanoTerapeutico from '../components/AptPlanoTerapeutico';
+import AptEscalaPPS from '../components/AptEscalaPPS';
+import AptEscalaMIF from '../components/AptEscalaMIF';
+import AptEscalaIVCF from '../components/AptEscalaIVCF';
+import AptIVCF from '../components/AptIVCF';
 
 function Prontuario() {
   moment.locale('pt-br');
@@ -102,6 +123,35 @@ function Prontuario() {
     listbalancos, setlistbalancos,
     listformularios, setlistformularios,
     arrayformularios, setarrayformularios,
+    // settings:
+    viewsettings, setviewsettings,
+    settings, setsettings,
+    // menu principal.
+    menuevolucoes, setmenuevolucoes,
+    menudiagnosticos, setmenudiagnosticos,
+    menuproblemas, setmenuproblemas,
+    menupropostas, setmenupropostas,
+    menuinterconsultas, setmenuinterconsultas,
+    menulaboratorio, setmenulaboratorio,
+    menuimagem, setmenuimagem,
+    menuprescricao, setmenuprescricao,
+    menuformularios, setmenuformularios,
+    // cards.
+    cardinvasoes, setcardinvasoes,
+    cardlesoes, setcardlesoes,
+    cardstatus, setcardstatus,
+    cardalertas, setcardalertas,
+    cardprecaucao, setcardprecaucao,
+    carddiasinternacao, setcarddiasinternacao,
+    cardultimaevolucao, setcardultimaevolucao,
+    carddiagnosticos, setcarddiagnosticos,
+    cardhistoricoatb, setcardhistoricoatb,
+    cardhistoricoatendimentos, setcardhistoricoatendimentos,
+    cardanamnese, setcardanamnese,
+    // colorcheme.
+    schemecolor, setschemecolor,
+    // APT IVCF / curva de Moraes.
+    ivcf, setivcf,
   } = useContext(Context)
   // history (react-router-dom).
   let history = useHistory()
@@ -115,36 +165,40 @@ function Prontuario() {
   } = useSpeechRecognition();
 
   function GetSpeech() {
-    return (
-      <button
-        style={{
-          display: window.innerWidth < 800 && (stateprontuario == 2 || stateprontuario == 4) ? 'flex' : 'none',
-          position: 'fixed',
-          bottom: 5,
-          marginLeft: 0, marginRight: 0,
-          borderRadius: 50,
-          height: 65, width: 65,
-          opacity: 1,
-          zIndex: 1
-        }}
-        className={listening ? "red-button" : "purple-button"}
-        onTouchStart={
-          listening ?
-            () => { SpeechRecognition.stopListening(); insertSpeech(); resetTranscript() } :
-            () => { resetTranscript(); SpeechRecognition.startListening({ continuous: true }); }
-        }
-      >
-        <img
-          alt=""
-          src={microfone}
+    if (/Android/i.test(navigator.userAgent)) {
+      return (
+        <button
           style={{
-            margin: 10,
-            height: 30,
-            width: 30,
+            display: window.innerWidth < 800 && (stateprontuario == 2 || stateprontuario == 4) ? 'flex' : 'none',
+            position: 'fixed',
+            bottom: 5,
+            marginLeft: 0, marginRight: 0,
+            borderRadius: 50,
+            height: 65, width: 65,
+            opacity: 1,
+            zIndex: 1
           }}
-        ></img>
-      </button>
-    )
+          className={listening ? "red-button" : "purple-button"}
+          onTouchStart={
+            listening ?
+              () => { SpeechRecognition.stopListening(); insertSpeech(); resetTranscript() } :
+              () => { resetTranscript(); SpeechRecognition.startListening({ continuous: true }); }
+          }
+        >
+          <img
+            alt=""
+            src={microfone}
+            style={{
+              margin: 10,
+              height: 30,
+              width: 30,
+            }}
+          ></img>
+        </button>
+      )
+    } else {
+      return null;
+    }
   }
 
   function ShowSpeech() {
@@ -253,12 +307,27 @@ function Prontuario() {
 
   // carregando os dados do paciente.
   const [listpacientes, setlistpacientes] = useState([]);
+  const [nomemae, setnomemae] = useState('');
+  const [contato, setcontato] = useState('');
+  const [endereço, setendereço] = useState('');
   const loadPaciente = (idpcte) => {
     axios.get(html + "/pacientes").then((response) => {
       setlistpacientes(response.data);
       var x = [0, 1];
       x = response.data;
       setnomepaciente(x.filter((item) => item.id == idpcte).map((item) => item.nome));
+      setnomemae(x.filter((item) => item.id == idpcte).map((item) => item.mae));
+      setcontato(
+        x.filter((item) => item.id == idpcte).map((item) => item.telefone) + ' - ' +
+        x.filter((item) => item.id == idpcte).map((item) => item.email)
+      );
+      setendereço(
+        x.filter((item) => item.id == idpcte).map((item) => item.rua) + ', Nº ' +
+        x.filter((item) => item.id == idpcte).map((item) => item.numero) + ', BAIRRO ' +
+        x.filter((item) => item.id == idpcte).map((item) => item.bairro) + ', ' +
+        x.filter((item) => item.id == idpcte).map((item) => item.cidade) + ' - ' +
+        x.filter((item) => item.id == idpcte).map((item) => item.estado) + '.'
+      );
       setdn(x.filter((item) => item.id == idpcte).map((item) => item.dn));
       setTimeout(() => {
         setidade(moment().diff(moment(x.filter((item) => item.id == idpaciente).map((item) => item.dn), 'DD/MM/YYYY'), 'years'));
@@ -287,6 +356,7 @@ function Prontuario() {
       setexames(x.map((item) => item.exames));
       sethistoria(x.map((item) => item.historia));
       setstatus(x.map((item) => item.status));
+      setprecaucao(x.map((item) => item.precaucao));
       setativo(x.map((item) => item.ativo));
       setclassificacao(x.map((item) => item.classificacao))
       statusatendimento = x.map((item) => item.ativo);
@@ -352,8 +422,8 @@ function Prontuario() {
   const [abd, setabd] = useState(0);
   const [dataabd, setdataabd] = useState('');
   // carregando o registro de invasões.
+
   const loadInvasoes = () => {
-    // ROTA: SELECT * FROM invasoes WHERE idatendimento = idatendimento.
     axios.get(html + "/getinvasoes/'" + idatendimento + "'").then((response) => {
       var x = [0, 1];
       x = response.data;
@@ -393,11 +463,13 @@ function Prontuario() {
         setdatapiapede(x.map((item) => item.datapiapede));
         settorax(x.map((item) => item.torax));
         setdatatorax(x.map((item) => item.datatorax));
+        loadAlertas();
       } else {
         // criando o registro de invasões para o atendimento.
         insertInvasoes();
         setTimeout(() => {
           loadInvasoes();
+          loadAlertas();
         }, 1000);
       }
     });
@@ -551,50 +623,59 @@ function Prontuario() {
   // exibição dos parâmetros ventilatórios.
   function CardVm() {
     return (
-      <div style={{ width: '100%', marginTop: 5, marginBottom: 5, padding: 0 }}>
-        <div className="card"
+      <div id="cardvm"
+        onClick={() => document.getElementById("cardvm").classList.toggle("pulsewidgetscrollmax")}
+        className="pulsewidgetscroll"
+        style={{
+          overflowY: 'hidden', flexDirection: 'column', justifyContent: 'center',
+          alignItems: 'center', backgroundColor: 'darkgrey', borderColor: 'darkgrey'
+        }}
+      >
+        <div className="pulsewidgettitle">
+          <div className="title5">VENTILAÇÃO MECÂNICA</div>
+        </div>
+        <div className="pulsewidgetcontent"
           title="PARÂMETROS VENTILATÓRIOS."
-          onClick={() => setviewupdatevm(1)}
           style={{
             opacity: 1,
-            display: modo == '' || va > 2 ? 'none' : 'flex',
+            display: modo == '' || va > 2 ? 'none' : '',
             flexDirection: 'column',
-            width: '100%', margin: 0, padding: 0,
-            height: window.innerWidth > 800 ? 145 : 110,
-            boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)',
+            justifyContent: 'center',
+            height: '100%',
           }}>
-          <div className="title4">
+          <div className="title4" onClick={() => setviewupdatevm(1)}>
             {'PARÂMETROS VENTILATÓRIOS:'}
           </div>
-          <div className="title2">{'MODO: ' + modo}</div>
-          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-            <div className={parseInt(pressao) > 14 ? 'title3' : 'title2'} style={{ alignSelf: 'center' }}>
+          <div onClick={() => setviewupdatevm(1)} className="title2center">{'MODO: ' + modo}</div>
+          <div onClick={() => setviewupdatevm(1)} style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div className={parseInt(pressao) > 14 ? 'title3' : 'title2center'} style={{ alignSelf: 'center', textAlign: 'center' }}>
               {modo === 'PCV' || 'PSV' ? 'PI: ' + pressao + ' cmH2O' : 'VCV: ' + pressao + 'ml'}
             </div>
-            <div className={parseInt(peep) > 10 ? 'title3' : 'title2'} style={{ alignSelf: 'center' }}>{'PEEP: ' + peep + ' cmH2O'}</div>
-            <div className={parseInt(fi) > 60 ? 'title3' : 'title2'} style={{ alignSelf: 'center' }}>{'FI: ' + fi + '%'}</div>
+            <div className={parseInt(peep) > 10 ? 'title3' : 'title2center'} style={{ alignSelf: 'center' }}>{'PEEP: ' + peep + ' cmH2O'}</div>
+            <div className={parseInt(fi) > 60 ? 'title3' : 'title2center'} style={{ alignSelf: 'center' }}>{'FI: ' + fi + '%'}</div>
           </div>
         </div>
-        <div className="card"
+        <div onClick={() => setviewupdatevm(1)} className="pulsewidgetcontent"
           title="PARÂMETROS VENTILATÓRIOS."
           onClick={() => setviewupdatevm(1)}
           style={{
-            display: va > 2 ? 'flex' : 'none',
+            display: va > 2 ? '' : 'none',
             width: '100%', margin: 0, padding: 0,
-            height: window.innerWidth > 800 ? 145 : 110,
+            height: '100%',
           }}>
           <div className="title2center">
-            {'PACIENTE FORA DA VM.'}</div>
+            {'PACIENTE FORA DA VM.'}
+          </div>
         </div >
-        <div className="card"
+        <div className="pulsewidgetcontent"
           title="PARÂMETROS VENTILATÓRIOS."
           onClick={() => setviewupdatevm(1)}
           style={{
-            display: modo == '' && va < 3 ? 'flex' : 'none',
+            display: modo == '' && va < 3 ? '' : 'none',
             width: '100%', margin: 0, padding: 0,
-            height: window.innerWidth > 800 ? 145 : 110,
+            height: '100%',
           }}>
-          <div className="title2" style={{ width: window.innerWidth > 800 ? 280 : 140 }}>{'SEM REGISTRO DE PARÂMETROS VENTILATÓRIOS'}</div>
+          <div className="title2center" style={{ width: window.innerWidth > 800 ? 280 : 140 }}>{'SEM REGISTRO DE PARÂMETROS VENTILATÓRIOS'}</div>
         </div>
       </div >
     );
@@ -606,45 +687,43 @@ function Prontuario() {
     if (viewupdatevm === 1) {
       return (
         <div
-          className={vmclass}
+          className="menucover"
+          onClick={(e) => { setviewupdatevm(0); e.stopPropagation() }}
           style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            borderRadius: 0,
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '100%',
-            width: '100%',
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            zIndex: 9,
-          }}
-        >
-          <div>
-            <div
-              className="secondary"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                backgroundColor: '#FFFFFF',
-                borderRadius: 5,
-                paddingTop: 30,
-                paddingBottom: 30,
-                paddingLeft: 30,
-                paddingRight: 30,
-              }}
-            >
-              <label className="title2" style={{
-                marginTop: 0, marginBottom: 15,
-                width: window.innerWidth > 800 ? 300 : 250
-              }}>
-                ATUALIZAR PARÂMETROS DA VM
-              </label>
+            zIndex: 9, display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', alignItems: 'center'
+          }}>
+          <div className="menucontainer">
+            <div id="cabeçalho" className="cabecalho">
+              <div>{'ATUALIZAR PARÂMETROS DA VM'}</div>
+              <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <button className="red-button" onClick={() => setviewupdatevm(0)}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+                <button className="green-button"
+                  onClick={() => updateVm()}
+                >
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+              </div>
+            </div>
+            <div className="corpo" onClick={(e) => e.stopPropagation()}>
               <div
                 style={{
                   display: 'flex',
@@ -655,116 +734,104 @@ function Prontuario() {
                   marginBottom: 0,
                 }}
               >
-                <label className="title2" style={{ color: '#1f7a8c' }}>MODO VENTILATÓRIO:</label>
+                <label className="title2center">MODO VENTILATÓRIO:</label>
                 <div
                   style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}
                 >
                   <button
-                    className="blue-button"
+                    className={modo == 'PCV' ? "red-button" : "blue-button"}
                     style={{
                       width: window.innerWidth > 800 ? 130 : 70,
                       padding: 10,
-                      backgroundColor: modo == 'PCV' ? '#ec7063' : '#1f7a8c'
                     }}
                     onClick={() => clickPCV()}
-                  >PCV</button>
+                  >
+                    PCV
+                  </button>
                   <button
-                    className="blue-button"
+                    className={modo == 'PSV' ? "red-button" : "blue-button"}
                     style={{
                       width: window.innerWidth > 800 ? 130 : 70,
                       padding: 10,
-                      backgroundColor: modo == 'PSV' ? '#ec7063' : '#1f7a8c'
                     }}
                     onClick={() => clickPSV()}
-                  >PSV</button>
+                  >
+                    PSV
+                  </button>
                   <button
-                    className="blue-button"
+                    className={modo == 'VCV' ? "red-button" : "blue-button"}
                     style={{
                       width: window.innerWidth > 800 ? 130 : 70,
                       padding: 10,
-                      backgroundColor: modo == 'VCV' ? '#ec7063' : '#1f7a8c'
                     }}
                     onClick={() => clickVCV()}
-                  >VCV</button>
+                  >
+                    VCV
+                  </button>
                 </div>
               </div>
-              <label className="title2" style={{ color: '#1f7a8c' }}>
-                {modo === 'PCV' ? 'PCV:' : modo === 'PSV' ? 'PSV:' : 'VT:'}
-              </label>
-              <input
-                autoComplete="off"
-                className="input"
-                placeholder={modo === 'PCV' ? 'PCV' : modo === 'PSV' ? 'PSV' : 'VT'}
-                onFocus={(e) => (e.target.placeholder = '')}
-                onBlur={(e) => (e.target.placeholder = 'PC.')}
-                onChange={(e) => validatePp(e.target.value)}
-                title={modo === 'PCV' ? 'PCV(cmH2O)' : modo === 'PSV' ? 'PSV(cmH2O)' : 'VT(ml)'}
-                style={{
-                  width: 100,
-                  height: 50,
-                }}
-                maxLength={modo === 'VCV' ? 3 : 2}
-                id="inputPp"
-                defaultValue={pressao}
-              ></input>
-              <label className="title2" style={{ color: '#1f7a8c' }}>PEEP:</label>
-              <input
-                autoComplete="off"
-                className="input"
-                placeholder="PEEP."
-                onFocus={(e) => (e.target.placeholder = '')}
-                onBlur={(e) => (e.target.placeholder = 'PEEP.')}
-                onChange={() => fixPeep()}
-                defaultValue={peep}
-                title="PEEP (cmH20)."
-                style={{
-                  width: 100,
-                  height: 50,
-                }}
-                min={0}
-                max={50}
-                id="inputPeep"
-              ></input>
-              <label className="title2" style={{ color: '#1f7a8c' }}>FI:</label>
-              <input
-                autoComplete="off"
-                className="input"
-                placeholder="FI."
-                onFocus={(e) => (e.target.placeholder = '')}
-                onBlur={(e) => (e.target.placeholder = 'FI.')}
-                onChange={() => fixFi()}
-                defaultValue={fi}
-                title="FI (%)."
-                style={{
-                  width: 100,
-                  height: 50,
-                }}
-                min={0}
-                max={100}
-                id="inputFi"
-              ></input>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  marginTop: 25,
-                  marginBottom: 0,
-                }}
-              >
-                <button
-                  className="red-button"
-                  onClick={() => setviewupdatevm(0)}
-                  style={{ width: 100 }}
-                >
-                  CANCELAR
-                </button>
-                <button
-                  className="green-button"
-                  onClick={() => updateVm()}
-                  style={{ width: 100, marginRight: 0 }}
-                >
-                  SALVAR
-                </button>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <label className="title2center">
+                    {modo === 'PCV' ? 'PCV:' : modo === 'PSV' ? 'PSV:' : 'VT:'}
+                  </label>
+                  <input
+                    autoComplete="off"
+                    className="input"
+                    placeholder={modo === 'PCV' ? 'PCV' : modo === 'PSV' ? 'PSV' : 'VT'}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'PC.')}
+                    onChange={(e) => validatePp(e.target.value)}
+                    title={modo === 'PCV' ? 'PCV(cmH2O)' : modo === 'PSV' ? 'PSV(cmH2O)' : 'VT(ml)'}
+                    style={{
+                      width: 100,
+                      height: 50,
+                    }}
+                    maxLength={modo === 'VCV' ? 3 : 2}
+                    id="inputPp"
+                    defaultValue={pressao}
+                  ></input>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <label className="title2center">PEEP:</label>
+                  <input
+                    autoComplete="off"
+                    className="input"
+                    placeholder="PEEP."
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'PEEP.')}
+                    onChange={() => fixPeep()}
+                    defaultValue={peep}
+                    title="PEEP (cmH20)."
+                    style={{
+                      width: 100,
+                      height: 50,
+                    }}
+                    min={0}
+                    max={50}
+                    id="inputPeep"
+                  ></input>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <label className="title2center">FI:</label>
+                  <input
+                    autoComplete="off"
+                    className="input"
+                    placeholder="FI."
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = 'FI.')}
+                    onChange={() => fixFi()}
+                    defaultValue={fi}
+                    title="FI (%)."
+                    style={{
+                      width: 100,
+                      height: 50,
+                    }}
+                    min={0}
+                    max={100}
+                    id="inputFi"
+                  ></input>
+                </div>
               </div>
             </div>
           </div>
@@ -774,6 +841,7 @@ function Prontuario() {
       return null;
     }
   }
+
   // escolha do modo ventilatorio.
   const clickPCV = () => {
     setmodo('PCV');
@@ -1013,53 +1081,53 @@ function Prontuario() {
   }
   // tempo prolongado de dispositivos e tot.
   const alertDispositivos = () => {
-    if (va == 2 && moment().diff(moment(datava, 'DD/MM/YY'), 'days') > 10) {
-      arrayalertas.push('TEMPO DE INTUBAÇÃO PROLONGADO: ' + moment().diff(moment(datava, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (va == 2 && moment().diff(moment(datava, 'DD/MM/YYYY'), 'days') > 10) {
+      arrayalertas.push('TEMPO DE INTUBAÇÃO PROLONGADO: ' + moment().diff(moment(datava, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (jid !== 0 && moment().diff(moment(datajid, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC JUGULAR INTERNA DIREITA ' + moment().diff(moment(datajid, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (jid !== 0 && moment().diff(moment(datajid, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC JUGULAR INTERNA DIREITA ' + moment().diff(moment(datajid, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (jie !== 0 && moment().diff(moment(datajie, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC JUGULAR INTERNA ESQUERDA ' + moment().diff(moment(datajie, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (jie !== 0 && moment().diff(moment(datajie, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC JUGULAR INTERNA ESQUERDA ' + moment().diff(moment(datajie, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (subcld !== 0 && moment().diff(moment(datasubcld, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC SUBCLÁVIA DIREITA ' + moment().diff(moment(datasubcld, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (subcld !== 0 && moment().diff(moment(datasubcld, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC SUBCLÁVIA DIREITA ' + moment().diff(moment(datasubcld, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (subcle !== 0 && moment().diff(moment(datasubcle, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC SUBCLÁVIA ESQUERDA ' + moment().diff(moment(datasubcle, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (subcle !== 0 && moment().diff(moment(datasubcle, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC SUBCLÁVIA ESQUERDA ' + moment().diff(moment(datasubcle, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (piard !== 0 && moment().diff(moment(datapiard, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA RADIAL DIREITA ' + moment().diff(moment(datapiard, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (piard !== 0 && moment().diff(moment(datapiard, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA RADIAL DIREITA ' + moment().diff(moment(datapiard, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (piare !== 0 && moment().diff(moment(datapiare, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA RADIAL ESQUERDA ' + moment().diff(moment(datapiare, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (piare !== 0 && moment().diff(moment(datapiare, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA RADIAL ESQUERDA ' + moment().diff(moment(datapiare, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (vfemd !== 0 && moment().diff(moment(datavfemd, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC FEMORAL DIREITA ' + moment().diff(moment(datavfemd, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (vfemd !== 0 && moment().diff(moment(datavfemd, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC FEMORAL DIREITA ' + moment().diff(moment(datavfemd, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (vfeme !== 0 && moment().diff(moment(datavfeme, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC FEMORAL ESQUERDA ' + moment().diff(moment(datavfeme, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (vfeme !== 0 && moment().diff(moment(datavfeme, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: CVC FEMORAL ESQUERDA ' + moment().diff(moment(datavfeme, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (afemd !== 0 && moment().diff(moment(dataafemd, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA FEMORAL DIREITA ' + moment().diff(moment(dataafemd, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (afemd !== 0 && moment().diff(moment(dataafemd, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA FEMORAL DIREITA ' + moment().diff(moment(dataafemd, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (afeme !== 0 && moment().diff(moment(dataafeme, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA FEMORAL ESQUERDA ' + moment().diff(moment(dataafeme, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (afeme !== 0 && moment().diff(moment(dataafeme, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA FEMORAL ESQUERDA ' + moment().diff(moment(dataafeme, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (piapedd !== 0 && moment().diff(moment(datapiapedd, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA PEDIOSA DIREITA ' + moment().diff(moment(datapiapedd, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (piapedd !== 0 && moment().diff(moment(datapiapedd, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA PEDIOSA DIREITA ' + moment().diff(moment(datapiapedd, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (piapede !== 0 && moment().diff(moment(datapiapede, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA PEDIOSA ESQUERDA ' + moment().diff(moment(datapiapede, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (piapede !== 0 && moment().diff(moment(datapiapede, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: PIA PEDIOSA ESQUERDA ' + moment().diff(moment(datapiapede, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (torax !== 0 && moment().diff(moment(datatorax, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: DRENO TORÁCICO ' + moment().diff(moment(datatorax, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (torax !== 0 && moment().diff(moment(datatorax, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: DRENO TORÁCICO ' + moment().diff(moment(datatorax, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (abd !== 0 && moment().diff(moment(dataabd, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: DRENO ABDOMINAL ' + moment().diff(moment(dataabd, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (abd !== 0 && moment().diff(moment(dataabd, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: DRENO ABDOMINAL ' + moment().diff(moment(dataabd, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
-    if (snc !== 0 && moment().diff(moment(datasnc, 'DD/MM/YY'), 'days') > 14) {
-      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: DISPOSITIVO SNC ' + moment().diff(moment(datasnc, 'DD/MM/YY'), 'days') + ' DIAS.')
+    if (snc !== 0 && moment().diff(moment(datasnc, 'DD/MM/YYYY'), 'days') > 14) {
+      arrayalertas.push('TEMPO PROLONGADO DE INVASÃO: DISPOSITIVO SNC ' + moment().diff(moment(datasnc, 'DD/MM/YYYY'), 'days') + ' DIAS.')
     }
   }
 
@@ -1072,27 +1140,6 @@ function Prontuario() {
         arrayalertas.push('RESULTADOS DE CULTURA PENDENTES.')
       }
     });
-  }
-
-  // memorizando a posição da scroll nas listas.
-  var timeout;
-  const scrollPosition = (value) => {
-    setscrollmenu(document.getElementById("MENU LATERAL").scrollTop);
-    document.getElementById("MENU LATERAL").scrollTop = scrollmenu;
-  }
-  const keepScroll = (value) => {
-    document.getElementById("MENU LATERAL").scrollTop = scrollmenu;
-    document.getElementById(value).scrollTop = scrolllist;
-  }
-  const scrollMenu = () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      setscrollmenu(document.getElementById("MENU LATERAL").scrollTop);
-      document.getElementById("MENU LATERAL").scrollTop = scrollmenu;
-    }, 50);
-  }
-  const keepMenu = () => {
-    document.getElementById("MENU LATERAL").scrollTop = scrollmenu;
   }
 
   // carregando listas das telas secundárias.
@@ -1126,7 +1173,7 @@ function Prontuario() {
   const deleteDiagnostico = (item) => {
     axios.get(html + "/deletediagnostico/'" + item.id + "'").then(() => {
       toast(1, '#52be80', 'DIAGNÓSTICO CANCELADO COM SUCESSO.', 3000);
-      loadDiagnosticos(idpaciente);
+      // loadDiagnosticos(idpaciente);
     });
   }
 
@@ -1142,7 +1189,13 @@ function Prontuario() {
   // exibição da lista de diagnósticos (tela principal).
   function CardDiagnosticos() {
     return (
-      <div className="pulsewidgetscroll" title="DIAGNOSTICOS.">
+      <div
+        className="pulsewidgetscroll"
+        title="DIAGNOSTICOS."
+        style={{ display: carddiagnosticos == 1 ? 'flex' : 'none', }}
+        id="carddiagnosticos"
+        onClick={() => document.getElementById("carddiagnosticos").classList.toggle("pulsewidgetscrollmax")}
+      >
         <div className="title4 pulsewidgettitle">{'DIAGNÓSTICOS'}</div>
         <div
           className="pulsewidgetcontent"
@@ -1182,12 +1235,17 @@ function Prontuario() {
     );
   }
 
-  // exibição da lista de internações (tela principal).
+  // exibição da lista de internações e atendimentos (tela principal).
   function CardInternacoes() {
     return (
-      <div className="pulsewidgetscroll"
-        title="INTERNAÇÕES">
-        <div className="title4 pulsewidgettitle">{'HISTÓRICO DE INTERNAÇÕES'}</div>
+      <div
+        className="pulsewidgetscroll"
+        title="INTERNAÇÕES"
+        style={{ display: cardhistoricoatendimentos == 1 ? 'flex' : 'none', }}
+        id="cardatendimentos"
+        onClick={() => document.getElementById("cardatendimentos").classList.toggle("pulsewidgetscrollmax")}
+      >
+        <div className="title4 pulsewidgettitle">{window.innerWidth > 400 ? 'HISTÓRICO DE ATENDIMENTOS' : 'ATEND.'}</div>
         <div className="pulsewidgetcontent" style={{ display: listatendimentos.length > 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'flex-start' }}>
           {listatendimentos.filter(value => value.idpaciente == idpaciente).map((item) => (
             <div
@@ -1217,6 +1275,13 @@ function Prontuario() {
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'BUSCAR DIAGNÓSTICO...')}
             onChange={() => filterDiagnostico()}
+            onClick={window.innerWidth < 400 ? (e) => {
+              document.getElementById("identificação").style.display = "none";
+              document.getElementById("inputFilterDiagnostico").focus();
+              e.stopPropagation();
+            }
+              : null
+            }
             style={{
               width: '100%',
               margin: 0,
@@ -1252,6 +1317,10 @@ function Prontuario() {
         document.getElementById("inputFilterDiagnostico").value = searchdiagnostico;
         document.getElementById("inputFilterDiagnostico").focus();
       }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
+        document.getElementById("inputFilterDiagnostico").focus();
+      }
     }, 500);
   }
 
@@ -1261,10 +1330,13 @@ function Prontuario() {
       return (
         <div
           id="diagnósticos"
-          className="conteudo">
-          <Identificacao></Identificacao>
+          className="conteudo"
+          onClick={() => { document.getElementById("identificação").style.display = "flex"; document.getElementById("inputFilterDiagnostico").value = ""; setarraydiagnosticos(listdiagnosticos) }}
+        >
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE DIAGNÓSTICOS"
           >
             {arraydiagnosticos.map((item) => (
@@ -1299,8 +1371,10 @@ function Prontuario() {
                           }}
                         ></img>
                       </button>
-                      <button className="animated-red-button"
-                        onClick={() => deleteDiagnostico(item)}
+                      <button
+                        id={"deletekey 0 " + item.id}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteDiagnostico, item); e.stopPropagation() }}
                       >
                         <img
                           alt=""
@@ -1311,6 +1385,20 @@ function Prontuario() {
                             width: 30,
                           }}
                         ></img>
+                      </button>
+                      <button
+                        id={"deletekey 1 " + item.id}
+                        style={{ display: 'none', width: 100 }}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteDiagnostico, item); e.stopPropagation() }}
+                      >
+                        <div>DESFAZER</div>
+                        <div className="deletetoast"
+                          style={{
+                            height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                            marginLeft: 5, marginRight: 5, maxWidth: 90,
+                          }}>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -1354,8 +1442,10 @@ function Prontuario() {
   // PAINEL DE ALERTAS.
   function CardAlertas() {
     return (
-      <div className="pulsewidgetscroll"
+      <div id="cardalertas" className="pulsewidgetscroll"
+        onClick={() => document.getElementById("cardalertas").classList.toggle("pulsewidgetscrollmax")}
         style={{
+          display: cardalertas == 1 ? 'flex' : 'none',
           backgroundColor: alertas.length > 1 ? '#ec7063' : '#52be80',
           borderColor: alertas.length > 1 ? '#ec7063' : '#52be80',
         }}
@@ -1416,7 +1506,7 @@ function Prontuario() {
   // excluir um diagnóstico da lista.
   const deleteProblema = (item) => {
     axios.get(html + "/deleteproblema/'" + item.id + "'").then(() => {
-      toast(1, '#52be80', 'PROBLEMA EXLCUÍDO COM SUCESSO.', 3000);
+      // toast(1, '#52be80', 'PROBLEMA EXLCUÍDO COM SUCESSO.', 3000);
       loadProblemas();
     });
   }
@@ -1483,6 +1573,10 @@ function Prontuario() {
         document.getElementById("inputFilterProblema").value = searchproblema;
         document.getElementById("inputFilterProblema").focus();
       }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
+        document.getElementById("inputFilterProblema").focus();
+      }
     }, 500);
   }
 
@@ -1500,12 +1594,13 @@ function Prontuario() {
     if (stateprontuario === 12) {
       return (
         <div
+          id="problemas"
           className="conteudo"
-          id="diagnósticos"
         >
-          <Identificacao></Identificacao>
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE PROBLEMAS"
           >
             {arrayproblemas.map((item) => (
@@ -1539,8 +1634,10 @@ function Prontuario() {
                           }}
                         ></img>
                       </button>
-                      <button className="animated-red-button"
-                        onClick={() => deleteProblema(item)}
+                      <button
+                        id={"deletekey 0 " + item.id}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteProblema, item); e.stopPropagation() }}
                       >
                         <img
                           alt=""
@@ -1551,6 +1648,20 @@ function Prontuario() {
                             width: 30,
                           }}
                         ></img>
+                      </button>
+                      <button
+                        id={"deletekey 1 " + item.id}
+                        style={{ display: 'none', width: 100 }}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteProblema, item); e.stopPropagation() }}
+                      >
+                        <div>DESFAZER</div>
+                        <div className="deletetoast"
+                          style={{
+                            height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                            marginLeft: 5, marginRight: 5, maxWidth: 90,
+                          }}>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -1619,9 +1730,16 @@ function Prontuario() {
             className="input"
             autoComplete="off"
             placeholder="BUSCAR EVOLUÇÃO..."
-            onFocus={(e) => (e.target.placeholder = '')}
+            onFocus={(e) => { (e.target.placeholder = '') }}
             onBlur={(e) => (e.target.placeholder = 'BUSCAR EVOLUÇÃO...')}
             onChange={() => filterEvolucao()}
+            onClick={window.innerWidth < 400 ? (e) => {
+              document.getElementById("identificação").style.display = "none";
+              document.getElementById("inputFilterEvolucao").focus();
+              e.stopPropagation();
+            }
+              : null
+            }
             style={{
               width: '100%',
               margin: 0,
@@ -1650,12 +1768,17 @@ function Prontuario() {
     timeout = setTimeout(() => {
       if (searchevolucao === '') {
         setarrayevolucao(listevolucoes);
+        // buceta
         document.getElementById("inputFilterEvolucao").value = '';
         document.getElementById("inputFilterEvolucao").focus();
       } else {
         setfilterevolucao(document.getElementById("inputFilterEvolucao").value.toUpperCase());
         setarrayevolucao(listevolucoes.filter(item => item.evolucao.includes(searchevolucao) === true));
         document.getElementById("inputFilterEvolucao").value = searchevolucao;
+        document.getElementById("inputFilterEvolucao").focus();
+      }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
         document.getElementById("inputFilterEvolucao").focus();
       }
     }, 500);
@@ -1725,7 +1848,7 @@ function Prontuario() {
     if (item.idusuario == idusuario) {
       axios.get(html + "/deleteevolucao/'" + item.id + "'").then(() => {
         loadEvolucoes(idpaciente);
-        toast(1, '#52be80', 'EVOLUÇÃO CANCELADA COM SUCESSO.', 3000);
+        // toast(1, '#52be80', 'EVOLUÇÃO CANCELADA COM SUCESSO.', 3000);
       });
     } else {
       toast(1, '#ec7063', 'EXCLUSÃO NÃO AUTORIZADA.', 3000);
@@ -1810,20 +1933,34 @@ function Prontuario() {
     toast(1, '#ec7063', 'AÇÃO NÃO AUTORIZADA.', 3000);
   }
 
+  // plano terapêutico.
+  const ShowPlanoTerapeutico = useCallback(() => {
+    if (stateprontuario === 21) {
+      return (
+        <div id="ivcf"
+          className="conteudo" style={{ margin: 0, padding: 0 }}>
+          <AptPlanoTerapeutico></AptPlanoTerapeutico>
+        </div>
+      )
+    } else {
+      return null;
+    }
+  }, [stateprontuario]);
+
   // renderização da lista de evoluções.
   var showexamefisico = 0;
   const ShowEvolucoes = useCallback(() => {
     if (stateprontuario === 2) {
       return (
         <div id="evoluções"
-          className="conteudo">
-          <Identificacao></Identificacao>
+          className="conteudo"
+          onClick={() => { document.getElementById("identificação").style.display = "flex"; document.getElementById("inputFilterEvolucao").value = ""; setarrayevolucao(listevolucoes) }}
+        >
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE EVOLUÇÕES"
-            style={{
-              width: '100%',
-            }}
           >
             {arrayevolucao.map((item) => (
               <div
@@ -1947,9 +2084,10 @@ function Prontuario() {
                             }}
                           ></img>
                         </button>
-                        <button id="delete-button"
+                        <button
+                          id={"deletekey 0 " + item.id}
                           className="animated-red-button"
-                          onClick={() => deleteEvolucao(item)}
+                          onClick={(e) => { deletetoast(deleteEvolucao, item); e.stopPropagation() }}
                           title="EXCLUIR EVOLUÇÃO."
                           style={{
                             display: item.status == 0 && item.idusuario == idusuario ? 'flex' : 'none',
@@ -1968,6 +2106,26 @@ function Prontuario() {
                               width: 30,
                             }}
                           ></img>
+                        </button>
+                        <button
+                          id={"deletekey 1 " + item.id}
+                          style={{
+                            display: 'none', width: 100,
+                            marginRight: 0,
+                            marginLeft: 2.5,
+                            marginBottom: 0,
+                            marginTop: 0
+                          }}
+                          className="animated-red-button"
+                          onClick={(e) => { deletetoast(deleteEvolucao, item); e.stopPropagation() }}
+                        >
+                          <div>DESFAZER</div>
+                          <div className="deletetoast"
+                            style={{
+                              height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                              marginLeft: 5, marginRight: 5, maxWidth: 90,
+                            }}>
+                          </div>
                         </button>
                         <button id="suspend-button"
                           className="animated-red-button"
@@ -2159,6 +2317,388 @@ function Prontuario() {
     });
   }
 
+  // ESCALAS.
+  var effectColors = {
+    highlight: 'rgba(255, 255, 255, 0.75)',
+    shadow: 'rgba(0, 0, 0, 0.5)',
+    glow: 'rgb(255, 255, 0)'
+  };
+
+  const dataChartPPS = (canvas) => {
+    const ctx = canvas.getContext("2d");
+    var gradient = ctx.createLinearGradient(0, 0, 0, 75);
+    gradient.addColorStop(0, 'rgba(82, 190, 128, 0.3');
+    gradient.addColorStop(1, 'transparent');
+
+    return {
+      labels: [
+        '07/03/21',
+        '16/04/21',
+        '15/05/21',
+        '18/06/21',
+        '20/07/21',
+        '30/08/21',
+        '12/09/21',
+        '21/10/21',
+        '15/11/21',
+      ],
+      datasets: [
+        {
+          lineTension: 0,
+          data: [60, 70, 50, 40, 60, 70, 80, 60, 70],
+          pointBackgroundColor: ['#52be80', '#52be80', '#52be80', '#52be80', '#52be80', '#52be80', '#52be80', '#52be80', '#52be80'],
+          fill: true,
+          backgroundColor: 'transparent',
+          borderColor: 'rgba(82, 190, 128, 1)',
+          hoverBorderColor: ['#E1E5F2', '#E1E5F2', '#E1E5F2', '#E1E5F2', '#E1E5F2', '#E1E5F2', '#E1E5F2', '#E1E5F2', '#E1E5F2'],
+          shadowOffsetX: 0,
+          shadowOffsetY: 2,
+          shadowBlur: 10,
+          shadowColor: effectColors.shadow
+        },
+      ],
+    }
+  }
+
+  const dataChartMIF = (canvas) => {
+    const ctx = canvas.getContext("2d");
+    var gradient = ctx.createLinearGradient(0, 0, 0, 75);
+    gradient.addColorStop(0, 'rgba(82, 190, 128, 0.3');
+    gradient.addColorStop(1, 'transparent');
+
+    return {
+      labels: [
+        '07/03/21',
+        '16/04/21',
+        '15/05/21',
+      ],
+      datasets: [
+        {
+          lineTension: 0,
+          borderRadius: 5,
+          // borderWidth: 3,
+          boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)',
+          data: [6, 8, 7],
+          pointBackgroundColor: ['#52be80', '#52be80', '#52be80'],
+          fill: true,
+          backgroundColor: 'transparent',
+          boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)',
+          borderColor: 'rgba(82, 190, 128, 1)',
+          hoverBorderColor: ['#E1E5F2', '#E1E5F2', '#E1E5F2'],
+          shadowOffsetX: 0,
+          shadowOffsetY: 2,
+          shadowBlur: 10,
+          shadowColor: effectColors.shadow
+        },
+      ],
+    }
+  }
+
+  const dataChartIVCF = (canvas) => {
+    const ctx = canvas.getContext("2d");
+    var gradient = ctx.createLinearGradient(0, 0, 0, 75);
+    gradient.addColorStop(0, 'rgba(82, 190, 128, 0.3');
+    gradient.addColorStop(1, 'transparent');
+
+    return {
+      labels: [
+        '07/03/21',
+        '16/04/21',
+        '15/05/21',
+        '18/11/21'
+      ],
+      datasets: [
+        {
+          lineTension: 0,
+          borderRadius: 5,
+          // borderWidth: 3,
+          boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)',
+          data: [6, 5, 7, 6],
+          pointBackgroundColor: ['#52be80', '#52be80', '#52be80', '#52be80'],
+          fill: true,
+          backgroundColor: 'transparent',
+          boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)',
+          borderColor: 'rgba(82, 190, 128, 1)',
+          hoverBorderColor: ['#E1E5F2', '#E1E5F2', '#E1E5F2', '#E1E5F2'],
+          shadowOffsetX: 0,
+          shadowOffsetY: 2,
+          shadowBlur: 10,
+          shadowColor: effectColors.shadow
+        },
+      ],
+    }
+  }
+
+  const [viewescalapps, setviewescalapps] = useState(0);
+  const [viewescalamif, setviewescalamif] = useState(0);
+  const [viewescalaivcf, setviewescalaivcf] = useState(0);
+  const ShowEscalas = useCallback(() => {
+    if (stateprontuario == 20) {
+      return (
+        <div className="scroll" style={{ height: '80vh', padding: 10, backgroundColor: 'transparent', borderColor: 'transparent' }}>
+
+          <div id="escalaPPS" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div className="card"
+              onClick={() => {
+                setviewescalapps(0);
+                setTimeout(() => {
+                  setviewescalapps(1);
+                }, 1000);
+              }}
+              style={{ flexDirection: 'column', justifyContent: 'center', width: '13vw', height: '13vw' }}>
+              <div className="title2center" style={{ margin: 0, padding: 0 }}>PPS</div>
+              <div className="title2center" style={{ fontSize: 10, margin: 0, padding: 0 }}>ESCALA DE PERFORMANCE PALIATIVA</div>
+              <div className="title2center" style={{ margin: 0, padding: 0, marginTop: 10 }}>60%</div>
+              <div className="title2center" style={{ margin: 0, padding: 0 }}>12/10/21</div>
+            </div>
+            <Line
+              data={dataChartPPS}
+              padding={10}
+              width={window.innerWidth > 400 ? 0.6 * window.innerWidth : 200}
+              height={0.13 * window.innerWidth}
+              plugins={ChartDataLabels}
+              options={{
+                scales: {
+                  xAxes: [
+                    {
+                      display: true,
+                      ticks: {
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                  yAxes: [
+                    {
+                      display: false,
+                      ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 100,
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                },
+                plugins: {
+                  datalabels: {
+                    display: false,
+                    color: '#ffffff',
+                    font: {
+                      weight: 'bold',
+                      size: 16,
+                    },
+                  },
+                },
+                tooltips: {
+                  enabled: true,
+                  displayColors: false,
+                },
+                hover: { mode: null },
+                elements: {},
+                animation: {
+                  duration: 500,
+                },
+                title: {
+                  display: false,
+                  text: 'PPS',
+                },
+                legend: {
+                  display: false,
+                  position: 'bottom',
+                },
+                maintainAspectRatio: true,
+                responsive: false,
+              }}
+            />
+          </div>
+          <div id="escalaMIF" style={{ marginTop: 20, marginBottom: 20, display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div className="card"
+              onClick={() => {
+                setviewescalamif(0);
+                setTimeout(() => {
+                  setviewescalamif(1);
+                }, 1000);
+              }}
+              style={{ flexDirection: 'column', justifyContent: 'center', width: '13vw', height: '13vw' }}>
+              <div className="title2center" style={{ margin: 0, padding: 0 }}>MIF</div>
+              <div className="title2center" style={{ fontSize: 10, margin: 0, padding: 0 }}>MEDIDA DE INDEPENDÊNCIA FUNCIONAL</div>
+              <div className="title2center" style={{ margin: 0, padding: 0, marginTop: 10 }}>6 PONTOS</div>
+              <div className="title2center" style={{ margin: 0, padding: 0 }}>16/11/21</div>
+            </div>
+            <Line
+              data={dataChartMIF}
+              padding={10}
+              width={window.innerWidth > 400 ? 0.6 * window.innerWidth : 200}
+              height={0.13 * window.innerWidth}
+              plugins={ChartDataLabels}
+              options={{
+                scales: {
+                  xAxes: [
+                    {
+                      display: true,
+                      ticks: {
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                  yAxes: [
+                    {
+                      display: false,
+                      ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 10,
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                },
+                plugins: {
+                  datalabels: {
+                    display: false,
+                    color: '#ffffff',
+                    font: {
+                      weight: 'bold',
+                      size: 16,
+                    },
+                  },
+                },
+                tooltips: {
+                  enabled: true,
+                  displayColors: false,
+                },
+                hover: { mode: null },
+                elements: {},
+                animation: {
+                  duration: 500,
+                },
+                title: {
+                  display: false,
+                  text: 'PPS',
+                },
+                legend: {
+                  display: false,
+                  position: 'bottom',
+                },
+                maintainAspectRatio: true,
+                responsive: false,
+              }}
+            />
+          </div>
+          <div id="escalaIVCF" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+            <div className="card"
+              onClick={() => {
+                setviewescalaivcf(0);
+                setTimeout(() => {
+                  setviewescalaivcf(1);
+                }, 1000);
+              }}
+              style={{ flexDirection: 'column', justifyContent: 'center', width: '13vw', height: '13vw' }}>
+              <div className="title2center" style={{ margin: 0, padding: 0 }}>IVCF</div>
+              <div className="title2center" style={{ fontSize: 10, margin: 0, padding: 0 }}>ÍNDICE DE VULNERABILIDADE CLÍNICO-FUNCIONAL</div>
+              <div className="title2center" style={{ margin: 0, padding: 0, marginTop: 10 }}>10</div>
+              <div className="title2center" style={{ margin: 0, padding: 0 }}>18/11/21</div>
+            </div>
+            <Line
+              data={dataChartIVCF}
+              padding={10}
+              width={window.innerWidth > 400 ? 0.6 * window.innerWidth : 200}
+              height={0.13 * window.innerWidth}
+              plugins={ChartDataLabels}
+              options={{
+                scales: {
+                  xAxes: [
+                    {
+                      display: true,
+                      ticks: {
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                  yAxes: [
+                    {
+                      display: false,
+                      ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 10,
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                },
+                plugins: {
+                  datalabels: {
+                    display: false,
+                    color: '#ffffff',
+                    font: {
+                      weight: 'bold',
+                      size: 16,
+                    },
+                  },
+                },
+                tooltips: {
+                  enabled: true,
+                  displayColors: false,
+                },
+                hover: { mode: null },
+                elements: {},
+                animation: {
+                  duration: 500,
+                },
+                title: {
+                  display: false,
+                  text: 'PPS',
+                },
+                legend: {
+                  display: false,
+                  position: 'bottom',
+                },
+                maintainAspectRatio: true,
+                responsive: false,
+              }}
+            />
+          </div>
+        </div>
+      )
+    } else {
+      return null;
+    }
+  }, [stateprontuario])
+
   // LISTA DE PROPOSTAS.
   const loadPropostas = () => {
     // ROTA: SELECT * FROM propostas WHERE idatendimento = idatendimento.
@@ -2173,7 +2713,7 @@ function Prontuario() {
   const deleteProposta = (item) => {
     axios.get(html + "/deleteprop/'" + item.id + "'").then(() => {
       loadPropostas();
-      toast(1, '#52be80', 'PROPOSTA CANCELADA COM SUCESSO.', 3000);
+      // toast(1, '#52be80', 'PROPOSTA CANCELADA COM SUCESSO.', 3000);
     });
   }
 
@@ -2189,6 +2729,13 @@ function Prontuario() {
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'BUSCAR PROPOSTA...')}
             onChange={() => filterProposta()}
+            onClick={window.innerWidth < 400 ? (e) => {
+              document.getElementById("identificação").style.display = "none";
+              document.getElementById("inputFilterProposta").focus();
+              e.stopPropagation();
+            }
+              : null
+            }
             style={{
               width: '100%',
               margin: 0,
@@ -2224,24 +2771,27 @@ function Prontuario() {
         document.getElementById("inputFilterProposta").value = searchproposta;
         document.getElementById("inputFilterProposta").focus();
       }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
+        document.getElementById("inputFilterProposta").focus();
+      }
     }, 500);
   }
 
   // exibição da lista de propostas.
-  function ShowPropostas() {
+  const ShowPropostas = useCallback(() => {
     if (stateprontuario === 4) {
       return (
         <div
           className="conteudo"
           id="propostas"
+          onClick={() => { document.getElementById("identificação").style.display = "flex"; document.getElementById("inputFilterProposta").value = ""; setarraypropostas(listpropostas) }}
         >
-          <Identificacao></Identificacao>
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE PROPOSTAS DESKTOP"
-            style={{
-              width: '100%'
-            }}
           >
             {arraypropostas.map((item) => (
               <p
@@ -2254,7 +2804,7 @@ function Prontuario() {
                     <div id="proposta" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
                       <button
                         className={item.termino == '' ? "red-button" : "green-button"}
-                        onClick={() => checkProposta(item)}
+                        onClick={(e) => { checkProposta(item); e.stopPropagation() }}
                         title={item.termino == '' ? "CLIQUE PARA MARCAR A PROPOSTA COMO REALIZADA." : "CLIQUE PARA MARCAR A PROPOSTA COMO PENDENTE."}
                         style={{
                           flexDirection: 'row',
@@ -2281,18 +2831,36 @@ function Prontuario() {
                           }}
                         ></img>
                       </button>
-                      <button className="animated-red-button"
-                        onClick={() => deleteProposta(item)}
+                      <button
+                        id={"deletekey 0 " + item.id}
+                        style={{ display: 'flex' }}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteProposta, item); e.stopPropagation() }}
                       >
                         <img
                           alt=""
                           src={deletar}
                           style={{
+                            display: 'flex',
                             margin: 10,
                             height: 30,
                             width: 30,
                           }}
                         ></img>
+                      </button>
+                      <button
+                        id={"deletekey 1 " + item.id}
+                        style={{ display: 'none', width: 100 }}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteProposta, item); e.stopPropagation() }}
+                      >
+                        <div>DESFAZER</div>
+                        <div className="deletetoast"
+                          style={{
+                            height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                            marginLeft: 5, marginRight: 5, maxWidth: 90,
+                          }}>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -2327,7 +2895,7 @@ function Prontuario() {
     } else {
       return null;
     }
-  }
+  }, [stateprontuario, arraypropostas]);
 
   // checando proposta como concluída.
   const checkProposta = (item) => {
@@ -2460,7 +3028,7 @@ function Prontuario() {
   const deleteInterconsulta = (item) => {
     axios.get(html + "/deleteinterconsulta/" + item.id).then(() => {
       loadInterconsultas(idpaciente);
-      toast(1, '#52be80', 'INTERCONSULTA CANCELADA COM SUCESSO.', 3000);
+      // toast(1, '#52be80', 'INTERCONSULTA CANCELADA COM SUCESSO.', 3000);
     });
   }
 
@@ -2511,6 +3079,10 @@ function Prontuario() {
         document.getElementById("inputFilterInterconsulta").value = searchinterconsulta;
         document.getElementById("inputFilterInterconsulta").focus();
       }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
+        document.getElementById("inputFilterInterconsulta").focus();
+      }
     }, 500);
   }
 
@@ -2524,9 +3096,10 @@ function Prontuario() {
           id="interconsultas"
           className="conteudo"
         >
-          <Identificacao></Identificacao>
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE INTERCONSULTAS"
           >
             {arrayinterconsultas.map((item) => (
@@ -2604,8 +3177,10 @@ function Prontuario() {
                           }}
                         ></img>
                       </button>
-                      <button className="animated-red-button"
-                        onClick={() => deleteInterconsulta(item)}
+                      <button
+                        id={"deletekey 0 " + item.id}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteInterconsulta, item); e.stopPropagation() }}
                         title="EXCLUIR PEDIDO DE INTERCONSULTA."
                         style={{
                           display: item.status === 0 ? 'flex' : 'none',
@@ -2621,6 +3196,20 @@ function Prontuario() {
                             width: 30,
                           }}
                         ></img>
+                      </button>
+                      <button
+                        id={"deletekey 1 " + item.id}
+                        style={{ display: 'none', width: 100 }}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteInterconsulta, item); e.stopPropagation() }}
+                      >
+                        <div>DESFAZER</div>
+                        <div className="deletetoast"
+                          style={{
+                            height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                            marginLeft: 5, marginRight: 5, maxWidth: 90,
+                          }}>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -2690,6 +3279,13 @@ function Prontuario() {
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'BUSCAR EXAME LABORATORIAL...')}
             onChange={() => filterLaboratorio()}
+            onClick={window.innerWidth < 400 ? (e) => {
+              document.getElementById("identificação").style.display = "none";
+              document.getElementById("inputFilterLaboratorio").focus();
+              e.stopPropagation();
+            }
+              : null
+            }
             style={{
               width: '100%',
               margin: 0,
@@ -2723,6 +3319,10 @@ function Prontuario() {
         document.getElementById("inputFilterLaboratorio").value = searchlaboratorio;
         document.getElementById("inputFilterLaboratorio").focus();
       }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
+        document.getElementById("inputFilterLaboratorio").focus();
+      }
     }, 500);
   }
 
@@ -2750,7 +3350,7 @@ function Prontuario() {
     axios.get(html + "/deletelab/'" + item.id + "'").then(() => {
       setfilterlaboratorio('');
       loadLaboratorio();
-      toast(1, '#52be80', 'PEDIDO DE EXAME LABORATORIAL CANCELADO COM SUCESSO.', 3000);
+      // toast(1, '#52be80', 'PEDIDO DE EXAME LABORATORIAL CANCELADO COM SUCESSO.', 3000);
     });
   }
 
@@ -2758,12 +3358,15 @@ function Prontuario() {
   const ShowLaboratorio = useCallback(() => {
     if (stateprontuario === 6) {
       return (
-        <div className="conteudo"
+        <div
           id="laboratório"
+          className="conteudo"
+          onClick={() => { document.getElementById("identificação").style.display = "flex"; document.getElementById("inputFilterLaboratorio").value = ""; setarraylaboratorio(listlaboratorio) }}
         >
-          <Identificacao></Identificacao>
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE EXAMES LABORATORIAIS"
           >
             {arraylaboratorio.map((item) => (
@@ -2806,8 +3409,10 @@ function Prontuario() {
                         {'REFERÊNCIA: ' + item.referencia}
                       </div>
                     </div>
-                    <button className="animated-red-button"
-                      onClick={() => deleteLab(item)}
+                    <button
+                      id={"deletekey 0 " + item.id}
+                      className="animated-red-button"
+                      onClick={(e) => { deletetoast(deleteLab, item); e.stopPropagation() }}
                       style={{ display: item.status === 'AGUARDANDO COLETA' ? 'flex' : 'none' }}
                     >
                       <img
@@ -2819,6 +3424,20 @@ function Prontuario() {
                           width: 30,
                         }}
                       ></img>
+                    </button>
+                    <button
+                      id={"deletekey 1 " + item.id}
+                      style={{ display: 'none', width: 100 }}
+                      className="animated-red-button"
+                      onClick={(e) => { deletetoast(deleteLab, item); e.stopPropagation() }}
+                    >
+                      <div>DESFAZER</div>
+                      <div className="deletetoast"
+                        style={{
+                          height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                          marginLeft: 5, marginRight: 5, maxWidth: 90,
+                        }}>
+                      </div>
                     </button>
                   </div>
                   <div className="title2" style={{ flexDirection: 'row', justifyContent: 'flex-start', marginTop: 0, paddingTop: 0, opacity: 0.5 }}>
@@ -2903,6 +3522,13 @@ function Prontuario() {
             onFocus={(e) => (e.target.placeholder = '')}
             onBlur={(e) => (e.target.placeholder = 'BUSCAR EXAME DE IMAGEM...')}
             onChange={() => filterImagem()}
+            onClick={window.innerWidth < 400 ? (e) => {
+              document.getElementById("identificação").style.display = "none";
+              document.getElementById("inputFilterImagem").focus();
+              e.stopPropagation();
+            }
+              : null
+            }
             style={{
               width: '100%',
               margin: 0,
@@ -2937,6 +3563,10 @@ function Prontuario() {
         document.getElementById("inputFilterImagem").value = searchimagem;
         document.getElementById("inputFilterImagem").focus();
       }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
+        document.getElementById("inputFilterImagem").focus();
+      }
     }, 500);
   }
 
@@ -2962,7 +3592,7 @@ function Prontuario() {
     axios.get(html + "/deleteimage/'" + item.id + "'").then(() => {
       setfilterimagem('');
       loadImagem();
-      toast(1, '#52be80', 'SOLICITAÇÃO DE EXAME DE IMAGEM CANCELADA COM SUCESSO.', 3000);
+      // toast(1, '#52be80', 'SOLICITAÇÃO DE EXAME DE IMAGEM CANCELADA COM SUCESSO.', 3000);
     });
   }
   // exibição da lista de exames de imagem.
@@ -2972,10 +3602,12 @@ function Prontuario() {
         <div
           id="imagem"
           className="conteudo"
+          onClick={() => { document.getElementById("identificação").style.display = "flex"; document.getElementById("inputFilterImagem").value = ""; setarrayimagem(listimagem); setarrayimagem(listimagem) }}
         >
-          <Identificacao></Identificacao>
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE EXAMES DE IMAGEM"          >
             {arrayimagem.map((item) => (
               <div
@@ -3022,8 +3654,10 @@ function Prontuario() {
                           }}
                         ></img>
                       </button>
-                      <button className="animated-red-button"
-                        onClick={() => deleteImagem(item)}
+                      <button
+                        id={"deletekey 0 " + item.id}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteImagem, item); e.stopPropagation() }}
                         style={{ display: item.status == 1 ? 'flex' : 'none' }}
                       >
                         <img
@@ -3035,6 +3669,20 @@ function Prontuario() {
                             width: 30,
                           }}
                         ></img>
+                      </button>
+                      <button
+                        id={"deletekey 1 " + item.id}
+                        style={{ display: 'none', width: 100 }}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteImagem, item); e.stopPropagation() }}
+                      >
+                        <div>DESFAZER</div>
+                        <div className="deletetoast"
+                          style={{
+                            height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                            marginLeft: 5, marginRight: 5, maxWidth: 90,
+                          }}>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -3082,6 +3730,8 @@ function Prontuario() {
     axios.get(html + "/balancos/" + idatendimento).then((response) => {
       x = response.data;
       setlistbalancos(x.sort((a, b) => a.id > b.id ? 1 : -1));
+      // preparando gráfico de dados clínicos.
+      prepareGraphDadosClinicos();
     });
   }
   // deletando um balanço.
@@ -3137,7 +3787,7 @@ function Prontuario() {
   const copyBalanco = (item) => {
     var obj = {
       idatendimento: item.idatendimento,
-      data: moment().format('DD/MM/YY') + ' ' + moment().format('HH') + ':00',
+      data: moment().format('DD/MM/YYYY') + ' ' + moment().format('HH') + ':00',
       hora: moment().format('HH') + ':00',
       pas: item.pas,
       pad: item.pad,
@@ -3156,7 +3806,7 @@ function Prontuario() {
   const newBalanco = (item) => {
     var obj = {
       idatendimento: idatendimento,
-      data: moment().format('DD/MM/YY') + ' ' + moment().format('HH') + ':00',
+      data: moment().format('DD/MM/YYYY') + ' ' + moment().format('HH') + ':00',
       hora: moment().format('HH') + ':00',
       pas: '?',
       pad: '?',
@@ -3319,9 +3969,10 @@ function Prontuario() {
         <div
           id="balanços"
           className="conteudo">
-          <Identificacao></Identificacao>
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE BALANÇOS"
           >
             {listbalancos.map((item) => (
@@ -3391,8 +4042,10 @@ function Prontuario() {
                           }}
                         ></img>
                       </button>
-                      <button className="animated-red-button"
-                        onClick={() => deleteBalanco(item)}
+                      <button
+                        id={"deletekey 0 " + item.id}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteBalanco, item); e.stopPropagation() }}
                         style={{
                           display: item.status === 0 ? 'flex' : 'none', boxShadow: 'none',
                         }}
@@ -3406,6 +4059,20 @@ function Prontuario() {
                             width: 30,
                           }}
                         ></img>
+                      </button>
+                      <button
+                        id={"deletekey 1 " + item.id}
+                        style={{ display: 'none', width: 100 }}
+                        className="animated-red-button"
+                        onClick={(e) => { deletetoast(deleteBalanco, item); e.stopPropagation() }}
+                      >
+                        <div>DESFAZER</div>
+                        <div className="deletetoast"
+                          style={{
+                            height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                            marginLeft: 5, marginRight: 5, maxWidth: 90,
+                          }}>
+                        </div>
                       </button>
                     </div>
                   </div>
@@ -3516,6 +4183,10 @@ function Prontuario() {
   const [viewformulario, setviewformulario] = useState(0);
 
   useEffect(() => {
+    // APT - carregando IVCF:
+    setivcf(7);
+    // carregando configurações de visualização dos componentes.
+    loadSettings();
     setloadprincipal(1);
     setTimeout(() => {
       setloadprincipal(0);
@@ -3532,6 +4203,7 @@ function Prontuario() {
     setalertas([]);
     arrayalertas = [];
     // fechando as visualizações das telas secundárias (melhor aproximação até o momento).
+    setviewsettings(0);
     setviewevolucao(0);
     setviewprintevolucao(0);
     setviewprintformulario(0);
@@ -3549,33 +4221,65 @@ function Prontuario() {
     // resetando estado das scrolls.
     setscrollmenu(0);
     // desabilitando a wheel do mouse (causava glitches nas scrolls).
-    document.getElementById("PRINCIPAL").onwheel = function (e) {
-      e.preventDefault()
-    }
+    // document.getElementById("PRINCIPAL").onwheel = function (e) {
+    // e.preventDefault()
+    //}
     // eslint-disable-next-line
   }, [idatendimento])
+
+  // carregando configurações do banco de dados.
+  var x = [0, 1];
+  const loadSettings = () => {
+    axios.get(html + "/settings").then((response) => {
+      x = response.data;
+      setsettings(response.data);
+      viewSettings(x);
+    });
+  }
+  const viewSettings = (origem) => {
+    // esquemas de cores >> 1 = purplescheme, 2 = bluescheme, etc...
+    var paleta = origem.filter(valor => valor.componente == "COLORSCHEME").map(valor => valor.view);
+    setschemecolor(paleta == 1 ? 'purplescheme' : paleta == 2 ? 'bluescheme' : 'ghapscheme');
+    setmenuevolucoes(origem.filter(valor => valor.componente == "EVOLUÇÕES").map(valor => valor.view));
+    setmenudiagnosticos(origem.filter(valor => valor.componente == "DIAGNÓSTICOS").map(valor => valor.view));
+    setmenuproblemas(origem.filter(valor => valor.componente == "PROBLEMAS").map(valor => valor.view));
+    setmenupropostas(origem.filter(valor => valor.componente == "PROPOSTAS").map(valor => valor.view));
+    setmenuinterconsultas(origem.filter(valor => valor.componente == "INTERCONSULTAS").map(valor => valor.view));
+    setmenulaboratorio(origem.filter(valor => valor.componente == "LABORATÓRIO").map(valor => valor.view));
+    setmenuimagem(origem.filter(valor => valor.componente == "IMAGEM").map(valor => valor.view));
+    setmenuprescricao(origem.filter(valor => valor.componente == "PRESCRIÇÃO").map(valor => valor.view));
+    setmenuformularios(origem.filter(valor => valor.componente == "FORMULÁRIOS").map(valor => valor.view));
+    setcardinvasoes(origem.filter(valor => valor.componente == "INVASÕES").map(valor => valor.view));
+    setcardlesoes(origem.filter(valor => valor.componente == "LESÕES").map(valor => valor.view));
+    setcardstatus(origem.filter(valor => valor.componente == "STATUS").map(valor => valor.view));
+    setcardalertas(origem.filter(valor => valor.componente == "ALERTAS").map(valor => valor.view));
+    setcardprecaucao(origem.filter(valor => valor.componente == "PRECAUÇÃO").map(valor => valor.view));
+    setcardultimaevolucao(origem.filter(valor => valor.componente == "ÚLTIMA EVOLUÇÃO").map(valor => valor.view));
+    setcarddiagnosticos(origem.filter(valor => valor.componente == "DIAGNÓSTICO").map(valor => valor.view));
+    setcardhistoricoatb(origem.filter(valor => valor.componente == "HISTÓRICO DE ANTIBIÓTICOS").map(valor => valor.view));
+    setcardhistoricoatendimentos(origem.filter(valor => valor.componente == "HISTÓRICO DE ATENDIMENTOS").map(valor => valor.view));
+    setcardanamnese(origem.filter(valor => valor.componente == "ANAMNESE").map(valor => valor.view));
+  }
+
+  useEffect(() => {
+    viewSettings(settings);
+  }, [settings])
 
   // animação para carregamento da tela principal.
   const [loadprincipal, setloadprincipal] = useState(0);
   const LoadPrincipal = useCallback(() => {
     return (
       <div
-        className="scroll"
+        // className="conteudo"
         style={{
-          display: loadprincipal == 1 ? 'flex' : 'none',
-          borderRadius: 0, overflowY: 'scroll', paddingRight: 10, backgroundColor: '#ffffff', opacity: 0.5,
-          justifyContent: 'center', flexDirection: 'column',
+          display: loadprincipal == 1 && stateprontuario == 1 ? 'flex' : 'none',
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: '#f2f2f2', opacity: 1, borderRadius: 0, zIndex: 1, margin: 0,
+          alignItems: 'center', justifyContent: 'center',
         }}>
-        <img
-          className="pulsarlogo"
-          alt=""
-          src={logoinverted}
-          style={{
-            padding: 0,
-            margin: 0,
-            borderRadius: 0,
-          }}
-        ></img>
+        <div className="pulsarlogo">
+          <LogoInverted height={''} width={''}></LogoInverted>
+        </div>
       </div>
     )
   }, [loadprincipal]);
@@ -3628,8 +4332,6 @@ function Prontuario() {
     // carregando os últimos valores válidos para Braden e Morse.
     loadLastBraden();
     loadLastMorse();
-    // carregando alertas.
-    loadAlertas();
     if (stateprontuario === 9 && (tipousuario === 1 || tipousuario === 2)) {
       setshowlesoes(0);
       setshowinvasoes(0);
@@ -3664,13 +4366,55 @@ function Prontuario() {
   - Tela principal;
   */
 
+  // botão para acesso às configurações de tela / settings.
+  function BtnSettings() {
+    return (
+      <button
+        className="grey-button"
+        title="CONFIGURAÇÕES."
+        onClick={(e) => { setviewsettings(1); e.stopPropagation() }}
+        style={{
+          display: tipousuario == 2 ? 'flex' : 'none',
+          minWidth: 50,
+          minHeight: 50,
+          width: 50,
+          height: 50,
+          marginLeft: 2.5, marginRight: 2.5,
+          padding: 5,
+        }}
+      >
+        <img
+          alt=""
+          src={settingsimg}
+          style={{
+            margin: 0,
+            height: 20,
+            width: 20,
+          }}
+        ></img>
+      </button>
+    )
+  }
+
+  // Representação gráfica do step atual do paciente.
+  const dataChartStep = {
+    datasets: [
+      {
+        data: [5, 10],
+        backgroundColor: ['#ec7063', '#52be80'],
+        borderColor: '#ffffff',
+        hoverBorderColor: ['#ffffff', '#ffffff'],
+      },
+    ],
+  }
+
   // IDENTIFICAÇÃO DO PACIENTE.
+  const [showdetalhes, setshowdetalhes] = useState(0);
   function Paciente() {
     return (
       <div
         id="identificação"
         className="paciente"
-        onClick={() => viewUpdateAtendimento()}
       >
         <div id="IDENTIFICAÇÃO" style={{
           display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '100vw',
@@ -3705,22 +4449,108 @@ function Prontuario() {
               >
                 {box}
               </button>
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'left', width: '100%' }}>
-                <button
-                  className="rowitem"
-                  style={{
-                    marginLeft: tipounidade != 4 ? 0 : 5,
-                    marginRight: 0,
-                    marginBottom: 0,
-                    paddingBottom: 0,
-                    color: '#ffffff',
-                    alignSelf: 'flex-start',
-                    fontSize: window.innerWidth > 400 ? 18 : 14,
+
+              <div id="round gráfico"
+                style={{
+                  display: window.innerWidth > 400 ? 'flex' : 'none',
+                  margin: 2.5, position: 'relative', height: 65,
+                }}>
+                <Doughnut
+                  data={dataChartStep}
+                  width={65}
+                  height={65}
+                  plugins={ChartDataLabels}
+                  options={{
+                    cutoutPercentage: 40,
+                    plugins: {
+                      legend: {
+                        display: false
+                      },
+                      datalabels: {
+                        display: false
+                      }
+                    },
+                    tooltips: {
+                      enabled: false,
+                    },
+                    hover: { mode: null },
+                    elements: {
+                      arc: {
+                        hoverBorderColor: '#E1E5F2',
+                        borderColor: '#E1E5F2',
+                        borderWidth: 0,
+                        width: 25
+                      },
+                    },
+                    animation: {
+                      duration: 500,
+                    },
+                    title: {
+                      display: false,
+                    },
+                    legend: {
+                      display: false,
+                      position: 'bottom',
+                    },
+                    maintainAspectRatio: true,
+                    responsive: false,
                   }}
-                  id="inputNome"
-                >
-                  {nomepaciente}
-                </button>
+                />
+                <div
+                  id="steptext"
+                  title="STEP ATUAL."
+                  className="title5" style={{
+                    margin: 0, padding: 0,
+                    fontSize: 12,
+                    position: 'absolute', top: 0, bottom: 0, left: 0, right: 0,
+                    height: 65,
+                    width: 65
+                  }}>
+                  01
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'left', width: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', verticalAlign: 'center' }}>
+                  <button
+                    className="rowitem"
+                    style={{
+                      marginLeft: tipounidade != 4 ? 0 : 5,
+                      marginRight: 0,
+                      marginBottom: 0,
+                      paddingBottom: 0,
+                      color: '#ffffff',
+                      alignSelf: 'flex-start',
+                      textAlign: 'left',
+                      fontSize: window.innerWidth > 400 ? 18 : 14,
+                    }}
+                    id="inputNome"
+                  >
+                    {JSON.stringify(nomepaciente).length < 20 ? nomepaciente : JSON.stringify(nomepaciente).substring(2, JSON.stringify(nomepaciente).length - 1).replace(']', '').replace('"', '') + '...'}
+                  </button>
+                  <div style={{ position: 'relative' }}>
+                    <img
+                      id="info"
+                      // onMouseOver={() => document.getElementById("info").style.opacity = 1}
+                      onClick={(e) => {
+                        setshowdetalhes(1);
+                        e.stopPropagation();
+                      }}
+                      alt=""
+                      src={info}
+                      style={{
+                        position: 'relative',
+                        height: 20,
+                        padding: 0,
+                        margin: 5, marginTop: 6,
+                        borderRadius: 5,
+                        opacity: 0.8
+                      }}
+                    >
+                    </img>
+                    <DetalhesPaciente></DetalhesPaciente>
+                  </div>
+                </div>
                 <button
                   className="rowitem"
                   style={{
@@ -3730,7 +4560,21 @@ function Prontuario() {
                 >
                   {moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') < 2 ? + moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANO' : moment().diff(moment(dn, 'DD/MM/YYYY'), 'years') + ' ANOS'}
                 </button>
-
+                <button
+                  className="rowitem"
+                  style={{
+                    display: window.innerWidth > 400 ? 'flex' : 'none',
+                    borderStyle: 'solid',
+                    borderWidth: 2.5,
+                    borderColor: '#ffffff',
+                    borderRadius: 5,
+                    backgroundColor: '#ec7063',
+                    color: '#ffffff',
+                    alignSelf: 'flex-start',
+                  }}
+                >
+                  {'CUIDADOS PALIATIVOS'}
+                </button>
                 <div
                   style={{
                     display: window.innerWidth > 400 ? 'none' : 'flex',
@@ -3763,7 +4607,7 @@ function Prontuario() {
                     ></img>
                   </Link>
                   <Link
-                    to="/gpulse-web"
+                    to="/gpulse-apt"
                     className="grey-button"
                     title="FAZER LOGOFF."
                     style={{
@@ -3835,8 +4679,9 @@ function Prontuario() {
                 }}
               ></img>
             </Link>
+            <BtnSettings></BtnSettings>
             <Link
-              to="/gpulse-web"
+              to="/gpulse-apt"
               className="grey-button"
               title="FAZER LOGOFF."
               style={{
@@ -3861,6 +4706,24 @@ function Prontuario() {
         </div>
       </div>
     );
+  }
+  function DetalhesPaciente() {
+    return (
+      <div className="detalhes fade-in"
+        onClick={(e) => { setshowdetalhes(0); e.stopPropagation() }}
+        onMouseLeave={() => setshowdetalhes(0)}
+        style={{
+          display: showdetalhes == 1 ? 'flex' : 'none',
+        }}
+      >
+        <div className="title5" style={{ fontSize: 12, textAlign: 'left' }}>{'PRONTUÁRIO: ' + idpaciente}</div>
+        <div className="title5" style={{ fontSize: 12, textAlign: 'left' }}>{'ATENDIMENTO: ' + idatendimento}</div>
+        <div className="title5" style={{ fontSize: 12, textAlign: 'left' }}>{'DN: ' + dn}</div>
+        <div className="title5" style={{ fontSize: 12, textAlign: 'left' }}>{'NOME DA MÃE: ' + nomemae}</div>
+        <div className="title5" style={{ fontSize: 12, textAlign: 'left' }}>{'CONTATO: ' + contato}</div>
+        <div className="title5" style={{ fontSize: 12, textAlign: 'left' }}>{'ENDEREÇO: ' + endereço}</div>
+      </div>
+    )
   }
 
   // importando informações do último atendimento, caso o sistema identifique uma história em branco.
@@ -3922,8 +4785,7 @@ function Prontuario() {
       <button
         className="grey-button"
         id="BTN MENU MOBILE"
-        onClick={() => showMenuMobile()}
-        onTouchStart={() => updateInvasoes()}
+        onClick={(e) => { showMenuMobile(); e.stopPropagation() }}
         style={{ zIndex: 0 }}
       >
         <img
@@ -3971,8 +4833,21 @@ function Prontuario() {
             </button>
             <button
               className="blue-button"
+              onClick={() => clickPlanoTerapeutico()}
+              style={{
+                width: 200,
+                height: 50,
+                margin: 5,
+                padding: 0,
+              }}
+            >
+              PLANO TERAPÊUTICO
+            </button>
+            <button
+              className="blue-button"
               onClick={() => clickEvoluções()}
               style={{
+                display: menuevolucoes == 1 ? 'flex' : 'none',
                 width: 200,
                 height: 50,
                 margin: 5,
@@ -4039,53 +4914,42 @@ function Prontuario() {
 
   // PAINEL PRINCIPAL.
   function Principal() {
-    if (stateprontuario === 1 && loadprincipal == 0) {
+    if (stateprontuario === 1) {
       return (
         <div id="painel principal"
           className="scroll"
-          style={{ borderRadius: 0, overflowY: 'scroll', paddingRight: 10 }}
+          style={{
+            alignItems: 'center', flexDirection: 'row', backgroundColor: 'transparent',
+            borderColor: 'transparent',
+            flexWrap: 'wrap', justifyContent: 'space-evenly'
+          }}
         >
-          <div
-            className="secondary"
-            id="DESTAQUES"
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              alignItems: 'flex-start',
-              flexWrap: 'wrap',
-              borderRadius: 0,
-              backgroundColor: 'transparent',
-              borderWidth: 0,
-              width: '100%',
-              margin: 10,
-              padding: 0,
-              paddingRight: 0,
-            }}
-          >
-            <CardStatus></CardStatus>
-            <CardAlertas></CardAlertas>
-            <CardPrecaucao></CardPrecaucao>
-            <CardDiasdeInternacao></CardDiasdeInternacao>
-            <CardEvolucoes></CardEvolucoes>
-            <CardInvasoes></CardInvasoes>
-            <CardDiagnosticos></CardDiagnosticos>
-            <CardLesoes></CardLesoes>
-            <CardAntibioticos></CardAntibioticos>
-            <CardInternacoes></CardInternacoes>
 
-          </div>
+          <CardIVCF></CardIVCF>
+
+          <CardStatus></CardStatus>
+          <CardDiasdeInternacao></CardDiasdeInternacao>
+          <CardAlertas></CardAlertas>
+          <CardGestaoDeRiscos></CardGestaoDeRiscos>
+
+          <CardInvasoes></CardInvasoes>
+          <CardLesoes></CardLesoes>
+
+          <CardEvolucoes></CardEvolucoes>
+          <CardDiagnosticos></CardDiagnosticos>
+          <CardVm></CardVm>
+          <CardControles></CardControles>
+          <CardNutricao></CardNutricao>
+
+          <CardAntibioticos></CardAntibioticos>
+          <CardInternacoes></CardInternacoes>
+
           <div
             id="ANAMNESE"
             className="secondary"
             style={{
-              margin: 0,
-              padding: 5,
-              paddingLeft: 10,
-              paddingRight: 10,
-              flexDirection: 'column',
+              display: cardanamnese == 1 ? 'flex' : 'none',
               justifyContent: 'center',
-              width: '100%',
-              boxShadow: 'none'
             }}
           >
             <div
@@ -4095,27 +4959,46 @@ function Prontuario() {
                 margin: 0,
                 padding: 0,
                 justifyContent: 'center',
-                width: '100%'
               }}
             >
-              <textarea
-                className="textarea"
-                disabled="true"
-                style={{ width: '100%', height: 140 }}
-                id="inputAp"
-                title="ANTECEDENTES PESSOAIS."
-              >
-                {'ANTECEDENTES PESSOAIS: ' + antecedentes}
-              </textarea>
-              <textarea
-                className="textarea"
-                disabled="true"
-                style={{ width: '100%', height: 140 }}
-                id="inputAlergias"
-                title="ALERGIAS."
-              >
-                {'ALERGIAS: ' + alergias}
-              </textarea>
+              <div style={{ padding: 5, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="title2center" style={{ color: '#8f9bbc' }}>
+                  {window.innerWidth > 400 ? 'ANTECEDENTES PESSOAIS' : 'ANTECEDENTES'}
+                </div>
+                <textarea
+                  className="textarea"
+                  onKeyUp={() => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                      setantecedentes(document.getElementById("inputAp").value);
+                      updateAtendimento();
+                    }, 2000);
+                  }}
+                  style={{ width: window.innerWidth < 400 ? '40vw' : 'calc(35vw - 20px)', height: 140 }}
+                  id="inputAp"
+                  title="ANTECEDENTES PESSOAIS."
+                >
+                  {antecedentes}
+                </textarea>
+              </div>
+              <div style={{ padding: 5, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="title2center" style={{ color: '#8f9bbc' }}>ALERGIAS</div>
+                <textarea
+                  className="textarea"
+                  onKeyUp={() => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                      setantecedentes(document.getElementById("inputAlergias").value);
+                      updateAtendimento();
+                    }, 2000);
+                  }}
+                  style={{ width: window.innerWidth < 400 ? '40vw' : 'calc(35vw - 20px)', height: 140 }}
+                  id="inputAlergias"
+                  title="ALERGIAS."
+                >
+                  {alergias}
+                </textarea>
+              </div>
             </div>
             <div
               style={{
@@ -4123,45 +5006,71 @@ function Prontuario() {
                 flexDirection: 'row',
                 margin: 0,
                 justifyContent: 'center',
-                width: '100%'
               }}
             >
-              <textarea
-                className="textarea"
-                disabled="true"
-                style={{ width: '100%', height: 140 }}
-                id="inputMedprev"
-                title="MEDICAÇÕES PRÉVIAS."
-              >
-                {'MEDICAÇÕES DE USO CONTÍNUO: ' + medicacoes}
-              </textarea>
-              <textarea
-                className="textarea"
-                disabled="true"
-                style={{ width: '100%', height: 140 }}
-                id="inputExprev"
-                title="EXAMES PRÉVIOS."
-              >
-                {'EXAMES PRÉVIOS: ' + exames}
-              </textarea>
+              <div style={{ padding: 5, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="title2center" style={{ color: '#8f9bbc' }}>
+                  {window.innerWidth > 400 ? 'MEDICAÇÕES DE USO PRÉVIO' : 'MEDICAÇÕES'}
+                </div>
+                <textarea
+                  className="textarea"
+                  onKeyUp={() => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                      setantecedentes(document.getElementById("inputMedprev").value);
+                      updateAtendimento();
+                    }, 2000);
+                  }}
+                  style={{ width: window.innerWidth < 400 ? '40vw' : 'calc(35vw - 20px)', height: 140 }}
+                  id="inputMedprev"
+                  title="MEDICAÇÕES PRÉVIAS."
+                >
+                  {medicacoes}
+                </textarea>
+              </div>
+              <div style={{ padding: 5, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div className="title2center" style={{ color: '#8f9bbc' }}>EXAMES PRÉVIOS</div>
+                <textarea
+                  className="textarea"
+                  onKeyUp={() => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                      setantecedentes(document.getElementById("inputExprev").value);
+                      updateAtendimento();
+                    }, 2000);
+                  }}
+                  style={{ width: window.innerWidth < 400 ? '40vw' : 'calc(35vw - 20px)', height: 140 }}
+                  id="inputExprev"
+                  title="EXAMES PRÉVIOS."
+                >
+                  {exames}
+                </textarea>
+              </div>
             </div>
             <div
               style={{
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: 'column',
                 margin: 0,
+                padding: 5,
                 justifyContent: 'center',
-                width: '100%'
               }}
             >
+              <div className="title2center" style={{ color: '#8f9bbc' }}>HISTÓRIA DA DOENÇA ATUAL</div>
               <textarea
                 className="textarea"
-                disabled="true"
-                style={{ width: '100%', height: 140 }}
+                onKeyUp={() => {
+                  clearTimeout(timeout);
+                  timeout = setTimeout(() => {
+                    setantecedentes(document.getElementById("inputHda").value);
+                    updateAtendimento();
+                  }, 2000);
+                }}
+                style={{ width: window.innerWidth < 400 ? '80vw' : 'calc(70vw - 20px)', height: 140 }}
                 id="inputHda"
                 title="HISTÓRIA DA DOENÇA ATUAL."
               >
-                {'HISTÓRIA DA DOENÇA ATUAL: ' + historia}
+                {historia}
               </textarea>
             </div>
           </div>
@@ -4182,7 +5091,12 @@ function Prontuario() {
   // EXIBIR LISTA DE ANTIBIÓTICOS USADOS.
   function CardAntibioticos() {
     return (
-      <div className="pulsewidgetscroll" id="LISTA DE ANTIBIÓTICOS PRESCRITOS">
+      <div
+        className="pulsewidgetscroll"
+        id="LISTA DE ANTIBIÓTICOS PRESCRITOS"
+        style={{ display: cardhistoricoatb == 1 ? 'flex' : 'none', }}
+        onClick={() => document.getElementById("LISTA DE ANTIBIÓTICOS PRESCRITOS").classList.toggle("pulsewidgetscrollmax")}
+      >
         <div className="title4 pulsewidgettitle">{'HISTÓRICO DE ANTIBIÓTICOS'}</div>
         <div className="pulsewidgetcontent" style={{ display: atblist.length > 0 ? 'flex' : 'none' }}>
           {atblist.map((item) => (
@@ -4241,6 +5155,7 @@ function Prontuario() {
         title="STATUS DO PACIENTE."
         onClick={tipousuario != 4 ? () => showChangeStatus() : null} // técnico
         style={{
+          display: cardstatus == 1 ? 'flex' : 'none',
           backgroundColor: status == 3 ? '#52be80' : status == 2 ? '#f5b041' : status == 1 ? '#ec7063' : status == 0 ? 'grey' : 'purple'
         }}
       >
@@ -4257,38 +5172,11 @@ function Prontuario() {
     if (viewstatus === 1) {
       return (
         <div
-          className="secondary"
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
-            borderRadius: 0,
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: '100%',
-            width: '100%',
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            zIndex: 9,
-          }}
+          className="menucover"
         >
           <div>
             <div
-              className="secondary"
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                backgroundColor: '#FFFFFF',
-                borderRadius: 5,
-                paddingTop: 30,
-                paddingBottom: 30,
-                paddingLeft: 30,
-                paddingRight: 30,
-              }}
+              className="menucontainer" style={{ padding: 20 }}
             >
               <label
                 className="title2"
@@ -4362,7 +5250,7 @@ function Prontuario() {
     setViewstatus(1);
   }
 
-  var stat = 0;
+  var stat = status;
   const changeStatus = (value) => {
     document.body.style.overflow = null;
     setstatus(value);
@@ -4379,7 +5267,8 @@ function Prontuario() {
         title="PRECAUÇÃO OU ISOLAMENTO DE CONTATO."
         onClick={tipousuario != 4 ? () => showChangePrecaucao(0) : null}
         style={{
-          backgroundColor: precaucao === 1 ? "#8f9bbc" : precaucao === 2 ? "#f5b041" : precaucao === 3 ? "#bb8fce" : "#ec7063"
+          display: cardprecaucao == 1 ? 'flex' : 'none',
+          backgroundColor: precaucao == 1 ? "#8f9bbc" : precaucao == 2 ? "#f5b041" : precaucao == 3 ? "#bb8fce" : "#ec7063"
         }}
       >
         <text className="title5">
@@ -4467,7 +5356,7 @@ function Prontuario() {
     setViewprecaucao(1);
   }
 
-  var prec = 0;
+  var prec = precaucao;
   const changePrecaucao = (value) => {
     document.body.style.overflow = null;
     setprecaucao(value);
@@ -4480,7 +5369,8 @@ function Prontuario() {
   function CardDiasdeInternacao() {
     return (
       <div
-        className="pulsewidgetstatic" style={{ backgroundColor: '#8f9bbc' }}
+        className="pulsewidgetstatic"
+        style={{ backgroundColor: '#8f9bbc', display: carddiasinternacao == 1 ? 'flex' : 'none', }}
         id="DIAS DE INTERNAÇÃO"
       >
         <p
@@ -4496,8 +5386,920 @@ function Prontuario() {
     )
   }
 
+  // CARD DADOS VITAIS (GRÁFICO).
+  const [dataControles, setdataControles] = useState([]);
+  const [dataPAM, setdataPAM] = useState([]);
+  const [dataFC, setdataFC] = useState([]);
+
+  const prepareGraphDadosClinicos = () => {
+    setdataControles(listbalancos.filter(item => item.idatendimento == idatendimento).map(item => JSON.stringify(item.data).substring(1, 11)))
+
+    setdataPAM({
+      lineTension: 0,
+      label: 'PAM',
+      data: listbalancos.filter(item => item.idatendimento == idatendimento).map(item => item.pas),
+      // pointBackgroundColor: 'purple',
+      fill: false,
+      borderColor: '#ec7063',
+      backgroundColor: '#ec7063',
+      hoverBorderColor: 'white',
+      // yAxisID: 'y',
+      shadowOffsetX: 0,
+      shadowOffsetY: 2,
+      shadowBlur: 10,
+      shadowColor: effectColors.shadow
+    })
+
+    setdataFC({
+      lineTension: 0,
+      label: 'FC',
+      data: listbalancos.filter(item => item.idatendimento == idatendimento).map(item => item.fc),
+      fill: false,
+      borderColor: '#2e86c1',
+      backgroundColor: '#2e86c1',
+      hoverBorderColor: 'white',
+      shadowOffsetX: 0,
+      shadowOffsetY: 2,
+      shadowBlur: 10,
+      shadowColor: effectColors.shadow
+    });
+  }
+
+  const dataChartDadosClinicos = (canvas) => {
+    const ctx = canvas.getContext("2d");
+    var gradient = ctx.createLinearGradient(0, 0, 0, 75);
+    gradient.addColorStop(0, 'rgba(82, 190, 128, 0.3');
+    gradient.addColorStop(1, 'transparent');
+
+    return {
+      labels: dataControles,
+      datasets: [dataPAM, dataFC],
+    }
+  }
+
+  // card dados vitais / controles.
+  function CardControles() {
+    return (
+      <div id="cardcontroles" style={{ position: 'relative' }}
+        className="pulsewidgetcontroles"
+        // style={{ display: cardinvasoes == 1 ? 'flex' : 'none' }}
+        onClick={() => document.getElementById("cardcontroles").className = "pulsewidgetcontroleshover"}
+      >
+        <div className="pulsewidgettitle" style={{ alignItems: 'center' }}>
+          <div className="title4">{'CONTROLES'}</div>
+        </div>
+        <div
+          id="gráfico de controles"
+          className="pulsewidgetcontent"
+        >
+          <button className="blue-button"
+            onClick={(e) => {
+              document.getElementById("cardcontroles").className = "pulsewidgetcontroles";
+              e.stopPropagation();
+            }}
+            style={{
+              position: 'absolute', top: 10, right: 10,
+              width: 30, minWidth: 30, height: 30, minHeight: 30,
+            }}
+          >
+            -
+          </button>
+          <div style={{ width: '75vw' }} onClick={(e) => e.stopPropagation()}>
+            <Line
+              data={dataChartDadosClinicos}
+              padding={10}
+              width={window.innerWidth > 400 ? 0.1 * window.innerWidth * listbalancos.filter(item => item.idatendimento == idatendimento).lenght : 200}
+              // height={0.13 * window.innerWidth}
+              plugins={ChartDataLabels}
+              options={{
+                scales: {
+                  xAxes: [
+                    {
+                      display: true,
+                      ticks: {
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                  yAxes: [
+                    {
+                      display: false,
+                      ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 200,
+                        fontColor: '#61636e',
+                        fontWeight: 'bold',
+                      },
+                      gridLines: {
+                        zeroLineColor: 'transparent',
+                        lineWidth: 0,
+                        drawOnChartArea: true,
+                      },
+                    },
+                  ],
+                },
+                plugins: {
+                  datalabels: {
+                    display: false,
+                    color: '#ffffff',
+                    font: {
+                      weight: 'bold',
+                      size: 16,
+                    },
+                  },
+                },
+                tooltips: {
+                  enabled: true,
+                  displayColors: false,
+                },
+                hover: { mode: null },
+                elements: {},
+                animation: {
+                  duration: 500,
+                },
+                title: {
+                  display: false,
+                  text: 'PPS',
+                },
+                legend: {
+                  display: true,
+                  position: 'bottom',
+                },
+                maintainAspectRatio: true,
+                responsive: false,
+              }}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // card para gerenciamento nutricional.
+  const [viadieta, setviadieta] = useState(0); // 0 = VO, 1 == SNE, 2 = GGT, 3 = NPT.
+  const [infusaodieta, setinfusaodieta] = useState(0);
+  const [getdieta, setgetdieta] = useState(0);
+  function CardNutricao() {
+    return (
+      <div id="cardnutricao" className="pulsewidgetscroll"
+        onClick={() => {
+          document.getElementById("cardnutricao").classList.toggle("pulsewidgetscrollmax");
+        }}
+        style={{
+          // display: cardnutricao == 1 ? 'flex' : 'none';
+          display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center',
+          backgroundColor: '#8f9bbc', borderColor: '#8f9bbc', overflowY: 'hidden'
+        }}
+      >
+        <div className="pulsewidgettitle"
+          style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignSelf: 'center' }}>
+          <div style={{ display: 'flex', color: "#ffffff", flexDirection: 'column', justifyContent: 'center' }}>
+            {viadieta == 0 ? 'DIETA ORAL' : 'DIETA: ' + infusaodieta + ' ml/h'}
+          </div>
+          <img
+            alt=""
+            src={cabeceira == 1 ? leito0 : cabeceira == 2 ? leito30 : cabeceira == 3 ? leito90 : fowler}
+            style={{
+              height: '80%',
+              width: '80%',
+              borderRadius: 5,
+              alignSelf: 'center'
+            }}
+          ></img>
+        </div>
+        <div
+          className="orange-button pulsewidgetcontent"
+          id="DIETA"
+          title="DIETA."
+          style={{
+            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+            position: 'relative', color: '#ffffff', fontSize: 16
+          }}
+          onClick={(e) => { setchangedieta(1); e.stopPropagation() }}
+        >
+          <div style={{ fontSize: 18 }}>{viadieta == 0 ? 'DIETA POR VIA ORAL' : viadieta == 1 ? 'DIETA POR SNE' : viadieta == 2 ? 'DIETA POR GASTRO/JEJUNOSTOMIA' : 'NUTRIÇÃO PARENTERAL TOTAL'}</div>
+          <div style={{ display: viadieta != 0 ? 'flex' : 'none' }}>
+            {'INFUSÃO: ' + infusaodieta + ' ml/h'}
+          </div>
+          <div style={{ display: viadieta != 0 ? 'flex' : 'none' }}>{'OBJETIVO: ' + getdieta + ' ml/h'}</div>
+
+          <div
+            className="blue-button"
+            style={{
+              display: 'flex', flexDirection: 'column', padding: 10,
+              width: 65, minWidth: 65, height: 65, minHeight: 65,
+              position: 'absolute', top: 5, right: 5
+            }}
+            onClick={(e) => { setviewcabeceira(1); e.stopPropagation() }}
+          >
+            <img
+              alt=""
+              src={cabeceira == 1 ? leito0 : cabeceira == 2 ? leito30 : cabeceira == 3 ? leito90 : fowler}
+              style={{
+                height: '80%',
+                width: '80%',
+                borderRadius: 5,
+              }}
+            ></img>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const [changedieta, setchangedieta] = useState(0);
+  function ChangeDieta() {
+    if (changedieta == 1) {
+      return (
+        <div
+          className="menucover"
+          onClick={(e) => { setchangedieta(0); e.stopPropagation() }}
+          style={{
+            zIndex: 9, display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', alignItems: 'center'
+          }}>
+          <div className="menucontainer">
+            <div id="cabeçalho" className="cabecalho">
+              <div>{'INFORMAÇÕES DE DIETA'}</div>
+              <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <button className="red-button" onClick={() => setchangedieta(0)}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+                <button className="green-button"
+                // onClick={viewcomponent == 1 ? () => insertData() : () => updateData()}
+                >
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+              </div>
+            </div>
+            <div className="corpo" onClick={(e) => e.stopPropagation()}>
+              <label
+                className="title2center"
+                style={{ margin: 0 }}
+              >
+                VIA DE ADMINISTRAÇÃO DA DIETA:
+              </label>
+              <div id="VIA DE ADMINISTRAÇÃO DA DIETA."
+                style={{
+                  display: 'flex',
+                  flexDirection: window.innerWidth > 800 ? 'row' : 'column',
+                  justifyContent: 'space-between',
+                  margin: 5,
+                }}
+              >
+                <button
+                  className={viadieta == 0 ? "red-button" : "blue-button"} style={{ width: 150, minWidth: 100, height: 75, minHeight: 50, padding: 10 }}
+                  onClick={(e) => { setviadieta(0); e.stopPropagation() }}
+                >
+                  VIA ORAL
+                </button>
+                <button
+                  className={viadieta == 1 ? "red-button" : "blue-button"} style={{ width: 150, minWidth: 100, height: 75, minHeight: 50, padding: 10 }}
+                  onClick={(e) => { setviadieta(1); e.stopPropagation() }}
+                >
+                  SONDA NASOENTÉRICA
+                </button>
+                <button
+                  className={viadieta == 2 ? "red-button" : "blue-button"} style={{ width: 150, minWidth: 100, height: 75, minHeight: 50, padding: 10 }}
+                  onClick={(e) => { setviadieta(2); e.stopPropagation() }}
+                >
+                  GASTRO/ JEJUNOSTOMIA
+                </button>
+                <button
+                  className={viadieta == 3 ? "red-button" : "blue-button"} style={{ width: 150, minWidth: 100, height: 75, minHeight: 50, padding: 10 }}
+                  onClick={(e) => { setviadieta(3); e.stopPropagation() }}
+                >
+                  NUTRIÇÃO PARENTERAL TOTAL
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '90%' }}>
+                <div id="INFUSÃO"
+                  style={{ display: viadieta != 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                  <div className="title2center">{'INFUSÃO (ml/h):'}</div>
+                  <input
+                    className="input"
+                    autoComplete="off"
+                    placeholder="?"
+                    title="?"
+                    defaultValue={infusaodieta}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = '?')}
+                    onChange={(e) => { validateInfusaoDieta(e.target.value); e.stopPropagation() }}
+                    style={{
+                      height: 50,
+                      width: 100,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                    id="inputInfusaoDieta"
+                    maxLength={3}
+                  ></input>
+                </div>
+                <div id="OBJETIVO"
+                  style={{ display: viadieta != 0 ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                  <div className="title2center">{'OBJETIVO (ml/h):'}</div>
+                  <input
+                    className="input"
+                    autoComplete="off"
+                    placeholder="?"
+                    title="?"
+                    defaultValue={getdieta}
+                    onFocus={(e) => (e.target.placeholder = '')}
+                    onBlur={(e) => (e.target.placeholder = '?')}
+                    onChange={(e) => { validateInfusaoDieta(e.target.value); e.stopPropagation() }}
+                    style={{
+                      height: 50,
+                      width: 100,
+                      margin: 0,
+                      padding: 0,
+                    }}
+                    id="inputGet"
+                    maxLength={3}
+                  ></input>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  // validando input da infusão de dieta.
+  const validateInfusaoDieta = (txt) => {
+    var last = txt.slice(-1);
+    if (isNaN(last) === true) {
+      last = '';
+      document.getElementById('inputInfusaoDieta').value = '';
+    } else {
+    }
+  };
+
+  const [viewcabeceira, setviewcabeceira] = useState(0);
+  // 1 = cabeceira zero graus, 2 = cabeceira 30 graus, 3 = cabeceira a 90 graus, 4 = fowler.
+  const [cabeceira, setcabeceira] = useState(0);
+  function ChangeCabeceira() {
+    if (viewcabeceira == 1) {
+      return (
+        <div
+          className="menucover"
+          onClick={(e) => { setviewcabeceira(0); e.stopPropagation() }}
+          style={{
+            zIndex: 9, display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', alignItems: 'center'
+          }}>
+          <div className="menucontainer" style={{ padding: 20 }}>
+            <label
+              className="title2center"
+              style={{ margin: 0 }}
+            >
+              ATUALIZAR POSIÇÃO DA CABECEIRA
+            </label>
+            <div
+              id="CABECEIRA."
+              style={{
+                display: 'flex',
+                flexDirection: window.innerWidth > 800 ? 'row' : 'column',
+                justifyContent: 'space-between',
+                margin: 5,
+              }}
+            >
+              <button
+                className="blue-button" style={{ width: 100, minWidth: 100, height: 100, minHeight: 100 }}
+                onClick={(e) => { setcabeceira(1); setviewcabeceira(0); e.stopPropagation() }}
+              >
+                <img
+                  alt=""
+                  src={leito0}
+                  style={{
+                    height: '70%',
+                    borderRadius: 5,
+                  }}
+                ></img>
+              </button>
+              <button
+                className="blue-button" style={{ width: 100, minWidth: 100, height: 100, minHeight: 100 }}
+                onClick={(e) => { setcabeceira(2); setviewcabeceira(0); e.stopPropagation() }}
+              >
+                <img
+                  alt=""
+                  src={leito30}
+                  style={{
+                    height: '70%',
+                    borderRadius: 5,
+                  }}
+                ></img>
+              </button>
+              <button
+                className="blue-button" style={{ width: 100, minWidth: 100, height: 100, minHeight: 100 }}
+                onClick={(e) => { setcabeceira(3); setviewcabeceira(0); e.stopPropagation() }}
+              >
+                <img
+                  alt=""
+                  src={leito90}
+                  style={{
+                    height: '70%',
+                    borderRadius: 5,
+                  }}
+                ></img>
+              </button>
+              <button
+                className="blue-button" style={{ width: 100, minWidth: 100, height: 100, minHeight: 100 }}
+                onClick={(e) => { setcabeceira(4); setviewcabeceira(0); e.stopPropagation() }}
+              >
+                <img
+                  alt=""
+                  src={fowler}
+                  style={{
+                    height: '70%',
+                    borderRadius: 5,
+                  }}
+                ></img>
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  // CARD PARA GESTÃO DE RISCOS.
+  function CardGestaoDeRiscos() {
+    return (
+      <div id="cardgestaoderiscos" className="pulsewidgetcontroles"
+        style={{
+          backgroundColor: alertas.length < 1 ? '#52be80' : '#ec7063',
+          borderColor: alertas.length < 1 ? '#52be80' : '#ec7063'
+        }}
+        onClick={() => {
+          document.getElementById("cardgestaoderiscos").className = "pulsewidgetcontroleshover";
+          document.getElementById("cardgestaoderiscos").style.height = '60vh';
+          document.getElementById("cardgestaoderiscos").style.flexDirection = 'row';
+          document.getElementById("cardgestaoderiscos").style.overflowY = 'scroll';
+          document.getElementById("cardgestaoderiscos").style.overflowX = 'hidden';
+        }}>
+        <div className="pulsewidgettitle">
+          <div className="title5">GESTÃO DE RISCOS</div>
+          <div className="title5" style={{ fontSize: 12 }}>{'ALERTAS: ' + alertas.length}</div>
+        </div>
+        <div className="pulsewidgetcontent"
+          style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}
+          onClick={(e) => {
+            document.getElementById("cardgestaoderiscos").className = "pulsewidgetcontroles";
+            document.getElementById("cardgestaoderiscos").style.height = '11vw';
+            document.getElementById("cardgestaoderiscos").style.overflowY = 'hidden';
+            e.stopPropagation();
+          }}>
+          <CardPrecaucao></CardPrecaucao>
+          <CardQueda></CardQueda>
+          <CardLesao></CardLesao>
+          {alertas.map((item) => (
+            <div
+              className="pulsewidgetstatic" style={{ overflowY: "scroll", justifyContent: 'flex-start' }}
+            >
+              <div className="title2center">{item}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  function CardQueda() {
+    return (
+      <div id="cardqueda" className="pulsewidgetstatic" onClick={(e) => { setshowbraden(1); e.stopPropagation() }}>
+        <div className="title4" style={{ margin: 0, padding: 0 }}>RISCO DE QUEDA:</div>
+        <div className="title2center" style={{ margin: 5, padding: 0 }}>{'BRADEN: ' + newbraden}</div>
+        <div className="title2center" style={{ margin: 0, padding: 0 }}>
+          {newbraden > 14 ? 'RISCO BAIXO' :
+            newbraden > 12 && newbraden < 15 ? 'RISCO MODERADO' :
+              newbraden > 9 && newbraden < 13 ? 'RISCO ALTO' :
+                newbraden < 10 ? 'RISCO MUITO ALTO' : 'BRADEN ?'}
+        </div>
+      </div>
+    );
+  }
+
+  function CardLesao() {
+    return (
+      <div id="cardlesao" className="pulsewidgetstatic" onClick={(e) => { setshowmorse(1); e.stopPropagation() }}>
+        <div className="title4" style={{ margin: 0, padding: 0 }}>RISCO DE LESÃO:</div>
+        <div className="title2center" style={{ margin: 5, padding: 0 }}>{'MORSE: ' + newmorse}</div>
+        <div className="title2center" style={{ margin: 0, padding: 0 }}>
+          {newmorse < 41 ? 'RISCO MÉDIO' : newmorse > 40 && newmorse < 52 ? 'RISCO ELEVADO' : newmorse > 51 ? 'RISCO MUITO ELEVADO' : 'MORSE ?'}
+        </div>
+      </div>
+    );
+  }
+
+  // CLASSIFICAÇÃO DE BRADEN (QUEDA).
+  const [percepcao, setpercepcao] = useState(4);
+  const [umidade, setumidade] = useState(4);
+  const [atividade, setatividade] = useState(4);
+  const [mobilidade, setmobilidade] = useState(4);
+  const [nutricao, setnutricao] = useState(4);
+  const [friccao, setfriccao] = useState(3);
+
+  const [newbraden, setnewbraden] = useState(braden);
+  const setBraden = () => {
+    setnewbraden(percepcao + umidade + atividade + mobilidade + nutricao + friccao);
+    setshowbraden(0);
+  }
+
+  const [showbraden, setshowbraden] = useState(0);
+  function Braden() {
+    if (showbraden === 1) {
+      return (
+        <div className="menucover" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="menucontainer">
+            <div id="cabeçalho" className="cabecalho">
+              <div className="title5">{'ESCALA DE BRADEN'}</div>
+              <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <button className="red-button" onClick={() => setshowbraden(0)}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+                <button className="green-button"
+                  onClick={() => setMorse()}
+                >
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+              </div>
+            </div>
+            <div
+              className="corpo">
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>PERCEPÇÃO SENSORIAL:</div>
+                <button
+                  onClick={() => { setpercepcao(1) }}
+                  className={percepcao === 1 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  TOTALMENTE LIMITADO
+                </button>
+                <button
+                  onClick={() => { setpercepcao(2) }}
+                  className={percepcao === 2 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  MUITO LIMITADO
+                </button>
+                <button
+                  onClick={() => { setpercepcao(3) }}
+                  className={percepcao === 3 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  LEVEMENTE LIMITADO
+                </button>
+                <button
+                  onClick={() => { setpercepcao(4) }}
+                  className={percepcao === 4 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  NENHUMA LIMITAÇÃO
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>UMIDADE:</div>
+                <button
+                  onClick={() => { setumidade(1) }}
+                  className={umidade === 1 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  COMPLETAMENTE MOLHADO
+                </button>
+                <button
+                  onClick={() => { setumidade(2) }}
+                  className={umidade === 2 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  MUITO MOLHADO
+                </button>
+                <button
+                  onClick={() => { setumidade(3) }}
+                  className={umidade === 3 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  OCASIONALMENTE MOLHADO
+                </button>
+                <button
+                  onClick={() => { setumidade(4) }}
+                  className={umidade === 4 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  RARAMENTE MOLHADO
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>ATIVIDADE:</div>
+                <button
+                  onClick={() => { setatividade(1) }}
+                  className={atividade === 1 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  ACAMADO
+                </button>
+                <button
+                  onClick={() => { setatividade(2) }}
+                  className={atividade === 2 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  CONFINADO À CADEIRA
+                </button>
+                <button
+                  onClick={() => { setatividade(3) }}
+                  className={atividade === 3 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  ANDA OCASIONALMENTE
+                </button>
+                <button
+                  onClick={() => { setatividade(4) }}
+                  className={atividade === 4 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  ANDA FREQUENTEMENTE
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>MOBILIDADE:</div>
+                <button
+                  onClick={() => { setmobilidade(1) }}
+                  className={mobilidade === 1 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  TOTALMENTE LIMITADO
+                </button>
+                <button
+                  onClick={() => { setmobilidade(2) }}
+                  className={mobilidade === 2 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  BASTANTE LIMITADO
+                </button>
+                <button
+                  onClick={() => { setmobilidade(3) }}
+                  className={mobilidade === 3 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  LEVEMENTE LIMITADO
+                </button>
+                <button
+                  onClick={() => { setmobilidade(4) }}
+                  className={mobilidade === 4 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  NÃO APRESENTA LIMITAÇÕES
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>NUTRIÇÃO:</div>
+                <button
+                  onClick={() => { setnutricao(1) }}
+                  className={nutricao === 1 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  MUITO POBRE
+                </button>
+                <button
+                  onClick={() => { setnutricao(2) }}
+                  className={nutricao === 2 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  PROVAVELMENTE INADEQUADA
+                </button>
+                <button
+                  onClick={() => { setnutricao(3) }}
+                  className={nutricao === 3 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  ADEQUADA
+                </button>
+                <button
+                  onClick={() => { setnutricao(4) }}
+                  className={nutricao === 4 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  EXCELENTE
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>FRICÇÃO E CISALHAMENTO:</div>
+                <button
+                  onClick={() => { setfriccao(1) }}
+                  className={friccao === 1 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  PROBLEMA
+                </button>
+                <button
+                  onClick={() => { setfriccao(2) }}
+                  className={friccao === 2 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  PROBLEMA POTENCIAL
+                </button>
+                <button
+                  onClick={() => { setfriccao(3) }}
+                  className={friccao === 3 ? "red-button" : "blue-button"}
+                  style={{ width: 150 }}>
+                  NENHUM PROBLEMA
+                </button>
+                <button className="blue-button" disabled="true" style={{ width: 150, opacity: 0.5 }}></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  // CLASSIFICAÇÃO DE MORSE (LESÕES).
+  const [quedas, setquedas] = useState(0);
+  const [diagsec, setdiagsec] = useState(0);
+  const [auxilio, setauxilio] = useState(0);
+  const [endovenosa, setendovenosa] = useState(0);
+  const [marcha, setmarcha] = useState(0);
+  const [mental, setmental] = useState(0);
+
+  const [newmorse, setnewmorse] = useState(morse);
+  const setMorse = () => {
+    setnewmorse(quedas + diagsec + auxilio + endovenosa + marcha + mental);
+    setshowmorse(0);
+  }
+
+  const [showmorse, setshowmorse] = useState(0);
+  function Morse() {
+    if (showmorse === 1) {
+      return (
+        <div className="menucover" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+          <div className="menucontainer">
+            <div id="cabeçalho" className="cabecalho">
+              <div className="title5">{'ESCALA DE MORSE'}</div>
+              <div id="botões" style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
+                <button className="red-button" onClick={() => setshowmorse(0)}>
+                  <img
+                    alt=""
+                    src={deletar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+                <button className="green-button"
+                  onClick={() => setMorse()}
+                >
+                  <img
+                    alt=""
+                    src={salvar}
+                    style={{
+                      margin: 10,
+                      height: 30,
+                      width: 30,
+                    }}
+                  ></img>
+                </button>
+              </div>
+            </div>
+            <div
+              className="corpo">
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'left', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>HISTÓRICO DE QUEDAS:</div>
+                <button
+                  onClick={() => { setquedas(0) }}
+                  className={quedas === 0 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  NÃO
+                </button>
+                <button
+                  onClick={() => { setquedas(25) }}
+                  className={quedas === 25 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  SIM
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'left', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>DIAGNÓSTICO SECUNDÁRIO:</div>
+                <button
+                  onClick={() => { setdiagsec(0) }}
+                  className={diagsec === 0 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  NÃO
+                </button>
+                <button
+                  onClick={() => { setdiagsec(15) }}
+                  className={diagsec === 15 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  SIM
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'left', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>AUXÍLIO NA DEAMBULAÇÃO:</div>
+                <button
+                  onClick={() => { setauxilio(0) }}
+                  className={auxilio === 0 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  NENHUM, ACAMADO OU AUXILIADO POR PROFISSIONAL DE SAÚDE
+                </button>
+                <button
+                  onClick={() => { setauxilio(15) }}
+                  className={auxilio === 15 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  MULETAS, BENGALA OU ANDADOR
+                </button>
+                <button
+                  onClick={() => { setauxilio(30) }}
+                  className={auxilio === 30 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  MOBILIÁRIO OU PAREDE
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'left', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>TERAPIA ENDOVENOSA OU CATETER VENOSO:</div>
+                <button
+                  onClick={() => { setendovenosa(0) }}
+                  className={endovenosa === 0 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  NÃO
+                </button>
+                <button
+                  onClick={() => { setendovenosa(20) }}
+                  className={endovenosa === 20 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  SIM
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'left', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>MARCHA:</div>
+                <button
+                  onClick={() => { setmarcha(0) }}
+                  className={marcha === 0 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  NORMAL, CADEIRANTE OU ACAMADO
+                </button>
+                <button
+                  onClick={() => { setmarcha(10) }}
+                  className={marcha === 10 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  FRACA
+                </button>
+                <button
+                  onClick={() => { setmarcha(20) }}
+                  className={marcha === 20 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  COMPROMETIDA, CAMBALEANTE
+                </button>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'left', marginBottom: 5 }}>
+                <div className="title2" style={{ fontSize: 14, width: 150, textAlign: 'center' }}>ESTADO MENTAL:</div>
+                <button
+                  onClick={() => { setmental(0) }}
+                  className={mental === 0 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  ORIENTADO E CAPAZ QUANTO A SUA LIMITAÇÃO
+                </button>
+                <button
+                  onClick={() => { setmental(15) }}
+                  className={mental === 15 ? "red-button" : "blue-button"}
+                  style={{ width: 150, padding: 10 }}>
+                  SUPERESTIMA CAPACIDADES E ESQUECE LIMITAÇÕES
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  }
+
   // função que atualiza o paciente.
   const updateAtendimento = () => {
+    setloadprincipal(1);
     var obj = {
       idpaciente: idpaciente,
       hospital: nomehospital,
@@ -4508,11 +6310,11 @@ function Prontuario() {
       dn: dn,
       peso: peso,
       altura: altura,
-      antecedentes: antecedentes,
-      alergias: alergias,
-      medicacoes: medicacoes,
-      exames: exames,
-      historia: historia,
+      antecedentes: document.getElementById("inputAp").value.toUpperCase(),
+      alergias: document.getElementById("inputAlergias").value.toUpperCase(),
+      medicacoes: document.getElementById("inputMedprev").value.toUpperCase(),
+      exames: document.getElementById("inputExprev").value.toUpperCase(),
+      historia: document.getElementById("inputHda").value.toUpperCase(),
       status: stat,
       ativo: ativo,
       classificacao: classificacao,
@@ -4520,7 +6322,9 @@ function Prontuario() {
       precaucao: prec,
       assistente: assistente,
     };
-    axios.post(html + '/updateatendimento/' + idatendimento, obj);
+    axios.post(html + '/updateatendimento/' + idatendimento, obj).then(() => {
+      setloadprincipal(0);
+    });
   };
 
   // encerrando consulta ambulatorial.
@@ -4552,19 +6356,22 @@ function Prontuario() {
     });
   };
 
+  // card IVCF.
+  function CardIVCF() {
+    return (
+      <div>
+        <AptIVCF></AptIVCF>
+      </div>
+    )
+  }
+
   // card invasões.
   function CardInvasoes() {
     return (
       <div id="cardinvasao"
         className="pulsewidgetbody"
-        onMouseOver={() => {
-          document.getElementById("cardinvasao").className = "pulsewidgetbodyhover"
-        }}
-        onMouseLeave={() => {
-          document.getElementById("cardinvasao").className = "pulsewidgetbody"
-          document.getElementById("cardinvasao").scrollTop = 0
-          updateInvasoes()
-        }}
+        style={{ display: cardinvasoes == 1 ? 'flex' : 'none' }}
+        onClick={() => document.getElementById("cardinvasao").classList.toggle("pulsewidgetbodyhover")}
       >
         <div className="pulsewidgettitle" style={{ alignItems: 'center' }}>
           <div className="title5">{'INVASÕES'}</div>
@@ -4591,14 +6398,11 @@ function Prontuario() {
   // card lesoes.
   function CardLesoes() {
     return (
-      <div id="cardlesao"
+      <div id="cardlesao" style={{ display: cardlesoes == 1 ? 'flex' : 'none' }}
         className="pulsewidgetbody"
         title="LESÕES DE PRESSÃO"
-        onMouseOver={() => {
-          document.getElementById("cardlesao").className = "pulsewidgetbodyhover"
-        }}
+        onClick={() => document.getElementById("cardlesao").classList.toggle("pulsewidgetbodyhover")}
         onMouseLeave={() => {
-          document.getElementById("cardlesao").className = "pulsewidgetbody"
           document.getElementById("cardlesao").scrollTop = 0
         }}
       >
@@ -4630,7 +6434,10 @@ function Prontuario() {
       <div
         id="EVOLUÇÃO E EXAME FÍSICO"
         title="ÚLTIMA EVOLUÇÃO E CONTROLES."
-        className="pulsewidgetscroll">
+        style={{ display: cardultimaevolucao == 1 ? 'flex' : 'none' }}
+        className="pulsewidgetscroll"
+        onClick={() => document.getElementById("EVOLUÇÃO E EXAME FÍSICO").classList.toggle("pulsewidgetscrollmax")}
+      >
         <div className="title4 pulsewidgettitle">
           {'ÚLTIMA EVOLUÇÃO E CONTROLES'}
         </div>
@@ -4641,39 +6448,7 @@ function Prontuario() {
           <div>
             {evolucao != '' ? evolucao : 'SEM EVOLUÇÕES REGISTRADAS.'}
           </div>
-          <div style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', marginTop: 5
-          }}>
-            <button
-              id="BRADEN"
-              className="blue-button"
-              style={{
-                display: lastbraden > 0 && window.innerWidth > 800 ? 'flex' : 'none',
-                alignSelf: 'center',
-                width: 250,
-                height: 50,
-                padding: 10,
-                backgroundColor: '#8f9bbc',
-              }}
-            >
-              {lastbraden > 14 ? 'BRADEN: ' + lastbraden + ' - RISCO BAIXO' : lastbraden > 12 && lastbraden < 15 ? 'BRADEN: ' + lastbraden + ' - RISCO MODERADO' : 'BRADEN: ' + lastbraden + ' - RISCO ELEVADO'}
-            </button>
-            <button
-              id="MORSE"
-              className="blue-button"
-              style={{
-                display: lastmorse > 0 && window.innerWidth > 800 ? 'flex' : 'none',
-                alignSelf: 'center',
-                width: 250,
-                height: 50,
-                padding: 10,
-                backgroundColor: '#8f9bbc',
-              }}
-            >
-              {lastmorse < 41 ? 'MORSE: ' + lastmorse + ' - RISCO MÉDIO' : lastmorse > 40 && lastmorse < 52 ? 'MORSE: ' + lastmorse + ' - RISCO ELEVADO' : lastmorse > 51 ? 'MORSE: ' + lastmorse + ' - RISCO MUITO ELEVADO' : 'MORSE ?'}
-            </button>
-          </div>
-          <div className="title4" style={{ marginTop: 5 }}>{'CONTROLES:'}</div>
+          <div className="title4" style={{ marginTop: 10 }}>{'CONTROLES:'}</div>
           <ViewGlasgow></ViewGlasgow>
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', padding: 2.5 }}>
             <ViewRass></ViewRass>
@@ -4682,22 +6457,22 @@ function Prontuario() {
           <div style={{
             display: evolucao != '' ? 'flex' : 'none', flexDirection: 'column', justifyContent: 'center',
           }}>
-            <div className={pam < 70 ? "title3" : "title2"}>{'PA: ' + pas + ' x ' + pad + ' (PAM ' + pam + ') mmHg'}</div>
+            <div className={pam < 70 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>{'PA: ' + pas + ' x ' + pad + ' (PAM ' + pam + ') mmHg'}</div>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-              <div className={parseInt(fc) < 60 || parseInt(fc) > 120 ? "title3" : "title2"}>{'FC: ' + fc + ' bpm'}</div>
-              <div className={parseInt(fr) > 26 ? 'title3' : 'title2'}>{'FR: ' + fr + ' irpm'}</div>
+              <div className={parseInt(fc) < 60 || parseInt(fc) > 120 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>{'FC: ' + fc + ' bpm'}</div>
+              <div className={parseInt(fr) > 26 ? 'title3' : 'title2'} style={{ margin: 2.5, padding: 0 }}>{'FR: ' + fr + ' irpm'}</div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%' }}>
-              <div className={parseInt(sao2) < 90 ? "title3" : "title2"} >{'SAO2: ' + sao2 + '%'}</div>
-              <div className={parseFloat(tax) < 35.0 || parseFloat(tax) > 37.5 ? "title3" : "title2"} >{'TAX: ' + tax + '°C'}</div>
+              <div className={parseInt(sao2) < 90 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>{'SAO2: ' + sao2 + '%'}</div>
+              <div className={parseFloat(tax) < 35.0 || parseFloat(tax) > 37.5 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>{'TAX: ' + tax + '°C'}</div>
             </div>
-            <div className={diurese12h < 500 ? "title3" : "title2"} >{'DIURESE: ' + diurese12h + 'ml/12h'}</div>
-            <div className={ganhos12h > 2000 ? "title3" : "title2"} >{'GANHOS EM 12H: ' + ganhos12h + 'ml'}</div>
-            <div className={perdas12h > 2000 ? "title3" : "title2"} >{'PERDAS EM 12H: ' + perdas12h + 'ml'}</div>
-            <div className={(ganhos12h - perdas12h) > 2000 || (ganhos12h - perdas12h) < -2000 ? "title3" : "title2"} >
+            <div className={diurese12h < 500 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>{'DIURESE: ' + diurese12h + 'ml/12h'}</div>
+            <div className={ganhos12h > 2000 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>{'GANHOS EM 12H: ' + ganhos12h + 'ml'}</div>
+            <div className={perdas12h > 2000 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>{'PERDAS EM 12H: ' + perdas12h + 'ml'}</div>
+            <div className={(ganhos12h - perdas12h) > 2000 || (ganhos12h - perdas12h) < -2000 ? "title3" : "title2"} style={{ margin: 2.5, padding: 0 }}>
               {ganhos12h || perdas12h != '' ? 'BH EM 12H: ' + (ganhos12h - perdas12h) + 'ml' : 'BH 12H: NÃO INFORMADO.'}
             </div>
-            <div className={(ganhosacumulados - perdasacumuladas) > 2000 || (ganhosacumulados - perdasacumuladas) < -2000 ? 'title3' : 'title2'} >
+            <div className={(ganhosacumulados - perdasacumuladas) > 2000 || (ganhosacumulados - perdasacumuladas) < -2000 ? 'title3' : 'title2'} style={{ margin: 2.5, padding: 0 }}>
               {ganhosacumulados || perdasacumuladas != '' ? 'BH ACUMULADO: ' + (ganhosacumulados - perdasacumuladas) + 'ml' : 'BH ACUMULADO: NÃO INFORMADO'}
             </div>
           </div>
@@ -4713,7 +6488,7 @@ function Prontuario() {
   function ViewGlasgow() {
     if (viewglasgow === 1) {
       return (
-        <div className="title2">
+        <div className="title2" style={{ margin: 2.5, padding: 0 }}>
           {window.innerWidth > 800 ? 'GLASGOW:\n ' + glasgow : 'ECG:\n' + glasgow}
         </div>
       );
@@ -4724,7 +6499,7 @@ function Prontuario() {
   const [viewrass, setViewrass] = useState(0);
   function ViewRass() {
     if (viewrass === 1) {
-      return <div className="title2">{'RASS:\n ' + rass}</div>
+      return <div className="title2" style={{ margin: 2.5, padding: 0 }}>{'RASS:\n ' + rass}</div>
     } else {
       return null;
     }
@@ -4732,7 +6507,7 @@ function Prontuario() {
   const [viewramsay, setViewramsay] = useState(0);
   function ViewRamsay() {
     if (viewramsay === 1) {
-      return <div className="title2">{'RAMSAY:\n ' + ramsay}</div>
+      return <div className="title2" style={{ margin: 2.5, padding: 0 }}>{'RAMSAY:\n ' + ramsay}</div>
     } else {
       return null;
     }
@@ -4758,11 +6533,27 @@ function Prontuario() {
     setshowmenu(0);
     document.body.style.overflow = null;
   }
+  const clickPlanoTerapeutico = () => {
+    cleanFilters();
+    setstateprontuario(21);
+    // menu da versão mobile.
+    window.scrollTo(0, 0);
+    setshowmenu(0);
+    document.body.style.overflow = null;
+  }
   const clickEvoluções = () => {
     cleanFilters();
     setstateprontuario(2);
     setshowlesoes(0);
     setshowinvasoes(1);
+    // menu da versão mobile.
+    window.scrollTo(0, 0);
+    setshowmenu(0);
+    document.body.style.overflow = null;
+  }
+  const clickEscalas = () => {
+    cleanFilters();
+    setstateprontuario(20);
     // menu da versão mobile.
     window.scrollTo(0, 0);
     setshowmenu(0);
@@ -4891,14 +6682,7 @@ function Prontuario() {
           flexDirection: 'row', justifyContent: 'center',
           margin: 20, marginBottom: 10
         }}>
-          <img
-            alt=""
-            src={newlogo}
-            style={{
-              height: 0.13 * window.innerHeight,
-              borderRadius: 50
-            }}
-          ></img>
+          <Logo height={0.13 * window.innerHeight} width={0.13 * window.innerHeight}></Logo>
           <div className="title2 logo"
             style={{
               opacity: 1, margin: 0, marginTop: 35, marginLeft: -10, color: 'white', fontSize: 18
@@ -4912,7 +6696,7 @@ function Prontuario() {
           id="MENU LATERAL"
         >
           <div
-            id="menuEvolucoes"
+            id="menuPrincipal"
             className="menuitemanimation"
           >
             <button
@@ -4935,6 +6719,29 @@ function Prontuario() {
             </button>
           </div>
           <div
+            id="menuPlanoTerapeutico"
+            className="menuitemanimation"
+          >
+            <button
+              id="btnPlanoTerapeutico"
+              className="blue-button"
+              onClick={() => {
+                clickPlanoTerapeutico();
+                var botoes = document.getElementById("MENU LATERAL").getElementsByClassName("red-button");
+                for (var i = 0; i < botoes.length; i++) {
+                  botoes.item(i).className = "blue-button";
+                }
+                document.getElementById("btnPlanoTerapeutico").className = "red-button"
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+              }}
+            >
+              PLANO TERAPÊUTICO
+            </button>
+          </div>
+          <div
             className="secondary"
             style={{ display: tipounidade == 4 ? 'flex' : 'none', flexDirection: 'row', marginTop: 0, marginBottom: 5, width: '100%', boxShadow: 'none' }}
           >
@@ -4952,6 +6759,7 @@ function Prontuario() {
           <div
             id="menuEvolucoes"
             className="menuitemanimation"
+            style={{ display: menuevolucoes == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnEvolucoes"
@@ -4981,9 +6789,36 @@ function Prontuario() {
               ></img>
             </button>
           </div>
+
+          <div
+            id="menuEscalas"
+            className="menuitemanimation"
+            style={{ display: menuevolucoes == 1 ? 'flex' : 'none' }}
+          >
+            <button
+              id="btnEscalas"
+              className="blue-button"
+              onClick={() => {
+                clickEscalas();
+                var botoes = document.getElementById("MENU LATERAL").getElementsByClassName("red-button");
+                for (var i = 0; i < botoes.length; i++) {
+                  botoes.item(i).className = "blue-button";
+                }
+                document.getElementById("btnEscalas").className = "red-button"
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+              }}
+            >
+              ESCALAS
+            </button>
+          </div>
+
           <div
             id="menuDiagnosticos"
             className="menuitemanimation"
+            style={{ display: menudiagnosticos == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnDiagnosticos"
@@ -4996,7 +6831,7 @@ function Prontuario() {
                 opacity: tipousuario == 1 || tipousuario == 2 ? 1 : 0.5,
               }}
             >
-              DIAGNÓSTICOS
+              {window.innerWidth > 400 ? 'DIAGNÓSTICOS' : 'DIAGN.'}
             </button>
             <button
               id="btnAddDiagnosticos"
@@ -5019,6 +6854,7 @@ function Prontuario() {
           <div
             id="menuProblemas"
             className="menuitemanimation"
+            style={{ display: menuproblemas == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnProblemas"
@@ -5054,6 +6890,7 @@ function Prontuario() {
           <div
             id="menuProprostas"
             className="menuitemanimation"
+            style={{ display: menupropostas == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnPropostas"
@@ -5089,6 +6926,7 @@ function Prontuario() {
           <div
             id="menuInterconsultas"
             className="menuitemanimation"
+            style={{ display: menuinterconsultas == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnInterconsultas"
@@ -5124,6 +6962,7 @@ function Prontuario() {
           <div
             id="menuLaboratorio"
             className="menuitemanimation"
+            style={{ display: menulaboratorio == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnLaboratorio"
@@ -5159,6 +6998,7 @@ function Prontuario() {
           <div
             id="menuImagens"
             className="menuitemanimation"
+            style={{ display: menuimagem == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnImagens"
@@ -5229,7 +7069,7 @@ function Prontuario() {
           <div
             id="menuPrescricao"
             className="menuitemanimation"
-            style={{ display: tipousuario != 4 ? 'flex' : 'none' }}
+            style={{ display: tipousuario != 4 && menuprescricao == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnPrescricoes"
@@ -5263,7 +7103,7 @@ function Prontuario() {
           <div
             id="menuCheckPrescricoes"
             className="menuitemanimation"
-            style={{ display: tipousuario == 4 ? 'flex' : 'none' }}
+            style={{ display: tipousuario == 4 && menuprescricao == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnCheckPrescricoes"
@@ -5291,13 +7131,13 @@ function Prontuario() {
           <div
             id="menuFormularios"
             className="menuitemanimation"
+            style={{ display: menuformularios == 1 ? 'flex' : 'none' }}
           >
             <button
               id="btnFormularios"
               className="blue-button"
               onClick={() => { clickFormularios(); setActive("btnFormularios", "btnAddFormularios"); }}
               style={{
-                disabled: tipousuario == 4 ? true : false,
                 opacity: tipousuario == 4 ? 0.3 : 1,
                 width: '100%',
                 height: 50,
@@ -5325,7 +7165,7 @@ function Prontuario() {
         </div>
       </div >
     );
-  }, []
+  }, [menuevolucoes, menudiagnosticos, menuproblemas, menupropostas, menuinterconsultas, menulaboratorio, menuimagem]
   );
 
   // INVASÕES.
@@ -5410,7 +7250,7 @@ function Prontuario() {
       return (
         <div
           className="orange-invasion va"
-          title={'DATA DE INSERÇÃO: ' + datava + '\nDIAS DE TOT: ' + moment().diff(moment(datava, 'DD/MM/YY'), 'days')}
+          title={'DATA DE INSERÇÃO: ' + datava + '\nDIAS DE TOT: ' + moment().diff(moment(datava, 'DD/MM/YYYY'), 'days')}
           style={{
             height: window.innerWidth > 800 ? 0.02 * window.innerWidth : window.innerWidth > 600 ? 0.07 * window.innerWidth : 0.09 * window.innerWidth,
             width: window.innerWidth > 800 ? 0.02 * window.innerWidth : window.innerWidth > 600 ? 0.07 * window.innerWidth : 0.09 * window.innerWidth,
@@ -5548,6 +7388,7 @@ function Prontuario() {
     }
     document.body.style.overflow = null;
     setVaMenu(0);
+    updateInvasoes();
   };
   const setVaTot = () => {
     setva(2);
@@ -5557,6 +7398,7 @@ function Prontuario() {
     }
     document.body.style.overflow = null;
     setVaMenu(0);
+    updateInvasoes();
   };
   const setVaMf = () => {
     setva(3);
@@ -5566,6 +7408,7 @@ function Prontuario() {
     }
     document.body.style.overflow = null;
     setVaMenu(0);
+    updateInvasoes();
   };
   const setVaCn = () => {
     setva(4);
@@ -5575,12 +7418,14 @@ function Prontuario() {
     }
     document.body.style.overflow = null;
     setVaMenu(0);
+    updateInvasoes();
   };
   const setVaNone = () => {
     setva(0);
     setdatava('');
     document.body.style.overflow = null;
     setVaMenu(0);
+    updateInvasoes();
   };
 
   // JUGULAR INTERNA DIREITA (JID).
@@ -5690,7 +7535,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datajid == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datajid);
     }
@@ -5703,6 +7548,7 @@ function Prontuario() {
       setdatajid(moment().format('DD/MM/YYYY'));
     }
     setJidMenu(0);
+    updateInvasoes();
   };
   const setCdlJid = () => {
     setjid(2);
@@ -5711,11 +7557,13 @@ function Prontuario() {
       setdatajid(moment().format('DD/MM/YYYY'));
     }
     setJidMenu(0);
+    updateInvasoes();
   };
   const setNoneJid = () => {
     setjid(0);
     setdatajid('');
     setJidMenu(0);
+    updateInvasoes();
   };
 
   // JUGULAR INTERNA ESQUERDA (JIE).
@@ -5822,7 +7670,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datajie == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datajie);
     }
@@ -5835,6 +7683,7 @@ function Prontuario() {
       setdatajie(moment().format('DD/MM/YYYY'));
     }
     setJieMenu(0);
+    updateInvasoes();
   };
   const setCdlJie = () => {
     setjie(2);
@@ -5843,11 +7692,13 @@ function Prontuario() {
       setdatajie(moment().format('DD/MM/YYYY'));
     }
     setJieMenu(0);
+    updateInvasoes();
   };
   const setNoneJie = () => {
     setjie(0);
     setdatajie('');
     setJieMenu(0);
+    updateInvasoes();
   };
 
   // SUBCLÁVIA DIREITA (SUBCLD).
@@ -5954,7 +7805,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datasubcld == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datasubcld);
     }
@@ -5967,6 +7818,7 @@ function Prontuario() {
       setdatasubcld(moment().format('DD/MM/YYYY'));
     }
     setSubcldMenu(0);
+    updateInvasoes();
   };
   const setCdlSubcld = () => {
     setsubcld(2);
@@ -5975,11 +7827,13 @@ function Prontuario() {
       setdatasubcld(moment().format('DD/MM/YYYY'));
     }
     setSubcldMenu(0);
+    updateInvasoes();
   };
   const setNoneSubcld = () => {
     setsubcld(0);
     setdatasubcld('');
     setSubcldMenu(0);
+    updateInvasoes();
   };
 
   // SUBCLÁVIA ESQUERDA (SUBCLE).
@@ -6086,7 +7940,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datasubcle == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datasubcle);
     }
@@ -6099,6 +7953,7 @@ function Prontuario() {
       setdatasubcle(moment().format('DD/MM/YYYY'));
     }
     setSubcleMenu(0);
+    updateInvasoes();
   };
   const setCdlSubcle = () => {
     setsubcle(2);
@@ -6107,11 +7962,13 @@ function Prontuario() {
       setdatasubcle(moment().format('DD/MM/YYYY'));
     }
     setSubcleMenu(0);
+    updateInvasoes();
   };
   const setNoneSubcle = () => {
     setsubcle(0);
     setdatasubcle('');
     setSubcleMenu(0);
+    updateInvasoes();
   };
 
   // RADIAL DIREITA (PIARD).
@@ -6197,7 +8054,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datapiard == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datapiard);
     }
@@ -6208,14 +8065,15 @@ function Prontuario() {
     setdatapiard(pickdate1);
     if (datapiard === '') {
       setdatapiard(moment().format('DD/MM/YYYY'));
-      setPiardMenu(0);
     }
     setPiardMenu(0);
+    updateInvasoes();
   };
   const setNonePiard = () => {
     setpiard(0);
     setdatapiard('');
     setPiardMenu(0);
+    updateInvasoes();
   };
 
   // RADIAL ESQUERDA (PIARE).
@@ -6301,7 +8159,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datapiare == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datapiare);
     }
@@ -6314,11 +8172,13 @@ function Prontuario() {
       setdatapiare(moment().format('DD/MM/YYYY'));
     }
     setPiareMenu(0);
+    updateInvasoes();
   };
   const setNonePiare = () => {
     setpiare(0);
     setdatapiare('');
     setPiareMenu(0);
+    updateInvasoes();
   };
 
   // PEDIOSA DIREITA (PIAPEDD).
@@ -6404,7 +8264,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datapiapedd == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datapiapedd);
     }
@@ -6415,14 +8275,15 @@ function Prontuario() {
     setdatapiapedd(pickdate1);
     if (datapiapedd === '') {
       setdatapiapedd(moment().format('DD/MM/YYYY'));
-      setPiapeddMenu(0);
     }
     setPiapeddMenu(0);
+    updateInvasoes();
   };
   const setNonePiapedd = () => {
     setpiapedd(0);
     setdatapiapedd('');
     setPiapeddMenu(0);
+    updateInvasoes();
   };
 
   // PEDIOSA ESQUERDA (PIAPEDE).
@@ -6508,7 +8369,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datapiapede == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datapiapede);
     }
@@ -6519,14 +8380,15 @@ function Prontuario() {
     setdatapiapede(pickdate1);
     if (datapiapede === '') {
       setdatapiapede(moment().format('DD/MM/YYYY'));
-      setPiapedeMenu(0);
     }
     setPiapedeMenu(0);
+    updateInvasoes();
   };
   const setNonePiapede = () => {
     setpiapede(0);
     setdatapiapede('');
     setPiapedeMenu(0);
+    updateInvasoes();
   };
 
   // DRENO DE TORAX.
@@ -6658,7 +8520,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datatorax == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datatorax);
     }
@@ -6671,6 +8533,7 @@ function Prontuario() {
       setdatatorax(moment().format('DD/MM/YYYY'));
     }
     setToraxMenu(0);
+    updateInvasoes();
   };
   const setToraxE = () => {
     settorax(2);
@@ -6679,6 +8542,7 @@ function Prontuario() {
       setdatatorax(moment().format('DD/MM/YYYY'));
     }
     setToraxMenu(0);
+    updateInvasoes();
   };
   const setToraxM = () => {
     settorax(3);
@@ -6687,11 +8551,13 @@ function Prontuario() {
       setdatatorax(moment().format('DD/MM/YYYY'));
     }
     setToraxMenu(0);
+    updateInvasoes();
   };
   const setToraxNone = () => {
     settorax(0);
     setdatatorax('');
     setToraxMenu(0);
+    updateInvasoes();
   };
 
   // SONDA VESICAL DE DEMORA (SVD).
@@ -6777,7 +8643,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datasvd == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datasvd);
     }
@@ -6790,11 +8656,13 @@ function Prontuario() {
       setdatasvd(moment().format('DD/MM/YYYY'));
     }
     setSvdMenu(0);
+    updateInvasoes();
   };
   const setNoneSvd = () => {
     setsvd(0);
     setdatasvd('');
     setSvdMenu(0);
+    updateInvasoes();
   };
 
   // DRENO ABDOMINAL.
@@ -6880,7 +8748,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (dataabd == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(dataabd);
     }
@@ -6893,11 +8761,13 @@ function Prontuario() {
       setdataabd(moment().format('DD/MM/YYYY'));
     }
     setAbdMenu(0);
+    updateInvasoes();
   };
   const setNoneAbd = () => {
     setabd(0);
     setdataabd('');
     setAbdMenu(0);
+    updateInvasoes();
   };
 
   // VEIA FEMORAL DIREITA (VFD).
@@ -7004,7 +8874,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datavfemd == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datavfemd);
     }
@@ -7017,6 +8887,7 @@ function Prontuario() {
       setdatavfemd(moment().format('DD/MM/YYYY'));
     }
     setVfemdMenu(0);
+    updateInvasoes();
   };
   const setCdlVfemd = () => {
     setvfemd(2);
@@ -7025,11 +8896,13 @@ function Prontuario() {
       setdatavfemd(moment().format('DD/MM/YYYY'));
     }
     setVfemdMenu(0);
+    updateInvasoes();
   };
   const setNoneVfemd = () => {
     setvfemd(0);
     setdatavfemd('');
     setVfemdMenu(0);
+    updateInvasoes();
   };
 
   // VEIA FEMORAL ESQUERDA (VFE).
@@ -7136,7 +9009,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datavfeme == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datavfeme);
     }
@@ -7149,6 +9022,7 @@ function Prontuario() {
       setdatavfeme(moment().format('DD/MM/YYYY'));
     }
     setVfemeMenu(0);
+    updateInvasoes();
   };
   const setCdlVfeme = () => {
     setvfeme(2);
@@ -7157,11 +9031,13 @@ function Prontuario() {
       setdatavfeme(moment().format('DD/MM/YYYY'));
     }
     setVfemeMenu(0);
+    updateInvasoes();
   };
   const setNoneVfeme = () => {
     setvfeme(0);
     setdatavfeme('');
     setVfemeMenu(0);
+    updateInvasoes();
   };
 
   // ARTÉRIA FEMORAL DIREITA (AFEMD).
@@ -7247,7 +9123,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (dataafemd == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(dataafemd);
     }
@@ -7260,11 +9136,13 @@ function Prontuario() {
       setdataafemd(moment().format('DD/MM/YYYY'));
     }
     setAfemdMenu(0);
+    updateInvasoes();
   };
   const setNoneAfemd = () => {
     setafemd(0);
     setdataafemd('');
     setAfemdMenu(0);
+    updateInvasoes();
   };
 
   // ARTÉRIA FEMORAL ESQUERDA (AFEME).
@@ -7350,7 +9228,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (dataafeme == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(dataafeme);
     }
@@ -7361,14 +9239,15 @@ function Prontuario() {
     setdataafeme(pickdate1);
     if (dataafeme === '') {
       setdataafeme(moment().format('DD/MM/YYYY'));
-      setAfemeMenu(0);
     }
     setAfemeMenu(0);
+    updateInvasoes();
   };
   const setNoneAfeme = () => {
     setafeme(0);
     setdataafeme('');
     setAfemeMenu(0);
+    updateInvasoes();
   };
 
   // SISTEMA NERVOSO CENTRAL (SNC - DVE, PIC).
@@ -7454,7 +9333,7 @@ function Prontuario() {
     hideInvasionsMenus();
     // atualizando o datepcker com a data de implante do dispositivo.
     if (datasnc == '') {
-      setpickdate1(moment().format('DD/MM/YY'))
+      setpickdate1(moment().format('DD/MM/YYYY'))
     } else {
       setpickdate1(datasnc);
     }
@@ -7467,11 +9346,13 @@ function Prontuario() {
       setdatasnc(moment().format('DD/MM/YYYY'));
     }
     setSncMenu(0);
+    updateInvasoes();
   };
   const setNoneSnc = () => {
     setsnc(0);
     setdatasnc('');
     setSncMenu(0);
+    updateInvasoes();
   };
 
   // RENDERIZAÇÃO DAS INVASÕES.
@@ -7479,11 +9360,17 @@ function Prontuario() {
   function ShowInvasoes() {
     return (
       <div
-        style={{ position: 'relative', disabled: tipousuario != 'TEC' ? true : false }}
+        disabled={tipousuario == 4 ? true : false}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          width: '100%'
+        }}
       >
         <div
           id="invasoes"
-          // onTouchEnd={() => updateInvasoes()}
           disabled={tipousuario == 4 ? () => true : false}
           style={{
             position: 'sticky',
@@ -7500,8 +9387,8 @@ function Prontuario() {
             id="ancora"
             className="boneco"
             style={{
-              width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '90%',
-              height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '90%',
+              width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '100%',
+              height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '100%',
               marginBottom: window.innerWidth > 800 ? 0 : 5,
             }}
           >
@@ -7539,7 +9426,7 @@ function Prontuario() {
   };
 
   // function Cabeçalho.
-  function Identificacao() {
+  function Filtros() {
     return (
       <div id="CABEÇALHO + IDENTIFICAÇÃO"
         style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 10, margin: 0, width: '100%' }}>
@@ -7749,6 +9636,10 @@ function Prontuario() {
         document.getElementById("inputFilterFormulario").value = searchformulario;
         document.getElementById("inputFilterFormulario").focus();
       }
+      if (window.innerWidth < 400) {
+        document.getElementById("identificação").style.display = "none";
+        document.getElementById("inputFilterFormulario").focus();
+      }
     }, 500);
   }
 
@@ -7758,11 +9649,12 @@ function Prontuario() {
       return (
         <div
           id="formulários"
-          className="conteudo"
+          className="conteudo" style={{ justifyContent: 'flex-start' }}
         >
-          <Identificacao></Identificacao>
+          <Filtros></Filtros>
           <div
             className="scroll"
+            style={{ width: '100%', height: '90%', backgroundColor: 'transparent', borderColor: 'transparent' }}
             id="LISTA DE FORMULÁRIOS"
           >
             {arrayformularios.map((item) => (
@@ -7863,8 +9755,10 @@ function Prontuario() {
                         }}
                       ></img>
                     </button>
-                    <button className="animated-red-button"
-                      onClick={() => deleteFormulario(item)}
+                    <button
+                      id={"deletekey 0 " + item.id}
+                      className="animated-red-button"
+                      onClick={(e) => { deletetoast(deleteFormulario, item); e.stopPropagation() }}
                       title="DELETAR FORMULÁRIO"
                       style={{ display: item.status === 0 ? 'flex' : 'none' }}
                     >
@@ -7877,6 +9771,20 @@ function Prontuario() {
                           width: 30,
                         }}
                       ></img>
+                    </button>
+                    <button
+                      id={"deletekey 1 " + item.id}
+                      style={{ display: 'none', width: 100 }}
+                      className="animated-red-button"
+                      onClick={(e) => { deletetoast(deleteFormulario, item); e.stopPropagation() }}
+                    >
+                      <div>DESFAZER</div>
+                      <div className="deletetoast"
+                        style={{
+                          height: 5, borderRadius: 5, backgroundColor: 'pink', alignSelf: 'flex-start',
+                          marginLeft: 5, marginRight: 5, maxWidth: 90,
+                        }}>
+                      </div>
                     </button>
                   </div>
                 </div>
@@ -7994,7 +9902,16 @@ function Prontuario() {
   // exibição do boneco com as lesões de pressão.
   function ShowLesoes() {
     return (
-      <div style={{ position: 'relative' }} disabled={tipousuario == 4 ? true : false}>
+      <div
+        disabled={tipousuario == 4 ? true : false}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'flex-start',
+          width: '100%'
+        }}
+      >
         <div
           id="lesões"
           style={{
@@ -8012,8 +9929,8 @@ function Prontuario() {
             id="ancora"
             className="boneco"
             style={{
-              width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '90%',
-              height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '90%',
+              width: window.innerWidth > 800 ? 0.18 * window.innerWidth : '100%',
+              height: window.innerWidth < 800 ? 0.85 * window.innerHeight : '100%',
               marginBottom: window.innerWidth > 800 ? 0 : 5,
             }}
           >
@@ -8070,7 +9987,7 @@ function Prontuario() {
   // limpando formulário que exibe as informaçoes das lesões de pressão.
   const limpalesoes = () => {
     setidlesao(0);
-    setdatainiciolesao(moment().format('DD/MM/YY'));
+    setdatainiciolesao(moment().format('DD/MM/YYYY'));
     setdataterminolesao();
     setestagiolesao();
     setobservacoeslesao();
@@ -8528,7 +10445,7 @@ function Prontuario() {
         <div className="menucover" style={{ zIndex: 9, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
           <div className="menucontainer">
             <div
-              className="scroll"
+              className="scroll" style={{ width: '100%' }}
               id="LISTA DE CURATIVOS"
               style={{
                 display: 'flex',
@@ -9564,7 +11481,7 @@ function Prontuario() {
   // selecionando um paciente da lista e atualizando a tela corrida.
   const selectPaciente = (item) => {
     setidatendimento(item.id);
-    history.push('/prontuario')
+    // history.push('/prontuario')
   };
   // SIDEBAR ANIMADA COM LISTA DE PACIENTES.
   function SideBar() {
@@ -9576,7 +11493,7 @@ function Prontuario() {
         onMouseOut={() => document.getElementById("sidebar").className = "pacientes-menu-out"}
         style={{
           display: tipounidade != 4 && window.innerWidth > 800 ? 'flex' : 'none',
-          width: 300,
+          width: '30vw',
           position: 'absolute',
           padding: 10, paddingLeft: 0,
           zIndex: 50,
@@ -9585,23 +11502,22 @@ function Prontuario() {
         <div
           className="widget"
           style={{
-            flexDirection: 'column', margin: 0,
+            flexDirection: 'column', justifyContent: 'center', margin: 0,
             borderRadius: 5, borderTopLeftRadius: 0, borderBottomLeftRadius: 0,
-            width: 300,
+            width: '100%',
             height: '100%',
             padding: 10, paddingLeft: 0,
-            boxShadow: '0 0 0.5em black',
+            boxShadow: '0px 2px 10px 5px rgba(0, 0, 0, 0.5)',
           }}
         >
           <div className="title2" style={{ color: "#ffffff" }}>{'LISTA DE PACIENTES:  ' + nomeunidade}</div>
-          <div className="scrolldrop" style={{ height: 0.8 * window.innerHeight, width: '100%', justifyContent: 'flex-start', borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}>
+          <div className="scroll" style={{ height: '80vh', width: '100%', justifyContent: 'flex-start', borderTopLeftRadius: 0, borderBottomLeftRadius: 0, paddingLeft: 7.5 }}>
             {listatendimentos.filter(item => item.hospital == nomehospital && item.unidade == nomeunidade && item.ativo > 0).map((item) => (
               <div
                 key={item.id}
-                className="row"
-                style={{ opacity: 1 }}
+                style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
               >
-                <button className="grey-button" style={{ backgroundColor: 'grey', display: item.box !== '' ? 'flex' : 'none' }}>
+                <button className="grey-button" style={{ backgroundColor: 'grey', marginRight: 10, display: item.box !== '' ? 'flex' : 'none' }}>
                   {item.box}
                 </button>
                 <button
@@ -9615,7 +11531,7 @@ function Prontuario() {
                   style={{
                     padding: 10,
                     margin: 2.5,
-                    width: 250,
+                    width: '100%',
                     height: 50,
                   }}
                 >
@@ -9629,6 +11545,53 @@ function Prontuario() {
     )
   }
 
+  /*
+  var p1 = new Promise(function (resolve, reject) {
+    if (viewdeletetoast == 1) {
+      resolve('SUCESSO');
+    } else {
+      reject('ERRO');
+    }
+  });
+  
+  p1.then((message) => {
+    console.log(message);
+  });
+  */
+  // confirmação de exclusão de um registro otimizada...
+  // função para construção dos deletetoasts.
+
+  // const [viewdeletetoast, setviewdeletetoast] = useState(0);
+  var timeout = null;
+  var deletekey = 0;
+  const deletetoast = (funcao, item) => {
+    document.getElementById("deletekey 1 " + item.id).style.display = "flex"
+    document.getElementById("deletekey 0 " + item.id).style.display = "none"
+    if (deletekey == 0) {
+      deletekey = 1;
+      document.getElementById("deletekey 1 " + item.id).style.display = "flex"
+      document.getElementById("deletekey 0 " + item.id).style.display = "none"
+    } else {
+      deletekey = 0;
+      document.getElementById("deletekey 0 " + item.id).style.display = "flex"
+      document.getElementById("deletekey 1 " + item.id).style.display = "none"
+    }
+    clearTimeout(timeout);
+    console.log('VIEW: ' + deletekey)
+    timeout = setTimeout(() => {
+      if (deletekey == 1) {
+        funcao(item);
+        console.log('REGISTRO EXCLUÍDO.');
+      } else {
+        console.log('REGISTRO MANTIDO.');
+      }
+      if (document.getElementById("deletekey 1 " + item.id) != null) {
+        document.getElementById("deletekey 0 " + item.id).style.display = "flex"
+        document.getElementById("deletekey 1 " + item.id).style.display = "none"
+      }
+    }, 3000);
+  }
+
   // RENDERIZAÇÃO DO COMPONENTE PRONTUÁRIO.
   // renderização do componente.
   return (
@@ -9636,22 +11599,11 @@ function Prontuario() {
       className="main fade-in"
       id="PRINCIPAL"
       onMouseMove={(e) => { showSideBar(e) }}
-      style={{
-        display: 'flex',
-        margin: 0,
-        padding: 0,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: '100%',
-        height: '100%',
-        overflowX: 'hidden',
-        overflowY: 'hidden',
-      }}
     >
+      <LoadPrincipal></LoadPrincipal>
       <div
         style={{
-          display: window.innerWidth < 800 ? 'flex' : 'none',
+          display: window.innerWidth < 800 && loadprincipal == 0 ? 'flex' : 'none',
           position: 'fixed', bottom: 10, left: 10, zIndex: 1,
         }}
       >
@@ -9854,7 +11806,7 @@ function Prontuario() {
         viewbalanco={viewbalanco}
         idatendimento={idatendimento}
         idbalanco={idbalanco}
-        databalanco={moment().format('DD/MM/YY')}
+        databalanco={moment().format('DD/MM/YYYY')}
         horabalanco={moment().format('HH') + ':00'}
         pas={pas}
         pad={pad}
@@ -9889,7 +11841,16 @@ function Prontuario() {
         <ShowCurativosList></ShowCurativosList>
         <ChangeStatus></ChangeStatus>
         <ChangePrecaucao></ChangePrecaucao>
+        <ChangeCabeceira></ChangeCabeceira>
+        <ChangeDieta></ChangeDieta>
+        <Braden></Braden>
+        <Morse></Morse>
         <UpdateVm></UpdateVm>
+      </div>
+      <div id="ESCALAS">
+        <AptEscalaPPS viewescalapps={viewescalapps}></AptEscalaPPS>
+        <AptEscalaMIF viewescalamif={viewescalamif}></AptEscalaMIF>
+        <AptEscalaIVCF viewescalaivcf={viewescalaivcf}></AptEscalaIVCF>
       </div>
       <div id="PRONTUÁRIO"
         style={{
@@ -9903,15 +11864,16 @@ function Prontuario() {
         <div id="LISTAS"
           className="prontuario"
           style={{
-            display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center',
             height: window.innerHeight,
             padding: 0,
             margin: 0,
           }}>
           <Paciente></Paciente>
           <Principal></Principal>
-          <LoadPrincipal></LoadPrincipal>
+          <ShowPlanoTerapeutico></ShowPlanoTerapeutico>
           <ShowEvolucoes></ShowEvolucoes>
+          <ShowEscalas></ShowEscalas>
           <ShowDiagnosticos></ShowDiagnosticos>
           <ShowProblemas></ShowProblemas>
           <ShowPropostas></ShowPropostas>
@@ -9925,6 +11887,7 @@ function Prontuario() {
         <Menu></Menu>
         <SideBar></SideBar>
         <UpdateAtendimento viewupdateatendimento={viewupdateatendimento}></UpdateAtendimento>
+        <Settings></Settings>
         <GetSpeech></GetSpeech>
         <ShowSpeech></ShowSpeech>
       </div>

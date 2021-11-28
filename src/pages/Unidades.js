@@ -2,7 +2,7 @@
 import React, { useState, useContext } from 'react'
 import { useEffect } from 'react'
 import axios from 'axios'
-import { Doughnut, Line } from 'react-chartjs-2'
+import { Doughnut, Line, Bar } from 'react-chartjs-2'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import salvar from '../images/salvar.svg'
 import deletar from '../images/deletar.svg'
@@ -13,7 +13,7 @@ import Context from '../Context'
 import { useHistory } from 'react-router-dom'
 
 // lixo a excluir (insistência de Guilherme).
-import { Stuff, MoreStuff } from '../components/Stuff'
+import { Stuff } from '../components/Stuff'
 
 function Unidades() {
   var html = 'https://pulsarapp-server.herokuapp.com';
@@ -32,12 +32,14 @@ function Unidades() {
   let history = useHistory()
 
   // carregamento da lista de unidades de atendimento do hospital, nas quais o usuário trabalha.
-  const [unidades, setUnidades] = useState([])
+  const [unidades, setunidades] = useState([])
+  const [arrayunidades, setarrayunidades] = useState([])
   const loadUnidades = () => {
     axios
       .get(html + "/unidades/'" + idusuario + "'/'" + nomehospital + "'")
       .then((response) => {
-        setUnidades(response.data)
+        setunidades(response.data)
+        setarrayunidades(response.data)
       })
   }
 
@@ -66,33 +68,17 @@ function Unidades() {
   function ShowUnidades() {
     return (
       <div
-        className="scrollgroup"
+        className="scroll"
+        id="LISTA DE UNIDADES"
         style={{
-          display: 'flex',
-          width: '100%',
-          height: '100%',
-          margin: 0,
-          marginTop: 5,
-          padding: 5,
+          scrollBehavior: 'smooth',
+          height: '82vh', maxHeight: '82vh',
+          flexDirection: window.innerWidth < 400 ? 'column' : 'row',
+          flexWrap: window.innerWidth < 400 ? 'nowrap' : 'wrap',
+          backgroundColor: 'transparent', borderColor: 'transparent'
         }}
       >
-        <div
-          className="scroll"
-          id="LISTA DE UNIDADES"
-          style={{
-            display: 'flex',
-            flexDirection: window.innerWidth < 800 ? 'column' : 'row',
-            justifyContent: 'flex-start',
-            width: '100%',
-            height: '82vh',
-            flexWrap: window.innerWidth < 800 ? 'nowrap' : 'wrap',
-            alignItems: 'center',
-            borderRadius: 5,
-            margin: 0,
-          }}
-        >
-          {unidades.map((item) => GetData(item))}
-        </div>
+        {arrayunidades.map((item) => GetData(item))}
       </div>
     )
   }
@@ -234,7 +220,7 @@ function Unidades() {
     axios.get(html + '/atendimentos').then((response) => {
       var x = [0, 1]
       x = response.data
-      setlistatendimentos(x)
+      setlistatendimentos(x);
     })
   }
   // lista de consultas ambulatoriais.
@@ -743,13 +729,21 @@ function Unidades() {
     })
   }
 
+  // efetuando a soma de leitos.
+  function somaLeitos(total, num) {
+    return total + num
+  }
+
   // CHART.
   /* gráfico em torta que exibe o total de leitos vagos e o total
   de leitos ocupados para cada unidade. */
   var dataChart = []
   var dataChartBlocoCirurgico = []
   var dataChartConsultas = []
+  var dataChartMif = []
+  var dataChartPlanoTerapeutico = []
   const [renderchart, setrenderchart] = useState(0);
+
   function GetData(item) {
     // gerando os dados dos gráficos.
     dataChart = {
@@ -761,9 +755,11 @@ function Unidades() {
               .filter((value) => value.unidade == item.unidade)
               .map((item) => item.leitos) -
             pct.filter((value) => value.unidade == item.unidade).length,
-            pct.filter((value) => value.unidade == item.unidade).length,
+            pct.filter((value) => value.unidade == item.unidade && value.linhadecuidado == 1).length,
+            pct.filter((value) => value.unidade == item.unidade && value.linhadecuidado == 2).length,
+            pct.filter((value) => value.unidade == item.unidade && value.linhadecuidado == 3).length,
           ],
-          backgroundColor: ['#52be80', '#ec7063'],
+          backgroundColor: ['grey', '#52be80', '#5DADE2', '#F4D03F'],
           borderColor: '#ffffff',
           hoverBorderColor: ['#ffffff', '#ffffff'],
         },
@@ -825,6 +821,40 @@ function Unidades() {
         },
       ],
     }
+    // extrair da tabela MIF, filtrando por hospital e unidade.
+    var arraymif = [];
+    var count = 0;
+    // var arraymif = listmif.filter(valor => valor.unidade == item.unidade).map(item => item.mif);
+
+    var dataMif = [30, 35, 32, 45, 50, 65, 55, 35, 25, 15, 30, 35, 32, 45, 50, 65, 55, 35, 25, 15, 30, 35, 32, 45, 50, 65, 55, 35, 25, 15]
+    var colorMif = dataMif.map(item => item < 50 ? '#ec7063' : '#52be80')
+    dataChartMif = {
+      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      datasets: [
+        {
+          data: dataMif,
+          fill: true,
+          backgroundColor: colorMif,
+          borderColor: 'rgba(82, 190, 128, 1)',
+          hoverBorderColor: ['#E1E5F2', '#E1E5F2', '#E1E5F2'],
+          borderRadius: 5,
+        },
+      ],
+    }
+    var dataPlanoTerapeutico = [30, 35, 32, 45, 50, 65, 55, 35, 25, 15, 30, 35, 32, 45, 50, 65, 55, 35, 25, 15, 30, 35, 32, 45, 50, 65, 55, 35, 25, 15]
+    var colorPlanoTerapeutico = dataPlanoTerapeutico.map(item => item < 30 ? '#ec7063' : '#52be80')
+    dataChartPlanoTerapeutico = {
+      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+      datasets: [
+        {
+          data: dataPlanoTerapeutico,
+          fill: true,
+          backgroundColor: colorPlanoTerapeutico,
+          borderColor: 'rgba(82, 190, 128, 1)',
+          hoverBorderColor: ['#E1E5F2', '#E1E5F2', '#E1E5F2'],
+        },
+      ],
+    }
     // renderizando os gráficos.
     if (
       lto
@@ -835,360 +865,164 @@ function Unidades() {
         .map((item) => item.tipo) == 2
     ) {
       return (
-        <div
-          className="card"
-          onClick={() => selectUnidade(item)}
+        <div id="invólucro"
           style={{
-            display: renderchart == 1 ? 'flex' : 'none',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: 'flex', flexDirection: 'row',
+            backgroundColor: '#ffffff', margin: 10,
             borderRadius: 5,
-            padding: 10,
-            width: window.innerWidth < 400 ? '95%' : '21vw',
-            height: 400
-          }}
-        >
-          <p
-            className="title2"
-            style={{
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 10,
-              padding: 0,
-              height: 100,
-              width: '100%',
-              textAlign: 'center',
-              // flexDirection: 'column',
-            }}
-          >
-            {item.unidade}
-          </p>
-          <div
-            style={{ position: 'relative' }}
+            boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)',
+            height: 420, width: window.innerWidth < 400 ? '90vw' : '',
+          }}>
+          <div id={"hospital" + item.id}
+            className="card"
             onClick={() => selectUnidade(item)}
-          >
-            <Doughnut
-              data={dataChart}
-              width={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
-              height={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
-              plugins={ChartDataLabels}
-              options={{
-                plugins: {
-                  datalabels: {
-                    display: function (context) {
-                      return context.dataset.data[context.dataIndex] !== 0
-                    },
-                    color: '#FFFFFF',
-                    textShadowColor: 'black',
-                    textShadowBlur: 5,
-                    font: {
-                      weight: 'bold',
-                      size: 16,
-                    },
-                  },
-                },
-                tooltips: {
-                  enabled: false,
-                },
-                hover: { mode: null },
-                elements: {
-                  arc: {
-                    hoverBorderColor: '#E1E5F2',
-                    borderColor: '#E1E5F2',
-                    borderWidth: 5,
-                  },
-                },
-                animation: {
-                  duration: 500,
-                },
-                title: {
-                  display: false,
-                  text: 'OCUPAÇÃO DE LEITOS',
-                },
-                legend: {
-                  display: false,
-                  position: 'bottom',
-                },
-                maintainAspectRatio: true,
-                responsive: false,
-              }}
-            />
-            {BtnInterconsultas(item.hospital, item.unidade)}
-          </div>
-          <div
             style={{
-              display: 'flex',
+              position: 'relative',
+              display: renderchart == 1 ? 'flex' : 'none',
               flexDirection: 'column',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
+              // alignSelf: window.innerWidth > 400 ? 'flex-start' : 'center',
+              borderRadius: 5,
+              padding: 10,
+              width: window.innerWidth < 400 ? '100%' : '21vw',
+              minWidth: window.innerWidth < 400 ? '90%' : '21vw',
             }}
           >
-            <div>
-              <p
-                className="title2"
-                style={{
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  margin: 2.5,
-                  marginTop: 10,
-                  padding: 0,
-                }}
-              >
-                {'OCUPAÇÃO: ' +
-                  Math.ceil(
-                    (pct.filter((value) => value.unidade == item.unidade)
-                      .length *
-                      100) /
-                    lto
-                      .filter((value) => value.unidade == item.unidade)
-                      .map((item) => item.leitos),
-                  ) +
-                  '%'}
-              </p>
-            </div>
             <div
-              className="secondary"
+              className="title2"
               style={{
-                flexDirection: 'row',
-                marginTop: 5,
-                marginBottom: 10,
-                boxShadow: 'none',
-              }}
-            >
-              <div
-                id="VAGOS"
-                className="secondary"
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 5,
-                  backgroundColor: '#52be80',
-                  margin: 2.5,
-                  padding: 0,
-                }}
-              ></div>
-              <p
-                className="title2"
-                style={{
-                  fontSize: 14,
-                  margin: 2.5,
-                  marginRight: 5,
-                  padding: 0,
-                }}
-              >
-                VAGOS
-              </p>
-              <div
-                id="OCUPADOS"
-                className="secondary"
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 5,
-                  backgroundColor: '#ec7063',
-                  margin: 2.5,
-                  padding: 0,
-                }}
-              ></div>
-              <p
-                className="title2"
-                style={{
-                  fontSize: 14,
-                  margin: 2.5,
-                  marginRight: 5,
-                  padding: 0,
-                }}
-              >
-                OCUPADOS
-              </p>
-            </div>
-            {Escala(item)}
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                alignItems: 'center',
-                margin: 0,
+                fontSize: 22,
+                fontWeight: 'bold',
+                margin: 10,
                 padding: 0,
+                height: 75,
+                width: '100%',
+                textAlign: 'center',
               }}
             >
-              <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                <button
-                  className="blue-button"
-                  onClick={(e) => { clickAcolhimento(item); e.stopPropagation() }}
-                  style={{
-                    display: lto.filter(valor => valor.unidade == item.unidade).map(valor => valor.tipo) == 1 && tipousuario == 5 ? 'flex' : 'none',
-                    width: 50,
-                    margin: 2.5,
-                    padding: 10,
-                    color: '#ffffff',
-                    alignSelf: 'center',
-                  }}
-                  title="ACOLHIMENTO"
-                >
-                  A
-                </button>
-                <button
-                  className="blue-button"
-                  onClick={(e) => {
-                    settipounidade(lto.filter(value => value.unidade == item.unidade).map(item => item.tipo));
-                    setnomeunidade(lto.filter(value => value.unidade == item.unidade).map(item => item.unidade));
-                    history.push('/atendimentos');
-                    e.stopPropagation();
-                  }}
-                  style={{
-                    display:
-                      tipousuario == 3 || tipousuario == 5 ? 'flex' : 'none', // enfermeira ou secretária podem movimentar o paciente.
-                    width: 50,
-                    margin: 2.5,
-                    padding: 10,
-                  }}
-                  title="MOVIMENTAR PACIENTE"
-                >
-                  M
-                </button>
-              </div>
+              {item.unidade}
             </div>
-          </div>
-        </div>
-      )
-    } else if (
-      lto
-        .filter((value) => value.unidade == item.unidade)
-        .map((item) => item.tipo) == 3 // bloco cirúrgico.
-    ) {
-      return (
-        <div
-          className="card"
-          onClick={() => selectUnidade(item)}
-          style={{
-            display: renderchart == 1 ? 'flex' : 'none',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderRadius: 5,
-            padding: 10,
-            width: window.innerWidth < 800 ? '95%' : '21vw',
-            height: 400
-          }}
-        >
-          <p
-            className="title2"
-            style={{
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 10,
-              padding: 0,
-              height: 100,
-              width: '100%',
-              textAlign: 'center',
-              // flexDirection: 'column',
-            }}
-          >
-            {item.unidade}
-          </p>
-          <div
-            style={{ position: 'relative' }}
-            onClick={() => selectBlocoCirurgico(item)}
-          ></div>
-          <div
-            style={{
-              display:
-                agendabloco.filter((value) => value.unidade == item.unidade)
-                  .length > 0
-                  ? 'flex'
-                  : 'none',
-            }}
-          >
-            <Doughnut
-              data={dataChartBlocoCirurgico}
-              width={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
-              height={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
-              plugins={ChartDataLabels}
-              options={{
-                plugins: {
-                  datalabels: {
-                    display: function (context) {
-                      return context.dataset.data[context.dataIndex] !== 0
-                    },
-                    color: '#FFFFFF',
-                    textShadowColor: 'black',
-                    textShadowBlur: 5,
-                    font: {
-                      weight: 'bold',
-                      size: 16,
-                    },
-                  },
-                },
-                tooltips: {
-                  enabled: false,
-                },
-                hover: { mode: null },
-                elements: {
-                  arc: {
-                    hoverBorderColor: '#E1E5F2',
-                    borderColor: '#E1E5F2',
-                    borderWidth: 5,
-                  },
-                },
-                animation: {
-                  duration: 500,
-                },
-                title: {
-                  display: false,
-                  text: 'CIRURGIAS AGENDADAS',
-                },
-                legend: {
-                  display: false,
-                  position: 'bottom',
-                },
-                maintainAspectRatio: true,
-                responsive: false,
-              }}
-            />
             <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <div>
-                <p
-                  className="title2"
+              style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'relative' }}>
+              <Doughnut
+                data={dataChart}
+                width={window.innerWidth > 400 ? 0.13 * window.innerWidth : 200}
+                height={window.innerWidth > 400 ? 0.13 * window.innerWidth : 200}
+                plugins={ChartDataLabels}
+                options={{
+                  plugins: {
+                    datalabels: {
+                      display: function (context) {
+                        return context.dataset.data[context.dataIndex] !== 0
+                      },
+                      color: '#FFFFFF',
+                      textShadowColor: 'black',
+                      textShadowBlur: 5,
+                      font: {
+                        weight: 'bold',
+                        size: 16,
+                      },
+                    },
+                  },
+                  tooltips: {
+                    enabled: false,
+                  },
+                  hover: { mode: null },
+                  elements: {
+                    arc: {
+                      hoverBorderColor: '#E1E5F2',
+                      borderColor: '#E1E5F2',
+                      borderWidth: 5,
+                    },
+                  },
+                  animation: {
+                    duration: 500,
+                  },
+                  title: {
+                    display: false,
+                    text: 'OCUPAÇÃO DE LEITOS',
+                  },
+                  legend: {
+                    display: false,
+                    position: 'bottom',
+                  },
+                  maintainAspectRatio: true,
+                  responsive: false,
+                }}
+              />
+              {BtnInterconsultas(item.hospital, item.unidade)}
+              <div id="OCUPAÇÃO">
+                <div
+                  id="OCUPAÇÃO"
+                  className="title2center"
                   style={{
-                    fontSize: 16,
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                    alignSelf: 'center',
+                    position: 'absolute', top: 5, left: 5, right: 5, bottom: 5,
                     fontWeight: 'bold',
                     margin: 2.5,
-                    marginTop: 10,
-                    padding: 0,
+                    padding: 0, fontSize: 20
                   }}
                 >
-                  {'PROGRESSO: ' +
+                  {
                     Math.ceil(
-                      (agendabloco.filter(
-                        (value) =>
-                          value.unidade == item.unidade && value.status == 1,
-                      ).length *
+                      (pct.filter((value) => value.unidade == item.unidade)
+                        .length *
                         100) /
-                      agendabloco.filter(
-                        (value) => value.unidade == item.unidade,
-                      ).length,
+                      lto
+                        .filter((value) => value.unidade == item.unidade)
+                        .map((item) => item.leitos)
+                        .reduce(somaLeitos, 0),
                     ) +
                     '%'}
+                </div>
+              </div>
+            </div>
+            <div id="LEGENDA"
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-evenly',
+                flexWrap: 'wrap',
+                marginTop: 5,
+                marginBottom: 5,
+                boxShadow: 'none',
+                width: '100%'
+              }}
+            >
+              <div style={{
+                display: window.innerWidth > 800 ? 'flex' : 'none', flexDirection: 'column',
+                justifyContent: 'center', alignItems: 'center'
+              }}>
+                <div
+                  id="LEITOS VAGOS"
+                  className="secondary"
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 5,
+                    backgroundColor: 'grey',
+                    margin: 2.5,
+                    padding: 0,
+                  }}
+                ></div>
+                <p
+                  className="title2center"
+                  style={{
+                    width: '8vw',
+                    margin: 2.5,
+                    marginRight: 5,
+                    padding: 0,
+                    fontSize: 10,
+                  }}
+                >
+                  LEITOS VAGOS
                 </p>
               </div>
-              <div
-                className="secondary"
-                style={{
-                  flexDirection: 'row',
-                  marginTop: 5,
-                  marginBottom: 65,
-                }}
-              >
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <div
-                  id="REALIZADAS"
+                  id="PACIENTES CRÔNICOS"
+                  className="secondary"
                   style={{
                     width: 20,
                     height: 20,
@@ -1199,60 +1033,281 @@ function Unidades() {
                   }}
                 ></div>
                 <p
-                  className="title2"
+                  className="title2center"
                   style={{
-                    fontSize: 14,
+                    width: '8vw',
                     margin: 2.5,
                     marginRight: 5,
                     padding: 0,
+                    fontSize: 10,
                   }}
                 >
-                  REALIZADAS
+                  CRÔNICOS
                 </p>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                 <div
-                  id="PENDENTES"
+                  id="CUIDADOS PALIATIVOS"
+                  className="secondary"
                   style={{
                     width: 20,
                     height: 20,
                     borderRadius: 5,
-                    backgroundColor: '#ec7063',
+                    backgroundColor: '#5DADE2',
                     margin: 2.5,
                     padding: 0,
                   }}
                 ></div>
                 <p
-                  className="title2"
+                  className="title2center"
                   style={{
-                    fontSize: 14,
+                    width: '8vw',
                     margin: 2.5,
                     marginRight: 5,
                     padding: 0,
+                    fontSize: 10,
                   }}
                 >
-                  PENDENTES
+                  PALIATIVOS
                 </p>
               </div>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <div
+                  id="REABILITAÇÃO"
+                  className="secondary"
+                  style={{
+                    width: 20,
+                    height: 20,
+                    borderRadius: 5,
+                    backgroundColor: '#F4D03F',
+                    margin: 2.5,
+                    padding: 0,
+                  }}
+                ></div>
+                <p
+                  className="title2center"
+                  style={{
+                    width: '8vw',
+                    margin: 2.5,
+                    marginRight: 5,
+                    padding: 0,
+                    fontSize: 10,
+                  }}
+                >
+                  { window.innerWidth < 600 ? 'REAB' : 'REABILITAÇÃO'}
+                </p>
+              </div>
+
             </div>
+
+            <div id={"expandbtn" + item.id}
+              className="blue-button"
+              style={{
+                width: 25, minWidth: 25, height: 25, minHeight: 25,
+                position: 'absolute', bottom: 5, right: 5
+              }}
+              onClick={(e) => {
+                document.getElementById("hospitaisstuff" + item.id).style.opacity = 0
+                document.getElementById("expandbtn" + item.id).style.display = "none"
+                document.getElementById("retractbtn" + item.id).style.display = "flex"
+
+                document.getElementById("hospitaisstuff" + item.id).classList = "expandcard";
+                setTimeout(() => {
+                  var position = document.getElementById("hospital" + item.id).offsetTop;
+                  document.getElementById("LISTA DE UNIDADES").scrollTop = position - 245;
+                  document.getElementById("hospitaisstuff" + item.id).style.opacity = 1
+                }, 500);
+
+                e.stopPropagation();
+              }}
+            >
+              +
+            </div>
+            <div id={"retractbtn" + item.id}
+              className="blue-button"
+              onClick={(e) => {
+                document.getElementById("hospitaisstuff" + item.id).style.opacity = 0
+                setTimeout(() => {
+                  document.getElementById("expandbtn" + item.id).style.display = "flex"
+                  document.getElementById("retractbtn" + item.id).style.display = "none"
+                  document.getElementById("hospitaisstuff" + item.id).className = "retractcard"
+                }, 500);
+                e.stopPropagation();
+              }}
+              style={{
+                display: 'none',
+                width: 25, minWidth: 25, height: 25, minHeight: 25,
+                position: 'absolute', bottom: 5, right: 5
+              }}
+            >
+              -
+            </div>
+
           </div>
-          <div
-            className="title2"
-            onClick={() => selectBlocoCirurgico(item)}
-            style={{
-              display:
-                agendabloco.filter((value) => value.unidade == item.unidade)
-                  .length == 0
-                  ? 'flex'
-                  : 'none',
-              fontSize: 16,
-              padding: 10,
-              width: '100%',
-              color: '#ec7063',
-              alignSelf: 'center',
-              textAlign: 'center',
-            }}
-          >
-            <div>{'SEM CIRURGIAS AGENDADAS PARA HOJE.'}</div>
+
+          <div id={"hospitaisstuff" + item.id} className="retractcard"
+            style={{ display: 'flex', flexDirection: 'row' }}>
+
+            <div id="gráficoMIF"
+              style={{
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                width: '15vw', height: '15vw', backgroundColor: "#F2F2F2", borderRadius: 5,
+                padding: 10, margin: 10
+              }}>
+              <div className="title2center">MIF</div>
+              <div className="scroll"
+                style={{
+                  overflowY: 'hidden', overflowX: 'scroll',
+                  padding: 5,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                    width: '40vw',
+                    height: 100,
+                    padding: 5, paddingRight: 12
+                  }}>
+                  <Bar
+                    data={dataChartMif}
+                    // width={'100%'}
+                    // height={100}
+                    plugins={ChartDataLabels}
+                    options={{
+                      scales: {
+                        xAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false
+                          }
+                        }],
+                        yAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false,
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                          }
+                        }]
+                      },
+                      plugins: {
+                        datalabels: {
+                          display: false,
+                        },
+                      },
+                      tooltips: {
+                        enabled: false,
+                      },
+                      hover: { mode: null },
+                      animation: {
+                        duration: 500,
+                      },
+                      title: {
+                        display: false,
+                      },
+                      legend: {
+                        display: false,
+                        position: 'bottom',
+                      },
+                      maintainAspectRatio: false,
+                      responsive: true,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div id="gráficoPlanoTerapeutico"
+              style={{
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                width: '15vw', height: '15vw', backgroundColor: "#F2F2F2", borderRadius: 5,
+                padding: 10, margin: 10
+              }}>
+              <div className="title2center">PLANO TERAPÊUTICO</div>
+              <div className="scroll"
+                style={{
+                  overflowY: 'hidden', overflowX: 'scroll',
+                  padding: 5,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                    width: '40vw',
+                    height: 60,
+                    padding: 5, paddingRight: 12
+                  }}>
+                  <Bar
+                    data={dataChartPlanoTerapeutico}
+                    // width={'100%'}
+                    // height={100}
+                    plugins={ChartDataLabels}
+                    options={{
+                      scales: {
+                        xAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false
+                          }
+                        }],
+                        yAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false,
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                          }
+                        }]
+                      },
+                      plugins: {
+                        datalabels: {
+                          display: false,
+                        },
+                      },
+                      tooltips: {
+                        enabled: false,
+                      },
+                      hover: { mode: null },
+                      animation: {
+                        duration: 500,
+                      },
+                      title: {
+                        display: false,
+                      },
+                      legend: {
+                        display: false,
+                        position: 'bottom',
+                      },
+                      maintainAspectRatio: false,
+                      responsive: true,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={(e) => { history.push('/escala'); e.stopPropagation() }}
+              className="blue-button"
+              style={{
+                display: tipousuario == 2 ? 'flex' : 'none',
+                minHeight: '15vw', minWidth: '15vw',
+                margin: 10, padding: 10, height: 50
+              }}
+            >
+              ESCALA PROFISSIONAL
+            </button>
+
           </div>
+
         </div>
       )
     } else if (
@@ -1261,140 +1316,345 @@ function Unidades() {
         .map((item) => item.tipo) == 4
     ) {
       return (
-        <div
-          className="card"
-          onClick={() => selectUnidade(item)}
+        <div id="invólucro"
           style={{
-            display: renderchart == 1 ? 'flex' : 'none',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: 'flex', flexDirection: 'row',
+            backgroundColor: '#ffffff', margin: 10,
             borderRadius: 5,
-            padding: 10,
-            width: window.innerWidth < 800 ? '95%' : '21vw',
-            height: 400
-          }}
-        >
-          <p
-            className="title2"
+            boxShadow: '0px 2px 20px 5px rgba(0, 0, 0, 0.1)',
+            height: 420, width: window.innerWidth < 400 ? '90vw' : '',
+          }}>
+          <div id={"hospital" + item.id}
+            className="card"
+            onClick={() => selectUnidade(item)}
             style={{
-              fontSize: 22,
-              fontWeight: 'bold',
-              margin: 10,
-              padding: 0,
-              height: 100,
-              width: '100%',
-              textAlign: 'center',
-              // flexDirection: 'column',
-            }}
-          >
-            {item.unidade}
-          </p>
-          <div
-            className="title2"
-            style={{
-              display:
-                agendabloco.filter((value) => value.unidade == item.unidade)
-                  .length == 0
-                  ? 'flex'
-                  : 'none',
-              fontSize: 16,
+              position: 'relative',
+              display: renderchart == 1 ? 'flex' : 'none',
               flexDirection: 'column',
-              justifyContent: 'center',
+              justifyContent: 'flex-start',
+              // alignSelf: window.innerWidth > 400 ? 'flex-start' : 'center',
+              borderRadius: 5,
               padding: 10,
-              width: '100%',
-              color: '#ec7063',
-              textAlign: 'center',
+              width: window.innerWidth < 400 ? '' : '21vw',
+              minWidth: window.innerWidth < 400 ? '' : '21vw',
             }}
           >
-            <div>CONSULTAS AGENDADAS PARA HOJE:</div>
-            <div style={{ margin: 5, fontSize: 16 }}>
-              {
-                ambulatorio.filter(
-                  (value) =>
-                    value.assistente == nomeusuario &&
-                    value.unidade == item.unidade &&
-                    JSON.stringify(value.admissao).substring(1, 11) ==
-                    moment().format('DD/MM/YYYY'),
-                ).length
-              }
+            <div
+              className="title2"
+              style={{
+                fontSize: 22,
+                fontWeight: 'bold',
+                margin: 10,
+                padding: 0,
+                height: 100,
+                width: '100%',
+                textAlign: 'center',
+                // flexDirection: 'column',
+              }}
+            >
+              {item.unidade}
             </div>
-          </div>
-          <div
-            id="gráfico de rendimento no consultório"
-            style={{ margin: 0, padding: 0 }}
-          >
-            <Line
-              backgroundColor="red"
-              data={dataChartConsultas}
-              padding={10}
-              width={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
-              height={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
-              plugins={ChartDataLabels}
-              options={{
-                scales: {
-                  xAxes: [
-                    {
-                      display: true,
-                      ticks: {
-                        fontColor: '#1f7a8c',
-                        fontWeight: 'bold',
+            <div
+              className="title2"
+              style={{
+                display:
+                  agendabloco.filter((value) => value.unidade == item.unidade)
+                    .length == 0
+                    ? 'flex'
+                    : 'none',
+                fontSize: 16,
+                flexDirection: 'column',
+                justifyContent: 'center',
+                padding: 10,
+                width: '100%',
+                color: '#ec7063',
+                textAlign: 'center',
+              }}
+            >
+              <div>CONSULTAS AGENDADAS PARA HOJE:</div>
+              <div style={{ margin: 5, fontSize: 16 }}>
+                {
+                  ambulatorio.filter(
+                    (value) =>
+                      value.assistente == nomeusuario &&
+                      value.unidade == item.unidade &&
+                      JSON.stringify(value.admissao).substring(1, 11) ==
+                      moment().format('DD/MM/YYYY'),
+                  ).length
+                }
+              </div>
+            </div>
+            <div
+              id="gráfico de rendimento no consultório"
+              style={{ margin: 0, marginBottom: 50, padding: 0 }}
+            >
+              <Line
+                data={dataChartConsultas}
+                padding={10}
+                width={window.innerWidth > 400 ? 0.15 * window.innerWidth : 200}
+                height={window.innerWidth > 400 ? 150 : 120}
+                plugins={ChartDataLabels}
+                options={{
+                  scales: {
+                    xAxes: [
+                      {
+                        display: true,
+                        ticks: {
+                          fontColor: '#1f7a8c',
+                          fontWeight: 'bold',
+                        },
+                        gridLines: {
+                          zeroLineColor: 'transparent',
+                          lineWidth: 0,
+                          drawOnChartArea: false,
+                        },
                       },
-                      gridLines: {
-                        zeroLineColor: 'transparent',
-                        lineWidth: 0,
-                        drawOnChartArea: false,
+                    ],
+                    yAxes: [
+                      {
+                        display: false,
+                        ticks: {
+                          suggestedMin: 0,
+                          suggestedMax: 30,
+                          fontColor: '#1f7a8c',
+                          fontWeight: 'bold',
+                        },
+                        gridLines: {
+                          zeroLineColor: 'transparent',
+                          lineWidth: 0,
+                          drawOnChartArea: false,
+                        },
                       },
-                    },
-                  ],
-                  yAxes: [
-                    {
+                    ],
+                  },
+                  plugins: {
+                    datalabels: {
                       display: false,
-                      ticks: {
-                        suggestedMin: 0,
-                        suggestedMax: 30,
-                        fontColor: '#1f7a8c',
-                        fontWeight: 'bold',
+                      color: '#ffffff',
+                      font: {
+                        weight: 'bold',
+                        size: 16,
                       },
-                      gridLines: {
-                        zeroLineColor: 'transparent',
-                        lineWidth: 0,
-                        drawOnChartArea: false,
-                      },
-                    },
-                  ],
-                },
-                plugins: {
-                  datalabels: {
-                    display: false,
-                    color: '#ffffff',
-                    font: {
-                      weight: 'bold',
-                      size: 16,
                     },
                   },
-                },
-                tooltips: {
-                  enabled: true,
-                  displayColors: false,
-                },
-                hover: { mode: null },
-                elements: {},
-                animation: {
-                  duration: 500,
-                },
-                title: {
-                  display: false,
-                  text: 'CONSULTAS',
-                },
-                legend: {
-                  display: false,
-                  position: 'bottom',
-                },
-                maintainAspectRatio: true,
-                responsive: false,
+                  tooltips: {
+                    enabled: true,
+                    displayColors: false,
+                  },
+                  hover: { mode: null },
+                  elements: {},
+                  animation: {
+                    duration: 500,
+                  },
+                  title: {
+                    display: false,
+                    text: 'CONSULTAS',
+                  },
+                  legend: {
+                    display: false,
+                    position: 'bottom',
+                  },
+                  maintainAspectRatio: true,
+                  responsive: false,
+                }}
+              />
+            </div>
+
+            <div id={"expandbtn" + item.id}
+              className="blue-button"
+              style={{
+                width: 25, minWidth: 25, height: 25, minHeight: 25,
+                position: 'absolute', bottom: 5, right: 5
               }}
-            />
+              onClick={(e) => {
+                document.getElementById("hospitaisstuff" + item.id).style.opacity = 0
+                document.getElementById("expandbtn" + item.id).style.display = "none"
+                document.getElementById("retractbtn" + item.id).style.display = "flex"
+
+                document.getElementById("hospitaisstuff" + item.id).classList = "expandcard";
+                setTimeout(() => {
+                  var position = document.getElementById("hospital" + item.id).offsetTop;
+                  document.getElementById("LISTA DE UNIDADES").scrollTop = position - 245;
+                  document.getElementById("hospitaisstuff" + item.id).style.opacity = 1
+                }, 500);
+
+                e.stopPropagation();
+              }}
+            >
+              +
+            </div>
+            <div id={"retractbtn" + item.id}
+              className="blue-button"
+              onClick={(e) => {
+                document.getElementById("hospitaisstuff" + item.id).style.opacity = 0
+                setTimeout(() => {
+                  document.getElementById("expandbtn" + item.id).style.display = "flex"
+                  document.getElementById("retractbtn" + item.id).style.display = "none"
+                  document.getElementById("hospitaisstuff" + item.id).className = "retractcard"
+                }, 500);
+                e.stopPropagation();
+              }}
+              style={{
+                display: 'none',
+                width: 25, minWidth: 25, height: 25, minHeight: 25,
+                position: 'absolute', bottom: 5, right: 5
+              }}
+            >
+              -
+            </div>
+
+          </div>
+
+          <div id={"hospitaisstuff" + item.id} className="retractcard"
+            style={{ display: 'flex', flexDirection: 'row' }}>
+
+
+
+            <div id="gráficoMIF"
+              style={{
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                width: '20vw', height: '30vh', backgroundColor: "#F2F2F2", borderRadius: 5,
+                padding: 10, margin: 10
+              }}>
+              <div className="title2center">MIF</div>
+              <div className="scroll"
+                style={{
+                  overflowY: 'hidden', overflowX: 'scroll',
+                  padding: 5,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                    width: '40vw',
+                    height: 100,
+                    padding: 5, paddingRight: 12
+                  }}>
+                  <Bar
+                    data={dataChartMif}
+                    // width={'100%'}
+                    // height={100}
+                    plugins={ChartDataLabels}
+                    options={{
+                      scales: {
+                        xAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false
+                          }
+                        }],
+                        yAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false,
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                          }
+                        }]
+                      },
+                      plugins: {
+                        datalabels: {
+                          display: false,
+                        },
+                      },
+                      tooltips: {
+                        enabled: false,
+                      },
+                      hover: { mode: null },
+                      animation: {
+                        duration: 500,
+                      },
+                      title: {
+                        display: false,
+                      },
+                      legend: {
+                        display: false,
+                        position: 'bottom',
+                      },
+                      maintainAspectRatio: false,
+                      responsive: true,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+            <div id="gráficoPlanoTerapeutico"
+              style={{
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                width: '20vw', height: '30vh', backgroundColor: "#F2F2F2", borderRadius: 5,
+                padding: 10, margin: 10
+              }}>
+              <div className="title2center">PLANO TERAPÊUTICO</div>
+              <div className="scroll"
+                style={{
+                  overflowY: 'hidden', overflowX: 'scroll',
+                  padding: 5,
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center',
+                    width: '40vw',
+                    height: 100,
+                    padding: 5, paddingRight: 12
+                  }}>
+                  <Bar
+                    data={dataChartPlanoTerapeutico}
+                    // width={'100%'}
+                    // height={100}
+                    plugins={ChartDataLabels}
+                    options={{
+                      scales: {
+                        xAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false
+                          }
+                        }],
+                        yAxes: [{
+                          gridLines: {
+                            display: false
+                          },
+                          ticks: {
+                            display: false,
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                          }
+                        }]
+                      },
+                      plugins: {
+                        datalabels: {
+                          display: false,
+                        },
+                      },
+                      tooltips: {
+                        enabled: false,
+                      },
+                      hover: { mode: null },
+                      animation: {
+                        duration: 500,
+                      },
+                      title: {
+                        display: false,
+                      },
+                      legend: {
+                        display: false,
+                        position: 'bottom',
+                      },
+                      maintainAspectRatio: false,
+                      responsive: true,
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       )
@@ -1443,6 +1703,7 @@ function Unidades() {
       <button
         className={painelgestor == 1 ? "red-button" : "green-button"}
         style={{
+          display: window.innerWidth > 400 ? 'flex' : 'none',
           width: '8vw', minHeight: '8vw',
           alignSelf: 'flex-start',
           position: 'absolute',
@@ -1455,57 +1716,87 @@ function Unidades() {
     )
   }
 
+  function PainelDoGestor() {
+    return (
+      <div className="scroll fade-in"
+        style={{
+          position: 'absolute', top: 20, bottom: 20, right: 20,
+          backgroundColor: 'darkgray',
+          borderRadius: 5,
+          padding: 10,
+          display: painelgestor == 1 ? 'flex' : 'none',
+          width: '30vw',
+          opacity: 1,
+          zIndex: 2,
+          boxShadow: '0px 2px 10px 5px rgba(0, 0, 0, 0.5)'
+        }}>
+        <Stuff></Stuff>
+      </div>
+    )
+  }
+
+  const [filterunidade, setfilterunidade] = useState('');
+  var searchunidade = '';
+  var timeout = null;
+
+  const filterUnidade = () => {
+    clearTimeout(timeout);
+    document.getElementById("inputFilterUnidade").focus();
+    searchunidade = document.getElementById("inputFilterUnidade").value.toUpperCase();
+    timeout = setTimeout(() => {
+      if (searchunidade == '') {
+        setarrayunidades(unidades);
+        document.getElementById("inputFilterUnidade").value = '';
+        document.getElementById("inputFilterUnidade").focus();
+      } else {
+        setfilterunidade(document.getElementById("inputFilterUnidade").value.toUpperCase());
+        setarrayunidades(unidades.filter(item => item.unidade.includes(searchunidade) == true));
+        document.getElementById("inputFilterUnidade").value = searchunidade;
+        document.getElementById("inputFilterUnidade").focus();
+      }
+    }, 500);
+  }
+
+  // filtro de unidades...
+  function FilterUnidades() {
+    return (
+      <input
+        className="input"
+        autoComplete="off"
+        placeholder="BUSCAR UNIDADE..."
+        onFocus={(e) => (e.target.placeholder = '')}
+        onBlur={(e) => (e.target.placeholder = 'BUSCAR UNIDADE...')}
+        onChange={() => filterUnidade()}
+        style={{
+          width: '60vw',
+          padding: 20,
+          margin: 20,
+          alignSelf: 'center',
+          textAlign: 'center'
+        }}
+        type="text"
+        id="inputFilterUnidade"
+        defaultValue={filterunidade}
+        maxLength={100}
+      ></input>
+    )
+  }
+
   // renderização do componente.
   return (
     <div
       className="main fade-in"
       style={{
         display: renderchart == 1 ? 'flex' : 'none',
-        flexDirection: 'column',
-        justifyContent: 'flex-start',
-        verticalAlign: 'center',
-        overflowX: 'hidden',
-        overflowY: 'hidden',
-        margin: 0,
-        padding: 0,
-        height: window.innerHeight,
-        maxHeight: window.innerHeight,
       }}
     >
+      <PainelDoGestor></PainelDoGestor>
       <Header link={'/hospitais'} titulo={nomehospital}></Header>
       <Toast valor={valor} cor={cor} mensagem={mensagem} tempo={tempo} />
-      <div
-        className="scroll"
-        style={{
-          display: window.innerWidth > 400 ? 'flex' : 'none',
-          width: '100vw', padding: 5,
-          height: '100vh',
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-          overflowY: 'scroll',
-        }}>
-        <PainelDoGestorBtn></PainelDoGestorBtn>
-        <div
-          className="fade-in"
-          style={{
-            display: painelgestor == 1 ? 'flex' : 'none', flexDirection: 'row', justifyContent: 'center',
-            width: '100%'
-          }}>
-          <Stuff></Stuff>
-          <MoreStuff></MoreStuff>
-        </div>
-        <ShowUnidades></ShowUnidades>
-        <ViewInterconsultas></ViewInterconsultas>
-      </div>
-      <div
-        style={{
-          display: window.innerWidth < 400 ? 'flex' : 'none',
-          flexDirection: 'row', justifyContent: 'center',
-          width: '100%'
-        }}>
-        <ShowUnidades></ShowUnidades>
-        <ViewInterconsultas></ViewInterconsultas>
-      </div>
+      <PainelDoGestorBtn></PainelDoGestorBtn>
+      <FilterUnidades></FilterUnidades>
+      <ShowUnidades></ShowUnidades>
+      <ViewInterconsultas></ViewInterconsultas>
     </div>
   )
 }

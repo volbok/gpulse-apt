@@ -108,10 +108,10 @@ function DatePicker({ valordatepicker, mododatepicker }) {
             display: 'flex',
             position: 'unset',
             zIndex: 99,
-            margin: window.innerWidth < 800 ? 5 : 0,
+            margin: window.innerWidth < 400 ? 5 : 0,
             padding: 15,
             width: window.innerWidth > 400 ? 450 : '95vw',
-            height: window.innerWidth > 400 ? 500 : 450,
+            height: window.innerWidth > 400 ? 500 : '95vh',
             borderRadius: 5,
           }}>
           <div style={{

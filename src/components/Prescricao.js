@@ -281,7 +281,7 @@ function Prescricao({ newprescricao }) {
             display: 'flex',
             justifyContent: 'flex-start',
             margin: 5,
-            padding: 0,
+            padding: 5,
             height: '100%',
             width: 0.18 * window.innerWidth,
           }}
@@ -433,17 +433,20 @@ function Prescricao({ newprescricao }) {
   // cabeçalho da lista de itens prescritos.
   function CabecalhoPrescricao() {
     return (
-      <div className="rowheader" style={{
-        display: stateprontuario == 9 ? 'flex' : 'none'
-      }}>
-        < div className="title2" style={{
-          width: '100%', margin: 2.5
-        }
-        }> FÁRMACO</div >
-        <div className="title2" style={{ minWidth: 50, margin: 2.5 }}>QTDE</div>
-        <div className="title2" style={{ minWidth: 120, margin: 2.5 }}>VIA</div>
-        <div className="title2" style={{ minWidth: 120, margin: 2.5 }}>HORÁRIO</div>
-      </div >
+      <div className="scrollheader" style={{ marginTop: 5 }}>
+        <div className="rowheader" style={{
+          display: stateprontuario == 9 ? 'flex' : 'none',
+          paddingRight: 15, marginBottom: -5, marginTop: -5
+        }}>
+          < div className="header-button" style={{
+            width: '100%', margin: 2.5
+          }
+          }> FÁRMACO</div >
+          <div className="header-button" style={{ minWidth: 50, margin: 2.5 }}>QTDE</div>
+          <div className="header-button" style={{ minWidth: 120, margin: 2.5 }}>VIA</div>
+          <div className="header-button" style={{ minWidth: 120, margin: 2.5 }}>HORÁRIO</div>
+        </div>
+      </div>
     )
   }
 
@@ -459,7 +462,8 @@ function Prescricao({ newprescricao }) {
         onClick={() => keepScroll()}
         // onLoad={() => keepScroll()}
         style={{
-          display: stateprontuario == 9 ? 'flex' : 'none', height: '65vh', width: '100%',
+          display: stateprontuario == 9 ? 'flex' : 'none', height: 'calc(65vh - 22px)', width: '100%', alignItems: 'center',
+          borderTopRightRadius: 0, borderBottomRightRadius: 0
         }}
       >
         {listantibioticos.filter((item) => expanditem === 0 && item.status === 0 && item.idatendimento === idatendimento &&
@@ -604,7 +608,6 @@ function Prescricao({ newprescricao }) {
                   padding: 5,
                   margin: 2.5,
                   flexDirection: 'column',
-                  //opacity: item.id === iditem ? 1 : 0.6,
                 }}
               >
                 <div>{item.via}</div>
